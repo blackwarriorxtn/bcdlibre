@@ -12,8 +12,8 @@ TODO
 ## Start Bibliopuce
 
 * In production mode:
-  `cd ...\bibliopuce`
-  `npm start`
+    cd ...\bibliopuce
+    npm start
 * In debug mode:
-  `cd ...\bibliopuce`
-  `set DEBUG=bibliopuce:* & npm start`
+    cd ...\bibliopuce
+    set DEBUG=bibliopuce:* & npm start
