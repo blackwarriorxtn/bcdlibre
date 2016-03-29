@@ -1,0 +1,28 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+/* Handle page structure: page (header + main) and footer */
+html, body
+{
+  height: 100%;
+}
+#page {
+  min-height: 100%;
+}
+
+#main {
+	padding-bottom: 150px;  /* must be same height as the footer */
+}
+
+#page_footer {
+  position: relative;
+	margin-top: -150px; /* negative value of footer height */
+	height: 150px;
+	clear:both;
+}

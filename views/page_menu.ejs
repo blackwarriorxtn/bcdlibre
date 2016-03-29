@@ -1,0 +1,8 @@
+<% for(var i=0; i< items.length; i++) { %>
+  <div class="col-xs-6 col-md-6">
+    <a href="<%- items[i].link%>" class="btn btn-primary btn-lg btn-block" <% if (items[i].tooltip) { %> title="<%= items[i].tooltip %>"<%
+    } // if %>><%
+      if (items[i].icon) { %><span class="glyphicon glyphicon-<%- items[i].icon%>" aria-hidden="true"></span> <%
+      } // if %> <%- items[i].label%></a>
+  </div><%
+} // for %>

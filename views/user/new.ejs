@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <%- include('../html_head', {title: title}) %>
+  </head>
+  <body>
+    <div id="page">
+      <div id="main">
+        <%- include('../page_header', {title: title, subtitle: "Lecteurs", menus:menus}) %>
+        <div class="container">
+          <form action="" method="post">
+            <% for(var i=0; i< fields.length; i++) { %>
+                <div class="form-group">
+                  <label for="<%= fields[i].name %>"><%= fields[i].label %></label>
+                  <input type="text" class="form-control" id="<%= fields[i].name %>" placeholder="<%= fields[i].label %>">
+                </div><%
+          } // for %>
+            <p>
+              <button type="submit" name="OK" class="btn btn-primary btn-lg">OK</button><button type="submit" name="CANCEL" class="btn btn-default btn-lg">Annuler</button>
+            </p>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <%- include('../page_footer') %>
+  </body>
+</html>

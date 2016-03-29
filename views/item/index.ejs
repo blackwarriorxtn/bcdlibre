@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <%- include('../html_head', {title: title}) %>
+  </head>
+  <body>
+    <div id="page">
+      <div id="main">
+        <%- include('../page_header', {title: title, subtitle: subtitle, menus:menus}) %>
+        <div class="container">
+          <%- include('../page_menu', {items:[
+            {link:"new", label:"Nouveau", icon:"plus", tooltip:"Ajouter un livre (exemplaire)"},
+            {link:"list", label:"Liste", icon:"th-list", tooltip:"Liste des livres (exemplaires)"},
+            {link:"search", label:"Recherche", icon:"search", tooltip:"Rechercher un livre"}
+          ]}) %>
+        </div>
+      </div>
+    </div>
+
+    <%- include('../page_footer') %>
+  </body>
+</html>

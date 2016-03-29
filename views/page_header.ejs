@@ -1,0 +1,18 @@
+<div class="page-header">
+  <h1><%= title %> <small><%= subtitle %></small></h1>
+  <ol class="breadcrumb">
+    <% for(var i=0; i< menus.length; i++) {
+      if (menus[i].link == null) { %>
+    <li><%= menus[i].text %></li><%
+      }
+      else { %>
+        <li class="active">
+            <a href="<%= menus[i].link %>">
+                <%= menus[i].text %>
+            </a>
+        </li><%
+      } // else if if (menus[i].link == null)
+  } // for %>
+    <li><%= subtitle %></li>
+  </ol>
+</div>
