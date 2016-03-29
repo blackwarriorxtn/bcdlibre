@@ -1,8 +1,15 @@
 # bibliopuce
-Logiciel de gestion d'une bibliothèque (minuscule - pas plus grande qu'une puce :-)
+
+Small library software (borrowing and returning books management)
+
+Logiciel de gestion d'une petite bibliothèque (gestion d'emprunt de livres)
 
 
-== Start Bibliopuce ==
+## Install Bibliopuce
+
+TODO
+
+## Start Bibliopuce
 
 * In production mode:
   cd ...\bibliopuce
@@ -10,4 +17,3 @@ Logiciel de gestion d'une bibliothèque (minuscule - pas plus grande qu'une puce
 * In debug mode:
   cd ...\bibliopuce
   set DEBUG=bibliopuce:* & npm start
-  
