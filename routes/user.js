@@ -3,6 +3,13 @@ var router = express.Router();
 var mysql      = require('mysql');
 var db = require('./db'); // database utilities
 
+var arrFields = [
+  {name:"name",label:"Nom",type:"String",required:true,validation:null},
+  {name:"login",label:"Compte",type:"String",required:true,validation:null},
+  {name:"phone",label:"Téléphone",type:"String",required:false,validation:null},
+  {name:"comment",label:"Commentaire",type:"String",required:false,validation:null},
+];
+
 // ******************************************************************************** user
 // GET users menu
 router.get('/', function(req, res, next) {
@@ -20,25 +27,17 @@ router.get('/list', function(req, res, next) {
 // GET new user (form)
 router.get('/new', function(req, res, next) {
 
-  var arrFields = [
-    {name:"name",label:"Nom",type:"String",required:true,validation:null},
-    {name:"login",label:"Compte",type:"String",required:true,validation:null},
-    {name:"phone",label:"Téléphone",type:"String",required:false,validation:null},
-    {name:"comment",label:"Commentaire",type:"String",required:false,validation:null},
-  ];
   res.render('user/new', { title: req.app.locals.title, subtitle: "Lecteur", menus:[{text:"Menu principal",link:"/"},{text:"Lecteurs",link:"/user/"}], fields:arrFields });
 
 });
 // POST new user (form validation)
-router.post('/user/new', function(req, res, next) {
+router.post('/new', function(req, res, next) {
 
-  var arrFields = [
-    {name:"name",label:"Nom",type:"String",required:true,validation:null},
-    {name:"login",label:"Compte",type:"String",required:true,validation:null},
-    {name:"phone",label:"Téléphone",type:"String",required:false,validation:null},
-    {name:"comment",label:"Commentaire",type:"String",required:false,validation:null},
-  ];
-  res.render('user/new', { title: req.app.locals.title, subtitle: "Lecteur", menus:[{text:"Menu principal",link:"/"},{text:"Lecteurs",link:"/user/"}], fields:arrFields });
+  res.setHeader('Content-Type', 'text/plain');
+  res.write('you posted:\n');
+  res.end(JSON.stringify(req.body, null, 2));
+
+  // TODO res.render('user/record'...);
 
 });
 

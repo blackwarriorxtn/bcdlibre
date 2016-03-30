@@ -12,7 +12,7 @@
             <% for(var i=0; i< fields.length; i++) { %>
                 <div class="form-group">
                   <label for="<%= fields[i].name %>"><%= fields[i].label %></label>
-                  <input type="text" class="form-control" id="<%= fields[i].name %>" placeholder="<%= fields[i].label %>">
+                  <input type="text" class="form-control" name="<%= fields[i].name %>" id="<%= fields[i].name %>" placeholder="<%= fields[i].label %>">
                 </div><%
           } // for %>
             <p>
