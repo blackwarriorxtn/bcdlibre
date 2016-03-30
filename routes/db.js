@@ -15,4 +15,13 @@ var runsql = function (strSQL, fnCallback)
   connection.end();
 }
 
+var check_field_value = function(strValue, arrFieldDescription)
+{
+  var strSQLValue = null;
+  // TODO Implement
+  strSQLValue = new String(strValue);
+  return(strSQLValue);
+}
+
 module.exports.runsql = runsql;
+module.exports.check_field_value = check_field_value;
