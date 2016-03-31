@@ -3,18 +3,21 @@ var router = express.Router();
 var mysql      = require('mysql');
 var db = require('./db'); // database utilities
 
-var arrFields = [
-  {name:"name",label:"Nom",type:"String",required:true,validation:null},
-  {name:"login",label:"Compte",type:"String",required:true,validation:null},
-  {name:"phone",label:"Téléphone",type:"String",required:false,validation:null},
-  {name:"comment",label:"Commentaire",type:"String",required:false,validation:null},
-];
-var arrExceptFields = [
-  "OK",
-  "CANCEL"
-];
-
 // ******************************************************************************** user
+
+// *** PARAMETERS (SQL)
+var objFormParameters = {
+  table_name: "user",
+  primary_key: ["id"],
+  autoincrement_column: "id",
+  fields:[
+    {name:"name",label:"Nom",type:"String",required:true,validation:null},
+    {name:"login",label:"Compte",type:"String",required:true,validation:null},
+    {name:"phone",label:"Téléphone",type:"String",required:false,validation:null},
+    {name:"comment",label:"Commentaire",type:"String",required:false,validation:null},
+  ]
+};
+
 // GET users menu
 router.get('/', function(req, res, next) {
   res.render('user/index', { title: req.app.locals.title, subtitle: "Lecteur", menus:[{text:"Menu principal",link:"/"}] });
@@ -31,12 +34,12 @@ router.get('/list', function(req, res, next) {
 // GET new user (form)
 router.get('/new', function(req, res, next) {
 
-  res.render('user/new', { title: req.app.locals.title, subtitle: "Lecteur", menus:[{text:"Menu principal",link:"/"},{text:"Lecteurs",link:"/user/"}], fields:arrFields });
+  res.render('user/new', { title: req.app.locals.title, subtitle: "Lecteur", menus:[{text:"Menu principal",link:"/"},{text:"Lecteurs",link:"/user/"}], fields:objFormParameters.fields });
 
 });
 // POST new user (form validation)
 router.post('/new', function(req, res, next) {
-
+  var objSQLConnection = db.new_connection();
 /* DEBUG
   res.setHeader('Content-Type', 'text/plain');
   res.write('you posted:\n');
@@ -51,27 +54,24 @@ router.post('/new', function(req, res, next) {
   var arrSQLValues = new Array();
   for (var strSentName in req.body)
   {
-    // DEBUG
-    console.log("strSentName=\""+strSentName+"\"\n");
+    // DEBUG console.log("strSentName=\""+strSentName+"\"\n");
     // Dont look for excluded fields, like "OK" or "CANCEL"
-    if (arrExceptFields.indexOf(strSentName) == -1)
+    if (db.form_ignore_fields.indexOf(strSentName) == -1)
     {
-
       var objField = null;
-      for (var intField = 0; intField < arrFields.length; intField++)
+      for (var intField = 0; intField < objFormParameters.fields.length; intField++)
       {
-        var strFieldName = arrFields[intField].name;
+        var strFieldName = objFormParameters.fields[intField].name;
         if (strFieldName)
         {
-          // DEBUG
-          console.log("strFieldName=\""+strFieldName+"\"\n");
+          // DEBUG console.log("strFieldName=\""+strFieldName+"\"\n");
           if (strSentName == strFieldName.valueOf())
           {
             // Known field : store attributes to check value and prepare storage
-            objField = arrFields[intField];
+            objField = objFormParameters.fields[intField];
           } // if (strSentName == strFieldName.valueOf())
         } // if (strFieldName)
-      } // for (var intField = 0; intField < arrFields; intField++)
+      } // for (var intField = 0; intField < objFormParameters.fields; intField++)
       if (objField == null)
       {
         // Unknown field: error!
@@ -79,20 +79,24 @@ router.post('/new', function(req, res, next) {
       } // if (objField == null)
       else
       {
-        var strSQLValue = db.check_field_value(req.body[strSentName],objField);
-        arrSQLNames.push(objField.name); // TODO handle name translation from HTML FORM to SQL TABLE COLUMN
+        var strSQLValue = db.check_field_value(req.body[strSentName],objField,objSQLConnection);
+        arrSQLNames.push(objSQLConnection.escapeId(objField.name)); // TODO handle name translation from HTML FORM to SQL TABLE COLUMN
         arrSQLValues.push(strSQLValue);
       } // else if (objField == null)
-    } // if (arrExceptFields.indexOf(strSentName) == -1)
+    } // if (db.form_ignore_fields.indexOf(strSentName) == -1)
   } // for (var objField in req.body)
 
-/* DEBUG */
-    res.write('SQL:\n');
-    res.write("INSERT INTO user("+arrSQLNames.join(",")+")\n");
-    res.write("VALUES("+arrSQLValues.join(",")+")\n");
-    res.end(";");
+  var strSQL = "INSERT INTO "+objSQLConnection.escapeId(objFormParameters.table_name)+"("+arrSQLNames.join(",")+")\n"
+             + "VALUES("+arrSQLValues.join(",")+")\n"
+             + ";"
+             ;
+  // DEBUG
+  console.log(strSQL);
 
-  // TODO res.render('user/record'...);
+  db.runsql(strSQL, function(err, rows, fields) {
+    if (err) throw err;
+    res.redirect('list'); // TODO /record
+  });
 
 });
 
