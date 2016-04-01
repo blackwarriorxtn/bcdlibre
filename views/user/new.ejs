@@ -9,11 +9,19 @@
         <%- include('../page_header', {title: title, subtitle: "Lecteurs", menus:menus}) %>
         <div class="container">
           <form action="" method="post">
-            <% for(var i=0; i< fields.length; i++) { %>
+            <% for(var i=0; i< form.fields.length; i++)
+            {
+              // Don't display field if it's part of the primary key
+              if (form.primary_key.indexOf(form.fields[i].name) == -1)
+              {
+              %>
                 <div class="form-group">
-                  <label for="<%= fields[i].name %>"><%= fields[i].label %></label>
-                  <input type="text" class="form-control" name="<%= fields[i].name %>" id="<%= fields[i].name %>" placeholder="<%= fields[i].label %>">
+                  <label for="<%= form.fields[i].name %>"><%= form.fields[i].label %></label>
+                  <input type="text" class="form-control" name="<%= form.fields[i].name %>" id="<%= form.fields[i].name %>" placeholder="<%= form.fields[i].label %>">
                 </div><%
+
+              } // if (form.primary_key.indexOf(form.fields[i]) == -1)
+
           } // for %>
             <p>
               <button type="submit" name="OK" class="btn btn-primary btn-lg">OK</button><button type="submit" name="CANCEL" class="btn btn-default btn-lg">Annuler</button>

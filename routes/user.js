@@ -11,6 +11,7 @@ var objFormParameters = {
   primary_key: ["id"],
   autoincrement_column: "id",
   fields:[
+    {name:"id",label:"#",type:"String",required:false,validation:null},
     {name:"name",label:"Nom",type:"String",required:true,validation:null},
     {name:"login",label:"Compte",type:"String",required:true,validation:null},
     {name:"phone",label:"Téléphone",type:"String",required:false,validation:null},
@@ -34,7 +35,7 @@ router.get('/list', function(req, res, next) {
 // GET new user (form)
 router.get('/new', function(req, res, next) {
 
-  res.render('user/new', { title: req.app.locals.title, subtitle: "Lecteur", menus:[{text:"Menu principal",link:"/"},{text:"Lecteurs",link:"/user/"}], fields:objFormParameters.fields });
+  res.render('user/new', { title: req.app.locals.title, subtitle: "Lecteur", menus:[{text:"Menu principal",link:"/"},{text:"Lecteurs",link:"/user/"}], form:objFormParameters });
 
 });
 // POST new user (form validation then insert new record in database)
@@ -46,7 +47,8 @@ router.get('/view', function(req, res, next) {
 
   db.view_record(req, res, next, objFormParameters, function(err, rows, fields) {
     if (err) throw err;
-    res.render('user/view', { title: req.app.locals.title, subtitle: "Fiche", menus:[{text:"Menu principal",link:"/"},{text:"Lecteurs",link:"/user/"}], record:rows });
+    // Display first record with "view" template
+    res.render('user/view', { title: req.app.locals.title, subtitle: "Fiche", menus:[{text:"Menu principal",link:"/"},{text:"Lecteurs",link:"/user/"}], form:objFormParameters, record:rows[0] });
   });
 
 });

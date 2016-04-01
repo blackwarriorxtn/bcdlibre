@@ -76,8 +76,9 @@ var insert_record = function(req, res, next, objFormParameters)
   for (var strSentName in req.body)
   {
     // DEBUG console.log("strSentName=\""+strSentName+"\"\n");
-    // Dont look for excluded fields, like "OK" or "CANCEL"
-    if (form_ignore_fields.indexOf(strSentName) == -1)
+    // Don't look for excluded fields, like "OK" or "CANCEL"
+    // Don't look for primary keys
+    if (form_ignore_fields.indexOf(strSentName) == -1 && objFormParameters.primary_key.indexOf(strSentName) == -1)
     {
       var objField = null;
       for (var intField = 0; intField < objFormParameters.fields.length; intField++)

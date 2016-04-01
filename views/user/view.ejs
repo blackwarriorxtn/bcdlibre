@@ -8,29 +8,19 @@
       <div id="main">
         <%- include('../page_header', {title: title, subtitle: subtitle, menus:menus}) %>
         <div class="container">
-          <table class="table">
-            <caption>Fiche lecteur</caption>
-            <tbody>
-              <% for(var i=0; i< record.length; i++) { %>
-                <tr>
-                  <th>#</th>
-                  <td><%= record[i].id %></td>
-                </tr>
-                <tr>
-                  <th>Compte</th>
-                  <td><%= record[i].login %></td>
-                </tr>
-                <tr>
-                  <th>Nom</th>
-                  <td><%= record[i].name %></td>
-                </tr>
-                <tr>
-                  <th>Téléphone</th>
-                  <td><%= record[i].phone %></td>
-                </tr>
-              <% } // for %>
-            </tbody>
-          </table>
+
+          <!-- Use a disabled form to display field values (non placeholder) -->
+          <form>
+            <fieldset disabled>
+            <% for(var i=0; i< form.fields.length; i++) { %>
+                <div class="form-group">
+                  <label for="<%= form.fields[i].name %>"><%= form.fields[i].label %></label>
+                  <input type="text" class="form-control" name="<%= form.fields[i].name %>" id="<%= form.fields[i].name %>" value="<%= record[form.fields[i].name] %>">
+                </div><%
+          } // for %>
+            </fieldset>
+          </form>
+
         </div>
       </div>
     </div>
