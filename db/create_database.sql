@@ -22,54 +22,54 @@ TO
 FLUSH PRIVILEGES
 ;
 
+DROP TABLE IF EXISTS item_description
+;
+CREATE TABLE item_description(
+  id INTEGER NOT NULL AUTO_INCREMENT,
+
+  title VARCHAR(255) NOT NULL COMMENT 'Item Title',
+  author VARCHAR(255) NOT NULL COMMENT 'Item Author',
+  description TEXT NULL COMMENT 'Item Description (synopsis)',
+  isbn13 VARCHAR(13) NULL COMMENT 'International Standard Book Number (ISBN13)',
+
+  PRIMARY KEY(id),
+  UNIQUE KEY id_isbn13(isbn13)
+
+) ENGINE=INNODB COMMENT 'Item Description'
+;
 
 DROP TABLE IF EXISTS item
 ;
 CREATE TABLE item(
   id INTEGER NOT NULL AUTO_INCREMENT,
 
-  book_id INTEGER NULL COMMENT 'Link to the book table (it item is a book - NULL otherwise)',
-  dvd_id INTEGER NULL COMMENT 'Link to the dvd table (it item is a DVD - NULL otherwise)',
+  item_description_id INTEGER NOT NULL COMMENT 'Link to item description',
 
   PRIMARY KEY(id),
-  KEY item_book_id(book_id),
-  KEY item_dvd_id(dvd_id)
+  KEY item_item_description_id(item_description_id),
+
+  CONSTRAINT item_fk_description FOREIGN KEY(item_description_id) REFERENCES item_description(id)
+      ON UPDATE CASCADE ON DELETE RESTRICT
 
 ) ENGINE=INNODB COMMENT 'Items in the inventory (one row per instance)'
 ;
 
-DROP TABLE IF EXISTS book
+DROP TABLE IF EXISTS item_search
 ;
-CREATE TABLE book(
+CREATE TABLE item_search(
   id INTEGER NOT NULL AUTO_INCREMENT,
 
-  title VARCHAR(255) NOT NULL COMMENT 'Book Title',
-  author VARCHAR(255) NOT NULL COMMENT 'Book Author',
-  description TEXT NULL COMMENT 'Book Description (synopsis)',
-  isbn13 VARCHAR(13) NULL COMMENT 'International Standard Book Number (ISBN13)',
+  item_id INTEGER NOT NULL COMMENT 'Link to the item table',
+  title VARCHAR(255) NOT NULL COMMENT 'Item Title',
+  author VARCHAR(255) NOT NULL COMMENT 'Item Author',
 
   PRIMARY KEY(id),
-  UNIQUE KEY book_isbn13(isbn13)
+  KEY item_search_title(title),
+  KEY item_author(author),
+  FULLTEXT KEY item_ft_title(title),
+  FULLTEXT KEY item_ft_author(author)
 
-) ENGINE=INNODB COMMENT 'Book Description'
-;
-
-DROP TABLE IF EXISTS book_search
-;
-CREATE TABLE book_search(
-  id INTEGER NOT NULL AUTO_INCREMENT,
-
-  book_id INTEGER NOT NULL COMMENT 'Link to the book table (it item is a book - NULL otherwise)',
-  title VARCHAR(255) NOT NULL COMMENT 'Book Title',
-  author VARCHAR(255) NOT NULL COMMENT 'Book Author',
-
-  PRIMARY KEY(id),
-  KEY book_search_title(title),
-  KEY book_author(author),
-  FULLTEXT KEY book_ft_title(title),
-  FULLTEXT KEY book_ft_author(author)
-
-)  ENGINE=MyISAM COMMENT 'Search engine for books (MyISAM Format for FULL TEXT SEARCHES)'
+)  ENGINE=MyISAM COMMENT 'Search engine for items (MyISAM Format for FULL TEXT SEARCHES)'
 ;
 
 
@@ -105,7 +105,8 @@ CREATE TABLE borrow(
 
   PRIMARY KEY(id),
   KEY borrow_item_user(item_id,user_id),
-  KEY borrow_user_item(user_id,item_id),
+  /* Can't borrow the same item twice: UNIQUE KEY */
+  UNIQUE KEY borrow_user_item(user_id,item_id),
   KEY borrow_begin_date(begin_date),
 
   CONSTRAINT borrow_fk_item FOREIGN KEY(item_id) REFERENCES item(id)

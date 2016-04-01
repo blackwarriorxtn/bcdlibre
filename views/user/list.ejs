@@ -12,6 +12,7 @@
             <caption>Liste des lecteurs</caption>
             <thead>
               <tr>
+                <th>#</th>
                 <th>Compte</th>
                 <th>Nom</th>
                 <th>Téléphone</th>
@@ -20,6 +21,7 @@
             <tbody>
               <% for(var i=0; i< users.length; i++) { %>
                 <tr>
+                  <td><a href="view?id=<%- users[i].id %>"><%= users[i].id %></a></td>
                   <td><%= users[i].login %></td>
                   <td><%= users[i].name %></td>
                   <td><%= users[i].phone %></td>

@@ -37,11 +37,20 @@ router.get('/new', function(req, res, next) {
   res.render('user/new', { title: req.app.locals.title, subtitle: "Lecteur", menus:[{text:"Menu principal",link:"/"},{text:"Lecteurs",link:"/user/"}], fields:objFormParameters.fields });
 
 });
-// POST new user (form validation)
+// POST new user (form validation then insert new record in database)
 router.post('/new', function(req, res, next) {
-  db.new_record(req,res,next,objFormParameters);
+  db.insert_record(req,res,next,objFormParameters);
+});
+// GET user (view)
+router.get('/view', function(req, res, next) {
+
+  db.view_record(req, res, next, objFormParameters, function(err, rows, fields) {
+    if (err) throw err;
+    res.render('user/view', { title: req.app.locals.title, subtitle: "Fiche", menus:[{text:"Menu principal",link:"/"},{text:"Lecteurs",link:"/user/"}], record:rows });
+  });
+
 });
 
-// TODO search, delete
+// TODO view, search, delete
 
 module.exports = router;

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <%- include('../html_head', {title: title}) %>
+  </head>
+  <body>
+    <div id="page">
+      <div id="main">
+        <%- include('../page_header', {title: title, subtitle: subtitle, menus:menus}) %>
+        <div class="container">
+          <table class="table">
+            <caption>Fiche lecteur</caption>
+            <tbody>
+              <% for(var i=0; i< record.length; i++) { %>
+                <tr>
+                  <th>#</th>
+                  <td><%= record[i].id %></td>
+                </tr>
+                <tr>
+                  <th>Compte</th>
+                  <td><%= record[i].login %></td>
+                </tr>
+                <tr>
+                  <th>Nom</th>
+                  <td><%= record[i].name %></td>
+                </tr>
+                <tr>
+                  <th>Téléphone</th>
+                  <td><%= record[i].phone %></td>
+                </tr>
+              <% } // for %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <%- include('../page_footer') %>
+  </body>
+</html>

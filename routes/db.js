@@ -58,7 +58,7 @@ var form_ignore_fields = [
   "CANCEL"
 ];
 
-var new_record = function(req, res, next, objFormParameters)
+var insert_record = function(req, res, next, objFormParameters)
 {
   // Must be something in the body
   if (!req.body) return res.sendStatus(400);
@@ -117,7 +117,52 @@ var new_record = function(req, res, next, objFormParameters)
   runsql(strSQL, function(err, rows, fields) {
     // TODO handle duplicate key errors (login must be unique but it is provided by user)
     if (err) throw err;
-    res.redirect('list'); // TODO res.redirect('record')
+    res.redirect('list'); // TODO res.redirect('view')
+  });
+}
+
+var view_record = function(req, res, next, objFormParameters, fnCallback)
+{
+  // Must be something in the query (GET)
+  if (!req.query) return res.sendStatus(400);
+
+  var objSQLConnection = new_connection();
+
+  // DEBUG
+  console.log("primary_key=%j\n",objFormParameters.primary_key);
+  console.log("req.body=%j\n",req.body);
+  console.log("req.query=%j\n",req.query);
+
+  // Get primary key of form
+  var arrSQLPKNamesEqualValues = new Array();
+  for (var intPK = 0; intPK < objFormParameters.primary_key.length; intPK++)
+  {
+    var strPKName = objFormParameters.primary_key[intPK];
+    // DEBUG
+    console.log("strPKName=%s\n",strPKName);
+    if (strPKName)
+    {
+      // Check that this field has been sent in request
+      if (req.query[strPKName])
+      {
+        var strSQLNameEqualValue = objSQLConnection.escapeId(strPKName) + " = " + objSQLConnection.escape(req.query[strPKName]);
+        arrSQLPKNamesEqualValues.push(strSQLNameEqualValue);
+      }
+      else
+      {
+        throw new Error("Can't find parameter \""+strPKName+"\" in request");
+      }
+    } // if (strPKName)
+  } // for (var intPK = 0; intPK < objFormParameters.primary_key.length; intPK++)
+
+  var strSQL = "SELECT * FROM "+objSQLConnection.escapeId(objFormParameters.table_name)+"\n"
+             + "WHERE "+arrSQLPKNamesEqualValues.join("\n AND ")+"\n;"
+             ;
+  // DEBUG
+  console.log(strSQL);
+
+  runsql(strSQL, function(err, rows, fields) {
+    fnCallback(err, rows, fields);
   });
 }
 
@@ -125,4 +170,5 @@ module.exports.new_connection = new_connection;
 module.exports.runsql = runsql;
 module.exports.check_field_value = check_field_value;
 module.exports.form_ignore_fields = form_ignore_fields;
-module.exports.new_record = new_record;
+module.exports.insert_record = insert_record;
+module.exports.view_record = view_record;
