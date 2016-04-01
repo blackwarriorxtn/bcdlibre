@@ -19,12 +19,12 @@
               </tr>
             </thead>
             <tbody>
-              <% for(var i=0; i< users.length; i++) { %>
+              <% for(var i=0; i< records.length; i++) { %>
                 <tr>
-                  <td><a href="view?id=<%- users[i].id %>"><%= users[i].id %></a></td>
-                  <td><%= users[i].login %></td>
-                  <td><%= users[i].name %></td>
-                  <td><%= users[i].phone %></td>
+                  <td><a href="view?id=<%- records[i].id %>"><%= records[i].id %></a></td>
+                  <td><%= records[i].login %></td>
+                  <td><%= records[i].name %></td>
+                  <td><%= records[i].phone %></td>
                 </tr>
               <% } // for %>
             </tbody>

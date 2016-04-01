@@ -11,8 +11,8 @@
           <form action="" method="post">
             <% for(var i=0; i< form.fields.length; i++)
             {
-              // Don't display field if it's part of the primary key
-              if (form.primary_key.indexOf(form.fields[i].name) == -1)
+              // Don't display field if it's an AUTOINCREMENT column
+              if (form.autoincrement_column != form.fields[i].name)
               {
               %>
                 <div class="form-group">

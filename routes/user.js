@@ -26,9 +26,18 @@ router.get('/', function(req, res, next) {
 // GET list of users
 router.get('/list', function(req, res, next) {
 
-  db.runsql('SELECT * FROM user', function(err, rows, fields) {
+  // Check parameter l for limit
+  var intLimit = 100; // Default: last 100 users
+  if (req.query.l)
+  {
+    intLimit = parseInt(req.query.l,10);
+  }
+  // Display last n users
+  var objSQLOptions = {order_by:[{name:"id", direction:"DESC"}], limit:intLimit};
+  db.list_record(req, res, next, objFormParameters, objSQLOptions, function(err, result, fields) {
     if (err) throw err;
-    res.render('user/list', { title: req.app.locals.title, subtitle: "Liste", menus:[{text:"Menu principal",link:"/"},{text:"Lecteurs",link:"/user/"}], users:rows });
+    // Display records with "list" template
+    res.render('user/list', { title: req.app.locals.title, subtitle: "Liste", menus:[{text:"Menu principal",link:"/"},{text:"Lecteurs",link:"/user/"}], form:objFormParameters, records:result });
   });
 
 });
@@ -40,19 +49,24 @@ router.get('/new', function(req, res, next) {
 });
 // POST new user (form validation then insert new record in database)
 router.post('/new', function(req, res, next) {
-  db.insert_record(req,res,next,objFormParameters);
+  db.insert_record(req, res, next, objFormParameters, function(err, result, fields) {
+    if (err) throw err;
+
+    // Redirect to list of users
+    res.redirect('list'); // TODO res.redirect('view') compute parameters
+  });
 });
 // GET user (view)
 router.get('/view', function(req, res, next) {
 
-  db.view_record(req, res, next, objFormParameters, function(err, rows, fields) {
+  db.view_record(req, res, next, objFormParameters, function(err, result, fields) {
     if (err) throw err;
     // Display first record with "view" template
-    res.render('user/view', { title: req.app.locals.title, subtitle: "Fiche", menus:[{text:"Menu principal",link:"/"},{text:"Lecteurs",link:"/user/"}], form:objFormParameters, record:rows[0] });
+    res.render('user/view', { title: req.app.locals.title, subtitle: "Fiche", menus:[{text:"Menu principal",link:"/"},{text:"Lecteurs",link:"/user/"}], form:objFormParameters, record:result[0] });
   });
 
 });
 
-// TODO view, search, delete
+// TODO search, delete
 
 module.exports = router;
