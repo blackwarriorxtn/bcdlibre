@@ -22,9 +22,9 @@ TO
 FLUSH PRIVILEGES
 ;
 
-DROP TABLE IF EXISTS item_description
+DROP TABLE IF EXISTS item_detail
 ;
-CREATE TABLE item_description(
+CREATE TABLE item_detail(
   id INTEGER NOT NULL AUTO_INCREMENT,
 
   title VARCHAR(255) NOT NULL COMMENT 'Item Title',
@@ -43,12 +43,12 @@ DROP TABLE IF EXISTS item
 CREATE TABLE item(
   id INTEGER NOT NULL AUTO_INCREMENT,
 
-  item_description_id INTEGER NOT NULL COMMENT 'Link to item description',
+  item_detail_id INTEGER NOT NULL COMMENT 'Link to item description',
 
   PRIMARY KEY(id),
-  KEY item_item_description_id(item_description_id),
+  KEY item_item_detail_id(item_detail_id),
 
-  CONSTRAINT item_fk_description FOREIGN KEY(item_description_id) REFERENCES item_description(id)
+  CONSTRAINT item_fk_description FOREIGN KEY(item_detail_id) REFERENCES item_detail(id)
       ON UPDATE CASCADE ON DELETE RESTRICT
 
 ) ENGINE=INNODB COMMENT 'Items in the inventory (one row per instance)'

@@ -18,11 +18,12 @@
               </tr>
             </thead>
             <tbody>
-              <% for(var i=0; i< items.length; i++) { %>
+              <% for(var i=0; i< records.length; i++) { %>
                 <tr>
-                  <td><%= items[i].title %></td>
-                  <td><%= items[i].author %></td>
-                  <td><%= items[i].description %></td>
+                  <td><a href="view?id=<%- records[i].id %>"><%= records[i].id %></a></td>
+                  <td><%= records[i].title %></td>
+                  <td><%= records[i].author %></td>
+                  <td><%= records[i].description %></td>
                 </tr>
               <% } // for %>
             </tbody>

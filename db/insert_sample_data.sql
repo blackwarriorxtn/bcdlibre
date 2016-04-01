@@ -9,14 +9,14 @@ VALUES
 ('Marie-Noëlle KARTMANN', 'marienoelleka')
 ;
 
-INSERT IGNORE INTO item_description(isbn13, title, author, description)
+INSERT IGNORE INTO item_detail(isbn13, title, author, description)
 VALUES
 ('9782227729254','Le fantôme d''à côté','Robert Lawrence Stine','Anna a toujours pensé que la maison d''à côté était vide. Qui est alors ce garçon qu''elle n''a jamais vu, et qui lui annonce qu''il habite là depuis des années \? Comment se fait-il qu''Anna ne les ait jamais remarqués, lui et sa mère \? Et surtout, d''où lui vient cette pâleur de...fantôme \?'),
 ('9780596101992','JavaScript - The Definitive Guide','David Flanagan','A guide for experienced programmers demonstrates the core JavaScript language, offers examples of common tasks, and contains an extensive reference to JavaScript commands, objects, methods, and properties.')
 ;
 
 /* One instance per item */
-INSERT INTO item(item_description_id) SELECT id FROM item_description
+INSERT INTO item(item_detail_id) SELECT id FROM item_detail
 ;
 
 /* Let user 1 borrow item 1 */
@@ -46,13 +46,13 @@ SELECT *
 FROM borrow
 JOIN user ON user.id = borrow.user_id
 JOIN item ON item.id = borrow.item_id
-LEFT OUTER JOIN item_description ON item.item_description_id = item_description.id
+LEFT OUTER JOIN item_detail ON item.item_detail_id = item_detail.id
 GROUP BY borrow.id
 */
 
 /* Count number of books (display title)
-SELECT item_description.title, COUNT(1) AS number
+SELECT item_detail.title, COUNT(1) AS number
 FROM item 
-JOIN item_description ON item.item_description_id = item_description.id
-GROUP BY item.item_description_id
+JOIN item_detail ON item.item_detail_id = item_detail.id
+GROUP BY item.item_detail_id
 */

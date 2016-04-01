@@ -191,7 +191,7 @@ var list_record = function(req, res, next, objFormParameters, objSQLOptions, fnC
 
   // Get options
   var arrOrderByFields = new Array();
-  if (objSQLOptions.order_by)
+  if (objSQLOptions && objSQLOptions.order_by)
   {
     for (var intField = 0; intField < objSQLOptions.order_by.length; intField++)
     {
@@ -200,7 +200,7 @@ var list_record = function(req, res, next, objFormParameters, objSQLOptions, fnC
   }
   var strSQL = "SELECT * FROM "+objSQLConnection.escapeId(objFormParameters.table_name)
              + (arrOrderByFields.length ? " \nORDER BY "+ arrOrderByFields.join(", ") : "")
-             + (objSQLOptions.limit ? " \nLIMIT " + objSQLConnection.escape(objSQLOptions.limit) : "")
+             + (objSQLOptions && objSQLOptions.limit ? " \nLIMIT " + objSQLConnection.escape(objSQLOptions.limit) : "")
              +"\n;";
   // DEBUG
   console.log(strSQL);

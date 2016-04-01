@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <%- include('../html_head', {title: title}) %>
+  </head>
+  <body>
+    <div id="page">
+      <div id="main">
+        <%- include('../page_header', {title: title, subtitle: subtitle, menus:menus}) %>
+        <div class="container">
+
+          <!-- Use a disabled form to display field values (non placeholder) -->
+          <form>
+            <fieldset disabled>
+            <% for(var i=0; i< form.fields.length; i++) { %>
+                <div class="form-group">
+                  <label for="<%= form.fields[i].name %>"><%= form.fields[i].label %></label>
+                  <input type="text" class="form-control" name="<%= form.fields[i].name %>" id="<%= form.fields[i].name %>" value="<%= record[form.fields[i].name] %>">
+                </div><%
+          } // for %>
+            </fieldset>
+          </form>
+
+        </div>
+      </div>
+    </div>
+
+    <%- include('../page_footer') %>
+  </body>
+</html>

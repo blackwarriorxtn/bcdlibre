@@ -12,8 +12,9 @@ var routes_borrow = require('./routes/borrow');
 
 var app = express();
 
-// title
+// local variables: title, main menu, etc...
 app.locals.title = 'Bibliopuce';
+app.locals.main_menu = {text:"Menu principal",link:"/"};
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
