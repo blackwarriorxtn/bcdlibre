@@ -4,22 +4,83 @@
     <%- include('../html_head', {title: title}) %>
   </head>
   <body>
+    <script type="text/javascript">
+    $( document ).ready(function() {
+      $('#isbn13').focusout(function(event){
+        var strValue = $(event.target).val();
+        if (strValue && (strValue.length = 10 || strValue.length == 13))
+        {
+          // Call external Web Service to fetch ISBN
+          var jqxhr = $.ajax("https://www.googleapis.com/books/v1/volumes?q=isbn:"+encodeURIComponent(strValue))
+            .done(function(data, textStatus, jqXHR) {
+              // TODO Handle multiple results - let the user pick one in a list
+              if (data && data.items && data.items.length && data.items[0].volumeInfo)
+              {
+                if (data.items[0].volumeInfo.title)
+                {
+                  var strTitle = data.items[0].volumeInfo.title
+                  if (strTitle)
+                  {
+                    $("#title").val(strTitle);
+                  }
+                }
+                if (data.items[0].volumeInfo.authors && data.items[0].volumeInfo.authors.length)
+                {
+                  var strAuthors = data.items[0].volumeInfo.authors.join(", ");
+                  if (strAuthors)
+                  {
+                    $("#author").val(strAuthors);
+                  }
+                }
+                if (data.items[0].volumeInfo.description)
+                {
+                  var strDescription = data.items[0].volumeInfo.description
+                  if (strDescription)
+                  {
+                    $("#description").val(strDescription);
+                  }
+                }
+                // Success
+                $("#isbn13").parent().addClass("has-success").removeClass("has-warning has-error");
+                $("#isbn13").parent().find(".glyphicon.form-control-feedback").addClass("glyphicon-ok").removeClass("glyphicon-warning-sign glyphicon-remove");
+              }
+              else
+              {
+                // Warning
+                $("#isbn13").parent().addClass("has-warning").removeClass("has-success has-error");
+                $("#isbn13").parent().find(".glyphicon.form-control-feedback").addClass("glyphicon-warning-sign").removeClass("glyphicon-ok glyphicon-remove");
+              }
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+              // Error
+              $("#isbn13").parent().addClass("has-error").removeClass("has-success has-warning");
+              $("#isbn13").parent().find(".glyphicon.form-control-feedback").addClass(" glyphicon-remove").removeClass("glyphicon-ok glyphicon-warning-sign");
+            })
+        }
+      });
+    });
+    </script>
     <div id="page">
       <div id="main">
         <%- include('../page_header', {title: title, subtitle: "Lecteurs", menus:menus}) %>
         <div class="container">
           <form action="" method="post">
-            <% for(var i=0; i< form.fields.length; i++)
+            <%
+            var intDisplayCount = 0;
+            for(var i=0; i< form.fields.length; i++)
             {
               // Don't display field if it's an AUTOINCREMENT column
               if (form.autoincrement_column != form.fields[i].name)
               {
               %>
-                <div class="form-group">
+                <div class="form-group has-feedback">
                   <label for="<%= form.fields[i].name %>"><%= form.fields[i].label %></label>
-                  <input type="text" class="form-control" name="<%= form.fields[i].name %>" id="<%= form.fields[i].name %>" placeholder="<%= form.fields[i].label %>">
+                  <input type="text" class="form-control" name="<%= form.fields[i].name %>" id="<%= form.fields[i].name %>" placeholder="<%= form.fields[i].label %>" <%= (intDisplayCount==0 ? " autofocus" : "") %>>
+                  <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                  <span id="inputSuccess3Status" class="sr-only">(success)</span>
                 </div><%
 
+                intDisplayCount++;
               } // if (form.primary_key.indexOf(form.fields[i]) == -1)
 
           } // for %>
