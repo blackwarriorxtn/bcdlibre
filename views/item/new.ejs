@@ -58,11 +58,31 @@
       })
     } // function check_isbn(event)
     $( document ).ready(function() {
+      // Initial setup for required fields
+      $(".form-control-required").each(function(index) {
+        var strValue = $(this).val().replace(/^ +/g, "").replace(/ +$/g, "");
+        if (strValue == "")
+        {
+          $(this).parent().addClass("has-error");
+        }
+      });
+      // Check required fields when losing focus
+      $(".form-control-required").on('focusout', function(event) {
+        // Validate required field: MUST NOT be empty on focus out (otherwise we set the error class)
+        var strValue = $(event.target).val().replace(/^ +/g, "").replace(/ +$/g, "");
+        if (strValue == "")
+        {
+          $(event.target).parent().addClass("has-error");
+        }
+      });
       $("#new_form").on('submit', function(event) {
-        var blnValue = ($(".has-error").length == 0);
+        var objErrors = $(".has-error");
+        var blnValue = (objErrors.length == 0);
         if(!blnValue)
         {
           event.preventDefault();
+          // Set focus on first field in error
+          objErrors[0].focus();
         }
       });
       $('#isbn13').on('keypress', function(event){
@@ -110,7 +130,7 @@
               %>
                 <div class="form-group has-feedback">
                   <label for="<%= form.fields[i].name %>"><%= form.fields[i].label %></label>
-                  <input type="text" class="form-control" name="<%= form.fields[i].name %>" id="<%= form.fields[i].name %>"
+                  <input type="text" class="form-control<%= (form.fields[i].required ? " form-control-required" : "") %>" name="<%= form.fields[i].name %>" id="<%= form.fields[i].name %>"
                          placeholder="<%= form.fields[i].label %>" <%= (intDisplayCount==0 ? " autofocus" : "") %>
                          <%- (form.fields[i].maximum_length ? " maxlength=\""+form.fields[i].maximum_length+"\"" : "") %>
                          >
