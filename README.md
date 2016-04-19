@@ -51,7 +51,11 @@ Logiciel de gestion d'une petite bibliothèque (gestion d'emprunt de livres)
 * Create database (empty)
   su - bibliopuce
   cd bibliopuce
-  mysql --user=root --password=***THEROOTPASSWORD**** < db/create_database.sql
+  mysql --default-character-set=utf8 --user=root --password=***THEROOTPASSWORD**** < db/create_database.sql
+  
+Optionally you could create sample data with this command:
+  mysql --default-character-set=utf8 --user=root --password=***THEROOTPASSWORD**** < db/insert_sample_data.sql
+  
 
 ## Start Bibliopuce
 
