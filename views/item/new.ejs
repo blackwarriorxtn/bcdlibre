@@ -59,7 +59,7 @@
     } // function check_isbn(event)
     $( document ).ready(function() {
       $("#new_form").on('submit', function(event) {
-        var blnValue = ($(".has-warning").length == 0) && ($(".has-error").length == 0);
+        var blnValue = ($(".has-error").length == 0);
         if(!blnValue)
         {
           event.preventDefault();
