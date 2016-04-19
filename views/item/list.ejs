@@ -12,6 +12,8 @@
             <caption>Liste des livres</caption>
             <thead>
               <tr>
+                <th>#</th>
+                <th>ISBN</th>
                 <th>Titre</th>
                 <th>Auteur</th>
                 <th>Description</th>
@@ -21,6 +23,7 @@
               <% for(var i=0; i< records.length; i++) { %>
                 <tr>
                   <td><a href="view?id=<%- records[i].id %>"><%= records[i].id %></a></td>
+                  <td><%= records[i].isbn13 %></td>
                   <td><%= records[i].title %></td>
                   <td><%= records[i].author %></td>
                   <td><%= records[i].description %></td>

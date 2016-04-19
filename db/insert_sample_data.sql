@@ -6,12 +6,12 @@ USE bibliopuce
 INSERT IGNORE INTO user(name,login)
 VALUES
 ('Emmanuel KARTMANN', 'emmanuelka'),
-('Marie-Noëlle KARTMANN', 'marienoelleka')
+('Marie-NoÃ«lle KARTMANN', 'marienoelleka')
 ;
 
 INSERT IGNORE INTO item_detail(isbn13, title, author, description)
 VALUES
-('9782227729254','Le fantôme d''à côté','Robert Lawrence Stine','Anna a toujours pensé que la maison d''à côté était vide. Qui est alors ce garçon qu''elle n''a jamais vu, et qui lui annonce qu''il habite là depuis des années \? Comment se fait-il qu''Anna ne les ait jamais remarqués, lui et sa mère \? Et surtout, d''où lui vient cette pâleur de...fantôme \?'),
+('9782227729254','Le fantÃ´me d''Ã  cÃ´tÃ©','Robert Lawrence Stine','Anna a toujours pensÃ© que la maison d''Ã  cÃ´tÃ© Ã©tait vide. Qui est alors ce garÃ§on qu''elle n''a jamais vu, et qui lui annonce qu''il habite lÃ  depuis des annÃ©es \? Comment se fait-il qu''Anna ne les ait jamais remarquÃ©s, lui et sa mÃ¨re \? Et surtout, d''oÃ¹ lui vient cette pÃ¢leur de...fantÃ´me \?'),
 ('9780596101992','JavaScript - The Definitive Guide','David Flanagan','A guide for experienced programmers demonstrates the core JavaScript language, offers examples of common tasks, and contains an extensive reference to JavaScript commands, objects, methods, and properties.')
 ;
 
@@ -55,4 +55,10 @@ SELECT item_detail.title, COUNT(1) AS number
 FROM item 
 JOIN item_detail ON item.item_detail_id = item_detail.id
 GROUP BY item.item_detail_id
+
+INSERT INTO `item_detail`(`isbn13`,`title`,`author`,`description`)
+VALUES('9780596527334','CSS','Eric Meyer','Demonstrates the control and flexibility Cascading Style Sheets bring to Web design, covering selectors and structure, units, text manipulation, colors, backgrounds, borders, visual formatting, and positioning.')
+
+
+SELECT * FROM item_detail
 */

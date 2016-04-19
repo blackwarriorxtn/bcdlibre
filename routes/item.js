@@ -12,10 +12,10 @@ var objFormParameters = {
   autoincrement_column: "id",
   fields:[
     {name:"id",label:"#",type:"String",required:false,validation:null},
-    {name:"isbn13",label:"Numéro ISBN",type:"String",required:false,validation:null},
-    {name:"title",label:"Titre",type:"String",required:true,validation:null},
-    {name:"author",label:"Auteur",type:"String",required:true,validation:null},
-    {name:"description",label:"Description (Synopsis)",type:"String",required:false,validation:null},
+    {name:"isbn13",label:"Numéro ISBN",type:"String",required:false,validation:null,maximum_length:13},
+    {name:"title",label:"Titre",type:"String",required:true,validation:null,maximum_length:255},
+    {name:"author",label:"Auteur",type:"String",required:true,validation:null,maximum_length:255},
+    {name:"description",label:"Description (Synopsis)",type:"String",required:false,validation:null,maximum_length:65535},
   ]
 };
 // *** PARAMETERS (MENU)

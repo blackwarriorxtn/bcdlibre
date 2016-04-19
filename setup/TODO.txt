@@ -4,6 +4,7 @@ mysql 5.5
 nodejs
   npm install express
   npm install mysql
+  npm install ejs
   npm install forms ?
   npm install moment ?
   npm install i18n-2 ?

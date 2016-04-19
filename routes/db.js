@@ -44,6 +44,11 @@ var check_field_value = function(strValue, arrFieldDescription, objSQLConnection
     objSQLConnection= new_connection();
     blnMustDisconnect = true;
   }
+
+
+  // TODO Check if field is required (value must not be NULL or empty string!)
+  // TODO Check maximum length
+
   // Use the SQL connection to escape value with appropriate charset/encoding
   strSQLValue = objSQLConnection.escape(strValue);
   if (blnMustDisconnect)
@@ -98,6 +103,7 @@ var insert_record = function(req, res, next, objFormParameters, fnCallback)
         } // if (strFieldName)
 
       } // for (var intField = 0; intField < objFormParameters.fields; intField++)
+
       if (objField == null)
       {
 
