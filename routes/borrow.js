@@ -11,11 +11,11 @@ router.get('/', function(req, res, next) {
 // Get list of borrowing
 router.get('/list', function(req, res, next) {
 
-  db.runsql('SELECT borrow.begin_date, user.*, item.*, book.* \n\
+  db.runsql('SELECT borrow.begin_date, user.*, item.*, item_detail.* \n\
   FROM borrow \n\
   JOIN user ON user.id = borrow.user_id \n\
   JOIN item ON item.id = borrow.item_id \n\
-  LEFT OUTER JOIN book ON item.book_id = book.id \n\
+  LEFT OUTER JOIN item_detail ON item.item_detail_id = item_detail.id \n\
   GROUP BY borrow.id \n\
   ; \n\
 ', function(err, rows, fields) {
