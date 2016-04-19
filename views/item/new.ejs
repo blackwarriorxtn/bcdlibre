@@ -8,7 +8,10 @@
     // Call external Web Service to fetch ISBN
     function check_isbn(event, strValue)
     {
-      var jqxhr = $.ajax("https://www.googleapis.com/books/v1/volumes?q=isbn:"+encodeURIComponent(strValue))
+      // Google is easy to use but does not find much books!
+      var strURL = "https://www.googleapis.com/books/v1/volumes?q=isbn:"+encodeURIComponent(strValue);
+      // TODO develop a LOCAL web service which calls multiple sources : google, but also Worldcat "http://xisbn.worldcat.org/webservices/xid/isbn/9780596527334?method=getMetadata&format=json&fl=*"
+      var jqxhr = $.ajax(strURL)
       .done(function(data, textStatus, jqXHR) {
         // TODO Handle multiple results - let the user pick one in a list
         if (data && data.items && data.items.length && data.items[0].volumeInfo)
@@ -75,15 +78,20 @@
           check_isbn(event, strValue);
         }
       });
-      $('#isbn13').on('focusout',function(event){
-        var strValue = $(event.target).val();
-        if (strValue && (strValue.length = 10 || strValue.length >= 13))
+      $('#isbn13').on('keyup',function(event){
+        if (event.which == 13)
         {
-          event.preventDefault();
-          // Remove spaces at beginning/end
-          strValue = strValue.replace(/^ +/g, "").replace(/ +$/g, "");
-          // Call external Web Service to fetch ISBN
-          check_isbn(event, strValue);
+          var strValue = $(event.target).val();
+          if (strValue && (strValue.length = 10 || strValue.length >= 13))
+          {
+            event.preventDefault();
+            // Remove spaces at beginning/end
+            strValue = strValue.replace(/^ +/g, "").replace(/ +$/g, "");
+            // Call external Web Service to fetch ISBN
+            check_isbn(event, strValue);
+          }
+        }
+
       });
     });
     </script>
