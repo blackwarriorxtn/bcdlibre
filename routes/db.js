@@ -130,7 +130,6 @@ var insert_record = function(req, res, next, objFormParameters, fnCallback)
   console.log(strSQL);
 
   runsql(strSQL, function(err, rows, fields) {
-    // TODO handle duplicate key errors (login must be unique but it is provided by user)
     if (fnCallback)
     {
       // Custom function defined: call it
@@ -216,6 +215,21 @@ var list_record = function(req, res, next, objFormParameters, objSQLOptions, fnC
   });
 }
 
+var handle_error = function(err, res, template_name, options)
+{
+  // handle duplicate key errors (e.g. login must be unique but it is provided by user, just like ISBN)
+  if (err && err.message.indexOf("ER_DUP_ENTRY") != -1)
+  {
+    // e.g. ISBN13 duplicate: Error: ER_DUP_ENTRY: Duplicate entry '9782841772292' for key 'id_isbn13'
+    res.render(template_name, { title: options.title, subtitle: options.subtitle, menus:options.menus, form:options.form, message:{text:options.message,type:"danger"} });
+  }
+  else
+  {
+    throw err;
+  }
+}
+
+
 module.exports.new_connection = new_connection;
 module.exports.runsql = runsql;
 module.exports.check_field_value = check_field_value;
@@ -223,3 +237,4 @@ module.exports.form_ignore_fields = form_ignore_fields;
 module.exports.insert_record = insert_record;
 module.exports.view_record = view_record;
 module.exports.list_record = list_record;
+module.exports.handle_error = handle_error;

@@ -112,6 +112,12 @@
       <div id="main">
         <%- include('../page_header', {title: title, subtitle: "Lecteurs", menus:menus}) %>
         <div class="container">
+          <% if (message != null) { %>
+          <div class="panel panel-<%=message.type%>">
+            <div class="panel-heading"><h3 class="panel-title"><%= message.text %></h3></div><!-- class="panel-heading" -->
+          </div><!-- class="panel panel-primary" -->
+          <% } // if if (message != null) %>
+          <div class="panel-body">
           <form action="" method="post" id="new_form">
             <%
             var intDisplayCount = 0;
@@ -141,7 +147,7 @@
                   } // else if (form.fields[i].maximum_length > 255)
                   %>
                   <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
-                  <span id="inputSuccess3Status" class="sr-only">(success)</span>
+                  <span id="inputSuccess<%=i%>Status" class="sr-only">(success)</span>
                 </div><%
 
                 intDisplayCount++;
@@ -152,6 +158,7 @@
               <button type="submit" name="OK" class="btn btn-primary btn-lg">OK</button><button type="submit" name="CANCEL" class="btn btn-default btn-lg">Annuler</button>
             </p>
           </form>
+          </div><!-- class="panel-body" -->
         </div>
       </div>
     </div>
