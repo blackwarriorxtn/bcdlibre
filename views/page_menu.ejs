@@ -15,9 +15,9 @@
   <div class="col-md-<%=12/intItemsPerLine%>">
     <div class="btn-group btn-group-justified">
     <a href="<%- items[i].link%>" class="btn btn-primary btn-lg btn-block" <% if (items[i].tooltip) { %> title="<%= items[i].tooltip %>"<%
-    } // if %>><%
+    } // if %>><h3><%
       if (items[i].icon) { %><span class="glyphicon glyphicon-<%- items[i].icon%>" aria-hidden="true"></span> <%
-      } // if %> <%- items[i].label%></a>
+    } // if %> <%= items[i].label%></h3></a>
     </div>
   </div><%
 } // for
