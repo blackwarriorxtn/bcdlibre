@@ -123,10 +123,23 @@
               %>
                 <div class="form-group has-feedback">
                   <label for="<%= form.fields[i].name %>"><%= form.fields[i].label %></label>
+                  <%
+                  if (form.fields[i].maximum_length > 255)
+                  {
+                    %><textarea class="form-control<%= (form.fields[i].required ? " form-control-required" : "") %>" name="<%= form.fields[i].name %>" id="<%= form.fields[i].name %>" rows="5"
+                                placeholder="<%= form.fields[i].label %>" <%= (intDisplayCount==0 ? " autofocus" : "") %>
+                                ></textarea><%
+                  } // if (form.fields[i].maximum_length > 255)
+                  else
+                  {
+                  %>
                   <input type="text" class="form-control<%= (form.fields[i].required ? " form-control-required" : "") %>" name="<%= form.fields[i].name %>" id="<%= form.fields[i].name %>"
                          placeholder="<%= form.fields[i].label %>" <%= (intDisplayCount==0 ? " autofocus" : "") %>
                          <%- (form.fields[i].maximum_length ? " maxlength=\""+form.fields[i].maximum_length+"\"" : "") %>
                          >
+                  <%
+                  } // else if (form.fields[i].maximum_length > 255)
+                  %>
                   <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                   <span id="inputSuccess3Status" class="sr-only">(success)</span>
                 </div><%

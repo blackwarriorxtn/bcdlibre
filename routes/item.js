@@ -58,7 +58,7 @@ router.get('/view', function(req, res, next) {
   db.view_record(req, res, next, objFormParameters, function(err, result, fields) {
     if (err) throw err;
     // Display first record with "view" template
-    res.render('user/view', { title: req.app.locals.title, subtitle: "Fiche", menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, record:result[0] });
+    res.render('item/view', { title: req.app.locals.title, subtitle: "Fiche", menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, record:result[0] });
   });
 
 });
