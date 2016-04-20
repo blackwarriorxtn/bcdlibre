@@ -8,36 +8,38 @@
     // Call external Web Service to fetch ISBN
     function check_isbn(event, strValue)
     {
-      // Google is easy to use but does not find much books!
-      var strURL = "https://www.googleapis.com/books/v1/volumes?q=isbn:"+encodeURIComponent(strValue);
-      // TODO develop a LOCAL web service which calls multiple sources : google, but also Worldcat "http://xisbn.worldcat.org/webservices/xid/isbn/9780596527334?method=getMetadata&format=json&fl=*"
+      // Call a local Web Service to fetch book information based on its ISBN
+      var strURL = "webservice?isbn="+encodeURIComponent(strValue);
       var jqxhr = $.ajax(strURL)
       .done(function(data, textStatus, jqXHR) {
         // TODO Handle multiple results - let the user pick one in a list
-        if (data && data.items && data.items.length && data.items[0].volumeInfo)
+        if (data && data.status && data.status == "OK")
         {
-          if (data.items[0].volumeInfo.title)
+          if (data.title)
           {
-            var strTitle = data.items[0].volumeInfo.title
-            if (strTitle)
+            var strTitle = data.title
+            if (strTitle && strTitle.length > 0)
             {
               $("#title").val(strTitle);
+              $("#title").parent().addClass("has-success").removeClass("has-warning has-error");
             }
           }
-          if (data.items[0].volumeInfo.authors && data.items[0].volumeInfo.authors.length)
+          if (data.authors)
           {
-            var strAuthors = data.items[0].volumeInfo.authors.join(", ");
-            if (strAuthors)
+            var strAuthors = data.authors;
+            if (strAuthors && strAuthors.length > 0)
             {
               $("#author").val(strAuthors);
+              $("#author").parent().addClass("has-success").removeClass("has-warning has-error");
             }
           }
-          if (data.items[0].volumeInfo.description)
+          if (data.description)
           {
-            var strDescription = data.items[0].volumeInfo.description
-            if (strDescription)
+            var strDescription = data.description
+            if (strDescription && strDescription.length > 0)
             {
               $("#description").val(strDescription);
+              $("#author").parent().addClass("has-success").removeClass("has-warning has-error");
             }
           }
           // Success
@@ -87,19 +89,6 @@
           event.preventDefault();
           // Set focus on first field in error
           objErrors[0].focus();
-        }
-      });
-      $('#isbn13').on('keypress', function(event){
-        // When using a barcode reader, keypress event of enter key must be discarded until the web services fills up the form
-        if (event.which == 13)
-        {
-          event.preventDefault();
-        }
-        var strValue = $(event.target).val().replace(/^ +/g, "").replace(/ +$/g, "");
-        if (strValue.length == 13)
-        {
-          // Call external Web Service to fetch ISBN
-          check_isbn(event, strValue);
         }
       });
       $('#isbn13').on('keyup',function(event){

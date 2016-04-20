@@ -13,7 +13,7 @@ Logiciel de gestion d'une petite bibliothèque (gestion d'emprunt de livres)
   ```sudo apt-get update
   sudo apt-get upgrade
   ```
-  
+
 * Install nodejs (refer to https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions)
   ```sudo apt-get install curl
   curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
@@ -47,15 +47,17 @@ Logiciel de gestion d'une petite bibliothèque (gestion d'emprunt de livres)
   npm install cookie-parser
   npm install body-parser
   npm install debug
+  npm install async
+  npm install request
 
 * Create database (empty)
   su - bibliopuce
   cd bibliopuce
   mysql --default-character-set=utf8 --user=root --password=***THEROOTPASSWORD**** < db/create_database.sql
-  
+
 Optionally you could create sample data with this command:
   mysql --default-character-set=utf8 --user=root --password=***THEROOTPASSWORD**** < db/insert_sample_data.sql
-  
+
 
 ## Start Bibliopuce
 
