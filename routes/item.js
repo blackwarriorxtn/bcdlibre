@@ -21,11 +21,11 @@ var objFormParameters = {
   ]
 };
 // *** PARAMETERS (MENU)
-var objMenu = {text:"Inventaire",link:"/item/"};
+var objMenu = {text:"Livres",link:"/item/"};
 
 // GET menu
 router.get('/', function(req, res, next) {
-  res.render('item/index', { title: req.app.locals.title, subtitle: "Inventaire", menus:[req.app.locals.main_menu] });
+  res.render('item/index', { title: req.app.locals.title, subtitle: "Livres", menus:[req.app.locals.main_menu] });
 });
 // Get list
 router.get('/list', function(req, res, next) {
