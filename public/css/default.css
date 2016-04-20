@@ -26,3 +26,8 @@ html, body
 	height: 150px;
 	clear:both;
 }
+
+/* Override Bootstrap grid with extra spacing in MENUS */
+.bib-row-menu {
+  margin-bottom: 15px;
+}
