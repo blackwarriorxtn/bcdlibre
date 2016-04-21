@@ -23,7 +23,7 @@ var objMenu = {text:"Lecteurs",link:"/user/"};
 
 // GET users menu
 router.get('/', function(req, res, next) {
-  res.render('user/index', { title: req.app.locals.title, subtitle: "Lecteur", menus:[req.app.locals.main_menu] });
+  res.render('user/index', { title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu] });
 });
 // GET list of users
 router.get('/list', function(req, res, next) {
@@ -46,7 +46,7 @@ router.get('/list', function(req, res, next) {
 // GET new user (form)
 router.get('/new', function(req, res, next) {
 
-  res.render('user/new', {title: req.app.locals.title, subtitle: "Lecteur", menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, message:{text:"Veuillez remplir le formulaire",type:"info"}});
+  res.render('user/new', {title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, message:{text:"Veuillez remplir le formulaire",type:"info"}});
 
 });
 // POST new user (form validation then insert new record in database)

@@ -25,7 +25,7 @@ var objMenu = {text:"Livres",link:"/item/"};
 
 // GET menu
 router.get('/', function(req, res, next) {
-  res.render('item/index', { title: req.app.locals.title, subtitle: "Livres", menus:[req.app.locals.main_menu] });
+  res.render('item/index', { title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu] });
 });
 // Get list
 router.get('/list', function(req, res, next) {
@@ -40,7 +40,7 @@ router.get('/list', function(req, res, next) {
 // GET new (form)
 router.get('/new', function(req, res, next) {
 
-  res.render('item/new', {req:req, title: req.app.locals.title, subtitle: "Livre", menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, message:{text:"Veuillez remplir le formulaire",type:"info"}});
+  res.render('item/new', {req:req, title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, message:{text:"Veuillez remplir le formulaire",type:"info"}});
 
 });
 // POST new (form validation then insert new record in database)
@@ -55,7 +55,7 @@ router.post('/new', function(req, res, next) {
     db.insert_record(req, res, next, objFormParameters, function(err, result, fields) {
       if (err)
       {
-        db.handle_error(err, res, "item/new", { title: req.app.locals.title, subtitle: "Livre", menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, message:"Ce livre est déjà dans l'inventaire ("+err+")" });
+        db.handle_error(err, res, "item/new", { title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, message:"Ce livre est déjà dans l'inventaire ("+err+")" });
       }
       else
       {
