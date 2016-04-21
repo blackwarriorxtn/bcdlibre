@@ -1,0 +1,48 @@
+<!-- page_form -->
+<% if (message != null) { %>
+<div class="panel panel-<%=message.type%>">
+  <div class="panel-heading"><h3 class="panel-title"><%= message.text %></h3></div><!-- class="panel-heading" -->
+</div><!-- class="panel panel-<%=message.type%>" -->
+<% } // if if (message != null) %>
+<div class="panel-body">
+<form action="" method="post" id="new_form">
+  <%
+  var intDisplayCount = 0;
+  for(var i=0; i< form.fields.length; i++)
+  {
+    // Don't display field if it's an AUTOINCREMENT column
+    if (form.autoincrement_column != form.fields[i].name)
+    {
+    %>
+      <div class="form-group has-feedback">
+        <label for="<%= form.fields[i].name %>"><%= form.fields[i].label %></label>
+        <%
+        if (form.fields[i].maximum_length > 255)
+        {
+          %><textarea class="form-control<%= (form.fields[i].required ? " form-control-required" : "") %>" name="<%= form.fields[i].name %>" id="<%= form.fields[i].name %>" rows="5"
+                      placeholder="<%= form.fields[i].label %>" <%= (intDisplayCount==0 ? " autofocus" : "") %>
+                      ></textarea><%
+        } // if (form.fields[i].maximum_length > 255)
+        else
+        {
+        %>
+        <input type="text" class="form-control<%= (form.fields[i].required ? " form-control-required" : "") %>" name="<%= form.fields[i].name %>" id="<%= form.fields[i].name %>"
+               placeholder="<%= form.fields[i].label %>" <%= (intDisplayCount==0 ? " autofocus" : "") %>
+               <%- (form.fields[i].maximum_length ? " maxlength=\""+form.fields[i].maximum_length+"\"" : "") %>
+               >
+        <%
+        } // else if (form.fields[i].maximum_length > 255)
+        %>
+        <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+        <span id="inputSuccess<%=i%>Status" class="sr-only">(success)</span>
+      </div><%
+
+      intDisplayCount++;
+    } // if (form.primary_key.indexOf(form.fields[i]) == -1)
+
+} // for %>
+  <p>
+    <button type="submit" name="OK" id="OK" class="btn btn-primary btn-lg">OK</button><button type="submit" name="CANCEL" id="CANCEL" class="btn btn-default btn-lg">Annuler</button>
+  </p>
+</form>
+</div><!-- class="panel-body" -->

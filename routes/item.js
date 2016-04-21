@@ -40,22 +40,35 @@ router.get('/list', function(req, res, next) {
 // GET new (form)
 router.get('/new', function(req, res, next) {
 
-  res.render('item/new', { title: req.app.locals.title, subtitle: "Livre", menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, message:{text:"Veuillez remplir le formulaire",type:"info"}});
+  res.render('item/new', {req:req, title: req.app.locals.title, subtitle: "Livre", menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, message:{text:"Veuillez remplir le formulaire",type:"info"}});
 
 });
 // POST new (form validation then insert new record in database)
 router.post('/new', function(req, res, next) {
-  db.insert_record(req, res, next, objFormParameters, function(err, result, fields) {
-    if (err)
-    {
-      db.handle_error(err, res, "item/new", { title: req.app.locals.title, subtitle: "Livre", menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, message:"Ce livre est déjà dans l'inventaire ("+err+")" });
-    }
-    else
-    {
-      // Redirect to list of users
-      res.redirect('list'); // TODO res.redirect('view') compute parameters
-    }
-  });
+  if (req.body["CANCEL"] != null)
+  {
+    // Cancel insert : Redirect to menu
+  } // if (req.body["CANCEL"] != null)
+  else if (req.body["OK"] != null)
+  {
+    db.insert_record(req, res, next, objFormParameters, function(err, result, fields) {
+      if (err)
+      {
+        db.handle_error(err, res, "item/new", { title: req.app.locals.title, subtitle: "Livre", menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, message:"Ce livre est déjà dans l'inventaire ("+err+")" });
+      }
+      else
+      {
+        // Redirect to list of users
+        res.redirect('list'); // TODO res.redirect('view') compute parameters
+      }
+    });
+  } // else if (req.body["CANCEL"] != null)
+  else
+  {
+    // Neither OK nor CANCEL: error!
+    throw new Error("ERROR: Invalid form state (must be OK or CANCEL)");
+  }
+
 });
 // GET view
 router.get('/view', function(req, res, next) {

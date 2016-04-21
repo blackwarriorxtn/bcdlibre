@@ -1,0 +1,108 @@
+<script type="text/javascript">
+// fetch book information from local Web Service based on ISBN
+function check_isbn(event, strValue)
+{
+  // Call a local Web Service to fetch book information based on its ISBN
+  var strURL = "webservice?isbn="+encodeURIComponent(strValue);
+  var jqxhr = $.ajax(strURL)
+  .done(function(data, textStatus, jqXHR) {
+    // TODO Handle multiple results - let the user pick one in a list
+    if (data && data.status && data.status == "OK")
+    {
+      if (data.title)
+      {
+        var strTitle = data.title
+        if (strTitle && strTitle.length > 0)
+        {
+          $("#title").val(strTitle);
+          $("#title").parent().addClass("has-success").removeClass("has-warning has-error");
+        }
+      }
+      if (data.authors)
+      {
+        var strAuthors = data.authors;
+        if (strAuthors && strAuthors.length > 0)
+        {
+          $("#author").val(strAuthors);
+          $("#author").parent().addClass("has-success").removeClass("has-warning has-error");
+        }
+      }
+      if (data.description)
+      {
+        var strDescription = data.description
+        if (strDescription && strDescription.length > 0)
+        {
+          $("#description").val(strDescription);
+          $("#author").parent().addClass("has-success").removeClass("has-warning has-error");
+        }
+      }
+      // Success
+      $("#isbn13").parent().addClass("has-success").removeClass("has-warning has-error");
+      $("#isbn13").parent().find(".glyphicon.form-control-feedback").addClass("glyphicon-ok").removeClass("glyphicon-warning-sign glyphicon-remove");
+    }
+    else
+    {
+      // Warning
+      $("#isbn13").parent().addClass("has-warning").removeClass("has-success has-error");
+      $("#isbn13").parent().find(".glyphicon.form-control-feedback").addClass("glyphicon-warning-sign").removeClass("glyphicon-ok glyphicon-remove");
+    }
+  })
+  .fail(function(jqXHR, textStatus, errorThrown) {
+    // Error
+    $("#isbn13").parent().addClass("has-error").removeClass("has-success has-warning");
+    $("#isbn13").parent().find(".glyphicon.form-control-feedback").addClass(" glyphicon-remove").removeClass("glyphicon-ok glyphicon-warning-sign");
+  })
+} // function check_isbn(event)
+
+// Bind events and callbacks
+$( document ).ready(function() {
+  // Initial setup for required fields (TODO: move this code to form-related module, e.g. form_script.ejs ?)
+  $(".form-control-required").each(function(index) {
+    var strValue = $(this).val().replace(/^ +/g, "").replace(/ +$/g, "");
+    if (strValue == "")
+    {
+      $(this).parent().addClass("has-error");
+    }
+  });
+  // Check required fields when losing focus
+  $(".form-control-required").on('focusout', function(event) {
+    // Validate required field: MUST NOT be empty on focus out (otherwise we set the error class)
+    var strValue = $(event.target).val().replace(/^ +/g, "").replace(/ +$/g, "");
+    if (strValue == "")
+    {
+      $(event.target).parent().addClass("has-error").removeClass("has-success has-warning");
+    }
+    else
+    {
+      $(event.target).parent().removeClass("has-error has-warning").addClass("has-success");
+    }
+  });
+  $("#new_form").on('submit', function(event) {
+    var objErrors = $(".has-error");
+    var blnValue = (objErrors.length == 0);
+    if(!blnValue)
+    {
+      event.preventDefault();
+      // Set focus on first field in error
+      objErrors[0].focus();
+    }
+  });
+
+  // Bind ISBN search - on keyup event code 13 (ENTER) - MAYBE switch to onfocusout?
+  $('#isbn13').on('keyup',function(event){
+    if (event.which == 13)
+    {
+      var strValue = $(event.target).val();
+      if (strValue && (strValue.length = 10 || strValue.length >= 13))
+      {
+        event.preventDefault();
+        // Remove spaces at beginning/end
+        strValue = strValue.replace(/^ +/g, "").replace(/ +$/g, "");
+        // Call external Web Service to fetch ISBN
+        check_isbn(event, strValue);
+      }
+    }
+
+  });
+});
+</script>

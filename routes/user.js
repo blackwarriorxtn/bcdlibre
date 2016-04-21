@@ -39,24 +39,37 @@ router.get('/list', function(req, res, next) {
   db.list_record(req, res, next, objFormParameters, objSQLOptions, function(err, result, fields) {
     if (err) throw err;
     // Display records with "list" template
-    res.render('user/list', { title: req.app.locals.title, subtitle: "Liste", menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, records:result });
+    res.render('user/list', {title: req.app.locals.title, subtitle: "Liste", menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, records:result});
   });
 
 });
 // GET new user (form)
 router.get('/new', function(req, res, next) {
 
-  res.render('user/new', { title: req.app.locals.title, subtitle: "Lecteur", menus:[req.app.locals.main_menu,objMenu], form:objFormParameters });
+  res.render('user/new', {title: req.app.locals.title, subtitle: "Lecteur", menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, message:{text:"Veuillez remplir le formulaire",type:"info"}});
 
 });
 // POST new user (form validation then insert new record in database)
 router.post('/new', function(req, res, next) {
-  db.insert_record(req, res, next, objFormParameters, function(err, result, fields) {
-    if (err) throw err;
+  if (req.body["CANCEL"] != null)
+  {
+    // Cancel insert : Redirect to menu
+    res.redirect('./');
+  } // if (req.body["CANCEL"] != null)
+  else if (req.body["OK"] != null)
+  {
+    db.insert_record(req, res, next, objFormParameters, function(err, result, fields) {
+      if (err) throw err;
 
-    // Redirect to list of users
-    res.redirect('list'); // TODO res.redirect('view') compute parameters
-  });
+      // Redirect to list of users
+      res.redirect('list'); // TODO res.redirect('view') compute parameters
+    });
+  } // else if (req.body["OK"] != null)
+  else
+  {
+    // Neither OK nor CANCEL: error!
+    throw new Error("ERROR: Invalid form state (must be OK or CANCEL)");
+  }
 });
 // GET user (view)
 router.get('/view', function(req, res, next) {
