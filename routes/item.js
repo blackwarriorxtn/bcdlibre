@@ -48,6 +48,7 @@ router.post('/new', function(req, res, next) {
   if (req.body["CANCEL"] != null)
   {
     // Cancel insert : Redirect to menu
+    res.redirect('./');
   } // if (req.body["CANCEL"] != null)
   else if (req.body["OK"] != null)
   {
