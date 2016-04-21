@@ -1,5 +1,5 @@
 <%
-  var intItemsPerLine = 2;
+  var intItemsPerLine = 3;
   var blnNeedToCloseRow = false;
   for(var i=0; i< items.length; i++) {
   if (i % intItemsPerLine == 0)
@@ -15,9 +15,9 @@
   <div class="col-md-<%=12/intItemsPerLine%>">
     <div class="btn-group btn-group-justified">
     <a href="<%- items[i].link%>" class="btn btn-primary btn-lg btn-block" <% if (items[i].tooltip) { %> title="<%= items[i].tooltip %>"<%
-    } // if %>><h4><%
+    } // if %>><h3><%
       if (items[i].icon) { %><span class="glyphicon glyphicon-<%- items[i].icon%>" aria-hidden="true"></span> <%
-    } // if %> <%= items[i].label%></h4></a>
+    } // if %> <%= items[i].label%></h3></a>
     </div>
   </div><%
 } // for
