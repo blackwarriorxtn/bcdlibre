@@ -78,6 +78,49 @@ router.post('/new', function(req, res, next) {
 
 });
 
+// Web Service returning items to borrow
+router.get('/webservice/items', function(req, res, next) {
+
+  // Custom SQL, list of items not already borrowed (LEFT OUTER JOIN borrow ... WHERE borrow.id IS NULL)
+  db.runsql('SELECT CONCAT_WS(\', \', title, author, isbn13) AS `text`  \n\
+FROM item \n\
+JOIN item_detail ON item.item_detail_id = item_detail.id \n\
+LEFT OUTER JOIN borrow ON borrow.item_id = item.id \n\
+WHERE borrow.id IS NULL \n\
+; \n\
+', function(err, rows, fields) {
+    if (err) throw err;
+    // Return result as JSON
+    var arrOut = new Array();
+    for (var row = 0; row < rows.length; row++)
+    {
+      arrOut.push(rows[row].text);
+    }
+    res.json(arrOut);
+  });
+
+});
+
+// Web Service returning users
+router.get('/webservice/users', function(req, res, next) {
+
+  // Custom SQL, list of items not already borrowed (LEFT OUTER JOIN borrow ... WHERE borrow.id IS NULL)
+  db.runsql('SELECT CONCAT_WS(\', \', name, login) AS `text`  \n\
+FROM user \n\
+; \n\
+', function(err, rows, fields) {
+    if (err) throw err;
+    // Return result as JSON
+    var arrOut = new Array();
+    for (var row = 0; row < rows.length; row++)
+    {
+      arrOut.push(rows[row].text);
+    }
+    res.json(arrOut);
+  });
+
+});
+
 // TODO search, delete
 
 module.exports = router;

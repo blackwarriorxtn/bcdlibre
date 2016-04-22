@@ -3,10 +3,53 @@
 $( document ).ready(function() {
   // Initial setup of autocomplete
 
-  // use auto-complete feature (typeahead) for fields "item" and "user"
   $('#item_search').typeahead({
   		name: 'accounts',
   		local: ['Audi', 'BMW', 'Bugatti', 'Ferrari', 'Ford', 'Lamborghini', 'Mercedes Benz', 'Porsche', 'Rolls-Royce', 'Volkswagen']
+  });
+});
+
+
+// Bind events and callbacks
+$(document).ready(function(){
+
+  // Initial setup of autocomplete
+
+  var items = new Bloodhound({
+    datumTokenizer: Bloodhound.tokenizers.whitespace,
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    // url points to a json web service that contains an array of items
+    remote: {
+      url: 'webservice/items'
+    }
+  });
+  var users = new Bloodhound({
+    datumTokenizer: Bloodhound.tokenizers.whitespace,
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    // url points to a json web service that contains an array of users
+    remote: {
+      url: 'webservice/users'
+    }
+  });
+
+  // Enable auto-complete feature (typeahead) for fields "item" and "user"
+  $('#item_search').typeahead({
+    hint: true,
+    highlight: true,
+    minLength: 1
+  },
+  {
+    name: 'items',
+    source: items
+  });
+  $('#user_search').typeahead({
+    hint: true,
+    highlight: true,
+    minLength: 1
+  },
+  {
+    name: 'users',
+    source: users
   });
 });
 </script>
