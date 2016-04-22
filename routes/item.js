@@ -52,15 +52,20 @@ router.post('/new', function(req, res, next) {
   } // if (req.body["CANCEL"] != null)
   else if (req.body["OK"] != null)
   {
-    db.insert_record(req, res, next, objFormParameters, function(err, result, fields) {
+    db.insert_record(req, res, next, objFormParameters, function(err, result, fields, objSQLConnection) {
       if (err)
       {
         db.handle_error(err, res, "item/new", { title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, message:"Ce livre est déjà dans l'inventaire ("+err+")" });
       }
       else
       {
-        // Redirect to list of users
-        res.redirect('list'); // TODO res.redirect('view') compute parameters
+        // Always add at least ONE exemplary of the book (item => item_detail)
+        db.runsql("INSERT INTO item(item_detail_id) VALUES(LAST_INSERT_ID());" /* strSQL */, function(err, rows, fields) {
+          if (err) throw err;
+          // Redirect to list of users
+          res.redirect('list'); // TODO res.redirect('view') compute parameters
+        }, objSQLConnection);
+
       }
     });
   } // else if (req.body["CANCEL"] != null)

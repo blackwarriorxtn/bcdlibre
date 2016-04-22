@@ -129,18 +129,19 @@ var insert_record = function(req, res, next, objFormParameters, fnCallback)
   // DEBUG
   console.log(strSQL);
 
+  // Execute INSERT query, reusing the same connection
   runsql(strSQL, function(err, rows, fields) {
     if (fnCallback)
     {
-      // Custom function defined: call it
-      fnCallback(err, rows, fields);
+      // Custom function defined: call it with the same connection (to successfully use LAST_INSERT_ID() function)
+      fnCallback(err, rows, fields, objSQLConnection);
     }
     else
     {
       // No custom function: Redirect to list
       res.redirect('list');
     }
-  });
+  }, objSQLConnection);
 }
 
 var view_record = function(req, res, next, objFormParameters, fnCallback)
