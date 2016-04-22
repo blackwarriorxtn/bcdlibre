@@ -3,13 +3,26 @@
   <head>
     <%- include('../html_head', {title: title}) %>
     <%- include('../form_script') %>
+    <%- include('new_script') %>
   </head>
   <body>
     <div id="page">
       <div id="main">
         <%- include('../page_header', {title: title, subtitle: "Nouvel emprunt", menus:menus}) %>
         <div class="container">
-          <%- include('../form', {form:form, message:message}) %>
+          <!-- Custom form -->
+          <%- include('../form_message', {message: message}) %>
+          <div class="panel-body">
+          <form action="" method="post" id="new_form" class="TODO">
+            <div>
+		            <h2>Livre</h2>
+                <input type="text" name="item_search" id="item_search"
+                       autocomplete="off" spellcheck="false" placeholder="Taper l'identifiant du livre à emprunter (ISBN ou Titre)" autofocus
+                       >
+            </div>
+          <%- include('../form_okcancel') %>
+          </form>
+          </div><!-- class="panel-body" -->
         </div>
       </div>
     </div>

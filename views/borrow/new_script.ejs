@@ -1,0 +1,12 @@
+<script type="text/javascript">
+// Bind events and callbacks
+$( document ).ready(function() {
+  // Initial setup of autocomplete
+
+  // use auto-complete feature (typeahead) for fields "item" and "user"
+  $('#item_search').typeahead({
+  		name: 'accounts',
+  		local: ['Audi', 'BMW', 'Bugatti', 'Ferrari', 'Ford', 'Lamborghini', 'Mercedes Benz', 'Porsche', 'Rolls-Royce', 'Volkswagen']
+  });
+});
+</script>

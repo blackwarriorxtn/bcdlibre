@@ -1,9 +1,5 @@
 <!-- page_form -->
-<% if (message != null) { %>
-<div class="panel panel-<%=message.type%>">
-  <div class="panel-heading"><h3 class="panel-title"><%= message.text %></h3></div><!-- class="panel-heading" -->
-</div><!-- class="panel panel-<%=message.type%>" -->
-<% } // if if (message != null) %>
+<%- include('form_message', {message: message}) %>
 <div class="panel-body">
 <form action="" method="post" id="new_form">
   <%
@@ -15,7 +11,7 @@
     {
     %>
       <div class="form-group has-feedback">
-        <label for="<%= form.fields[i].name %>"><%= form.fields[i].label %></label>
+        <label for="<%= form.fields[i].name %>" class="control-label"><%= form.fields[i].label %></label>
         <%
         if (form.fields[i].maximum_length > 255)
         {
@@ -41,8 +37,6 @@
     } // if (form.primary_key.indexOf(form.fields[i]) == -1)
 
 } // for %>
-  <p>
-    <button type="submit" name="OK" id="OK" class="btn btn-primary btn-lg">OK</button><button type="submit" name="CANCEL" id="CANCEL" class="btn btn-default btn-lg">Annuler</button>
-  </p>
+<%- include('form_okcancel') %>
 </form>
 </div><!-- class="panel-body" -->

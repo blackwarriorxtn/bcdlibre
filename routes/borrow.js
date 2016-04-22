@@ -46,7 +46,7 @@ router.get('/list', function(req, res, next) {
 // GET new (form)
 router.get('/new', function(req, res, next) {
 
-  res.render('borrow/new', {req:req, title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, message:{text:"Veuillez saisir le code ou le titre à emprunter",type:"info"}});
+  res.render('borrow/new', {req:req, title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, message:{text:"Veuillez saisir le livre et le lecteur",type:"info"}});
 
 });
 // POST new (form validation then insert new record in database)
