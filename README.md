@@ -10,39 +10,27 @@ Logiciel de gestion d'une petite bibliothèque (gestion d'emprunt de livres)
 ### On Debian 8 Jessie
 
 * Update system
-
-  ```sudo apt-get update
-  sudo apt-get upgrade
-  ```
+  ```sudo apt-get update```
+  ```sudo apt-get upgrade```
 
 * Install nodejs (refer to https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions)
-
-  ```sudo apt-get install curl
-  curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
-  sudo apt-get install -y nodejs
-  ```
+  ```sudo apt-get install curl```
+  ```curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -```
+  ```sudo apt-get install -y nodejs```
 
 * Install mysql
-
-  ```sudo apt-get install mysql-server
-  ```
+  ```sudo apt-get install mysql-server```
 * Change mysql root password
-
-  ```mysql --user=root --execute="SET PASSWORD FOR 'root'@'localhost' = PASSWORD('***THEROOTPASSWORD****');"
-  ```
+  ```mysql --user=root --execute="SET PASSWORD FOR 'root'@'localhost' = PASSWORD('***THEROOTPASSWORD****');"```
 
 * Install git
-
   ```sudo apt-get install git```
 
 * Create dedicated user login
-
   ```adduser bibliopuce```
 
 * Get source code
-
-  ```
-  su - bibliopuce
+  ```su - bibliopuce
   git clone git://github.com/e-dot/bibliopuce.git
   ```
 
