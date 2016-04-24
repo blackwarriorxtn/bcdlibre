@@ -41,6 +41,7 @@ Logiciel de gestion d'une petite bibliothèque (gestion d'emprunt de livres)
 * Get source code
 
   ```su - bibliopuce```
+
   ```git clone git://github.com/e-dot/bibliopuce.git```
 
 * Install node modules: express, mysql
