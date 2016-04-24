@@ -7,11 +7,12 @@ Logiciel de gestion d'une petite bibliothèque (gestion d'emprunt de livres)
 
 ## Install Bibliopuce
 
-### On Debian 8 Jessie
+### On Debian 8 Jessie (including on a Raspberry Pi)
 
 * Update system
 
   ```sudo apt-get update```
+
   ```sudo apt-get upgrade```
 
 * Install nodejs (refer to https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions)
