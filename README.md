@@ -19,7 +19,7 @@ Logiciel de gestion d'une petite bibliothèque (gestion d'emprunt de livres)
   ```sudo apt-get install curl```
 
   ```curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -```
-  
+
   ```sudo apt-get install -y nodejs```
 
 * Install mysql
@@ -36,7 +36,7 @@ Logiciel de gestion d'une petite bibliothèque (gestion d'emprunt de livres)
 
 * Create dedicated user login
 
-  ```adduser bibliopuce```
+  ```sudo adduser bibliopuce```
 
 * Get source code
 
