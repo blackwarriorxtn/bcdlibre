@@ -22,8 +22,9 @@ Logiciel de gestion d'une petite bibliothèque (gestion d'emprunt de livres)
 
 * Install mysql
   ```sudo apt-get install mysql-server
-  # Change mysql root password
-  mysql --user=root --execute="SET PASSWORD FOR 'root'@'localhost' = PASSWORD('***THEROOTPASSWORD****');"
+  ```
+* Change mysql root password
+  ```mysql --user=root --execute="SET PASSWORD FOR 'root'@'localhost' = PASSWORD('***THEROOTPASSWORD****');"
   ```
 
 * Install git
