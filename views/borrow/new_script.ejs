@@ -1,28 +1,8 @@
 <script type="text/javascript">
 // Bind events and callbacks
-$( document ).ready(function() {
-  // Initial setup of autocomplete
-
-  $('#item_search').typeahead({
-  		name: 'accounts',
-  		local: ['Audi', 'BMW', 'Bugatti', 'Ferrari', 'Ford', 'Lamborghini', 'Mercedes Benz', 'Porsche', 'Rolls-Royce', 'Volkswagen']
-  });
-});
-
-
-// Bind events and callbacks
 $(document).ready(function(){
 
   // Initial setup of autocomplete
-
-  var items = new Bloodhound({
-    datumTokenizer: Bloodhound.tokenizers.whitespace,
-    queryTokenizer: Bloodhound.tokenizers.whitespace,
-    // url points to a json web service that contains an array of items
-    remote: {
-      url: 'webservice/items'
-    }
-  });
   var users = new Bloodhound({
     datumTokenizer: Bloodhound.tokenizers.whitespace,
     queryTokenizer: Bloodhound.tokenizers.whitespace,
@@ -40,7 +20,31 @@ $(document).ready(function(){
   },
   {
     name: 'items',
-    source: items
+    source: function (query, process) {
+      items = [];
+      items_map = {};
+
+      var data = [
+          {"id": "CA", "label": "California"},
+          {"id": "AZ", "label": "Arizona"},
+          {"id": "NY", "label": "New York"},
+          {"id": "NV", "label": "Nevada"},
+          {"id": "OH", "label": "Ohio"}
+      ];
+
+      $.each(data, function (i, item) {
+          items_map[item.label] = item;
+          items.push(item.label);
+      });
+
+      process(items);
+    }
+  });
+  $('#item_search').bind('typeahead:select', function(ev, suggestion) {
+    // Display selected value
+    $('#item_id_static').val(items_map[item].id);
+    // Store selected value in hidden input field to submit it with the form
+    $('#user_id').val(items_map[item].id);
   });
   $('#user_search').typeahead({
     hint: true,

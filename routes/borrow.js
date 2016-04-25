@@ -82,7 +82,7 @@ router.post('/new', function(req, res, next) {
 router.get('/webservice/items', function(req, res, next) {
 
   // Custom SQL, list of items not already borrowed (LEFT OUTER JOIN borrow ... WHERE borrow.id IS NULL)
-  db.runsql('SELECT CONCAT_WS(\', \', title, author, isbn13) AS `text`  \n\
+  db.runsql('SELECT item.id AS `id`, CONCAT_WS(\', \', title, author, isbn13) AS `label`  \n\
 FROM item \n\
 JOIN item_detail ON item.item_detail_id = item_detail.id \n\
 LEFT OUTER JOIN borrow ON borrow.item_id = item.id \n\
@@ -91,12 +91,7 @@ WHERE borrow.id IS NULL \n\
 ', function(err, rows, fields) {
     if (err) throw err;
     // Return result as JSON
-    var arrOut = new Array();
-    for (var row = 0; row < rows.length; row++)
-    {
-      arrOut.push(rows[row].text);
-    }
-    res.json(arrOut);
+    res.json(rows);
   });
 
 });
