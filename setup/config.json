@@ -1,0 +1,11 @@
+{
+  "application": {
+    "title": "Bibliopuce"
+  },
+  "database": {
+    "host_name": "localhost",
+    "database_name": "bibliopuce",
+    "application_user_name": "bibliopuce",
+    "application_user_password": "FPxWFYVux7BhEuU9",
+  }
+}

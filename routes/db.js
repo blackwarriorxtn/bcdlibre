@@ -1,10 +1,10 @@
 var mysql = require('mysql');
+var config = require('../setup/config.js');
 
-
-var strMySQLHost = 'localhost';
-var strMySQLDatabase = 'bibliopuce';
-var strMySQLUser = 'bibliopuce';
-var strMySQLPassword = 'FPxWFYVux7BhEuU9'; /* TODO Use crypted configuration */
+var strMySQLHost = config.database.host_name;
+var strMySQLDatabase = config.database.database_name;
+var strMySQLUser = config.database.application_user_name;
+var strMySQLPassword = config.database.application_user_password;
 
 var new_connection = function ()
 {
