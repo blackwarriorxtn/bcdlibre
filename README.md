@@ -71,6 +71,8 @@ Logiciel de gestion d'une petite bibliothèque (gestion d'emprunt de livres)
 
   ```npm install request```
 
+  ```(MAYBE)npm install apac@latest```
+
 
 * Create database (empty)
 
