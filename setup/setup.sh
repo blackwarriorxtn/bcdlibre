@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "[`date +'%Y-%m-%d %H:%M:%S'`] Begin..."
+
 # Define error handling function
 handle_error()
 {
@@ -49,3 +51,7 @@ mysql --default-character-set=utf8 --user=root --password="$MYSQL_ROOT_PASSWORD"
 if [ $MYSQL_CREATE_SAMPLE = "y" ] ; then
   mysql --default-character-set=utf8 --user=root --password="$MYSQL_ROOT_PASSWORD" < db/insert_sample_data.sql
 fi
+
+echo "[`date +'%Y-%m-%d %H:%M:%S'`] End."
+
+npm start

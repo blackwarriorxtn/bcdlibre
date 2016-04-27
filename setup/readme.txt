@@ -16,6 +16,7 @@ INSTALL
 ** On Linux:
     # Login as root
     sudo adduser bibliopuce
+    adduser bibliopuce sudo
     su - bibliopuce
     # Get the source code
     git clone git://github.com/e-dot/bibliopuce.git
