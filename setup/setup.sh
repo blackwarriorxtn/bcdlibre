@@ -19,7 +19,7 @@ git help 1>/dev/null 2>/dev/null || handle_error "Please install git (sudo apt-g
 
 
 echo "[`date +'%Y-%m-%d %H:%M:%S'`] Options..."
-read -p "MySQL root password [$MYSQL_ROOT_PASSWORD] ?" MYSQL_ROOT_PASSWORD
+read -s -p "MySQL root password [$MYSQL_ROOT_PASSWORD] ?" MYSQL_ROOT_PASSWORD
 if [ "$DEFAULT_MYSQL_CREATE_SAMPLE" = "" ] ; then
   DEFAULT_MYSQL_CREATE_SAMPLE=y
 fi
