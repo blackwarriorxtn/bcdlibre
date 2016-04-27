@@ -3,12 +3,13 @@ ECHO [%DATE% %TIME%] %~n0: Begin...
 
 ECHO [%DATE% %TIME%] Check prerequisites...
 ECHO [%DATE% %TIME%] nodejs
-
 %COMSPEC% /C npm help 1>NUL 2>NUL || GOTO ERROR_PREREQUESITES
 ECHO [%DATE% %TIME%] mysql
 mysql --help 1>NUL 2>NUL || GOTO ERROR_PREREQUESITES
 ECHO [%DATE% %TIME%] git
 git help 1>NUL 2>NUL || GOTO ERROR_PREREQUESITES
+
+REM TODO: SHOW ENGINES => check InnoDB AND MyISAM
 
 cd /D %~dp0..\ || GOTO ERROR
 
@@ -33,6 +34,7 @@ ECHO [%DATE% %TIME%] Install node modules...
 REM (MAYBE)%COMSPEC% /C npm install apac@latest || GOTO ERROR
 
 ECHO [%DATE% %TIME%] Create MySQL database...
+REM TODO reuse password from configuration
 mysql --default-character-set=utf8 --user=root --password=%MYSQL_ROOT_PASSWORD% < db/create_database.sql || GOTO ERROR
 IF NOT "%MYSQL_CREATE_SAMPLE%" == "y" GOTO POST_CREATE_SAMPLE
 :CREATE_SAMPLE
