@@ -2,6 +2,7 @@
 <html>
   <head>
     <%- include('../html_head', {title: title}) %>
+    <%- include('../form_script') %>
   </head>
   <body>
     <div id="page">
@@ -9,6 +10,7 @@
         <%- include('../page_header', {title: title, subtitle: subtitle, menus:menus}) %>
         <div class="container">
 
+          <%- include('../form_view', {form:form, message:message}) %>
           <!-- Use a disabled form to display field values (non placeholder) -->
           <form class="form-horizontal">
             <fieldset disabled>
@@ -36,6 +38,8 @@
               } // if (form.autoincrement_column != form.fields[i].name)
           } // for %>
             </fieldset>
+            <input id="MODIFY" name="MODIFY" class="btn btn-default" type="button" value="Modifier">
+            <input id="DELETE" name="DELETE" class="btn btn-default" type="button" value="Supprimer">
           </form>
 
         </div>
