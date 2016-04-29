@@ -33,7 +33,7 @@ $( document ).ready(function() {
     {
       event.preventDefault();
       // Set focus on first field in error
-      objErrors[0].focus();
+      $(objErrors[0]).find(".form-control").focus();
     }
   });
   $("#_ADD").on('click', function(event) {
