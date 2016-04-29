@@ -26,6 +26,20 @@ $( document ).ready(function() {
     // Remove all errors so that submit event can be processed without validation
     $(".has-error").removeClass("has-error");
   });
+
+  // When use type on ESC key, cancel form (click on CANCEL button, if any)
+  $("#_FORM_NEW").on('keyup', function(event) {
+    if (event.which == 27 /* Esc */)
+    {
+      $("#_CANCEL").click();
+    }
+  });
+  $("#_FORM_VIEW").on('keyup', function(event) {
+    if (event.which == 27 /* Esc */)
+    {
+      $("#_CANCEL").click();
+    }
+  });
   $("#_FORM_NEW").on('submit', function(event) {
     var objErrors = $(".has-error");
     var blnValue = (objErrors.length == 0);
@@ -33,7 +47,7 @@ $( document ).ready(function() {
     {
       event.preventDefault();
       // Set focus on first field in error
-      $(objErrors[0]).find(".form-control").focus();
+      $(objErrors.first()).find(".form-control").focus();
     }
   });
   $("#_ADD").on('click', function(event) {
@@ -51,6 +65,8 @@ $( document ).ready(function() {
     $("#_DELETE").prop("disabled", true);
     // Show OK/Cancel buttons
     $("#_OK_CANCEL").removeClass("hidden").addClass("show");
+    // Set focus on first field
+    $("#_FORM_VIEW").find(".form-control").first().focus();
   });
   $("#_DELETE").on('click', function(event) {
     // Change form action
