@@ -36,6 +36,10 @@ $( document ).ready(function() {
       objErrors[0].focus();
     }
   });
+  $("#_ADD").on('click', function(event) {
+    // Redirect to new form
+    window.location.href = "new";
+  });
   $("#_MODIFY").on('click', function(event) {
     // Change form action
     $("#_FORM_VIEW").attr("action", "update");
