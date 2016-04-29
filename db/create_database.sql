@@ -49,7 +49,7 @@ CREATE TABLE item(
   KEY item_item_detail_id(item_detail_id),
 
   CONSTRAINT item_fk_description FOREIGN KEY(item_detail_id) REFERENCES item_detail(id)
-      ON UPDATE CASCADE ON DELETE RESTRICT
+      ON UPDATE CASCADE ON DELETE CASCADE
 
 ) ENGINE=INNODB COMMENT 'Items in the inventory (one row per instance)'
 ;
