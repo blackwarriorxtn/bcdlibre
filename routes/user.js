@@ -49,6 +49,7 @@ router.get('/new', function(req, res, next) {
   res.render('user/new', {title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, message:{text:"Veuillez remplir le formulaire",type:"info"}});
 
 });
+
 // POST new user (form validation then insert new record in database)
 router.post('/new', function(req, res, next) {
   if (req.body["_CANCEL"] != null)
@@ -71,6 +72,67 @@ router.post('/new', function(req, res, next) {
     throw new Error("ERROR: Invalid form state (must be OK or CANCEL)");
   }
 });
+
+// POST update (form validation then update all fields in database)
+router.post('/update', function(req, res, next) {
+  if (req.body["_CANCEL"] != null)
+  {
+    // Cancel : Redirect to menu
+    res.redirect('./');
+  } // if (req.body["_CANCEL"] != null)
+  else if (req.body["_OK"] != null)
+  {
+    db.update_record(req, res, next, objFormParameters, function(err, result, fields, objSQLConnection) {
+      if (err)
+      {
+        db.handle_error(err, res, "user/update", { title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, message:"Impossible de modifier ce lecteur ("+err+")" });
+      }
+      else
+      {
+        // Redirect to list
+        res.redirect('list');
+
+      }
+    });
+  } // else if (req.body["_CANCEL"] != null)
+  else
+  {
+    // Neither _OK nor _CANCEL: error!
+    throw new Error("ERROR: Invalid form state (must be _OK or _CANCEL)");
+  }
+
+});
+
+// POST delete (form validation then delete record in database)
+router.post('/delete', function(req, res, next) {
+  if (req.body["_CANCEL"] != null)
+  {
+    // Cancel : Redirect to menu
+    res.redirect('./');
+  } // if (req.body["_CANCEL"] != null)
+  else if (req.body["_OK"] != null)
+  {
+    db.delete_record(req, res, next, objFormParameters, function(err, result, fields, objSQLConnection) {
+      if (err)
+      {
+        db.handle_error(err, res, "user/delete", { title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, message:"Impossible d'effacer ce lecteur ("+err+")" });
+      }
+      else
+      {
+        // Redirect to list
+        res.redirect('list');
+
+      }
+    });
+  } // else if (req.body["_CANCEL"] != null)
+  else
+  {
+    // Neither _OK nor _CANCEL: error!
+    throw new Error("ERROR: Invalid form state (must be _OK or _CANCEL)");
+  }
+
+});
+
 // GET user (view)
 router.get('/view', function(req, res, next) {
 
