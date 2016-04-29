@@ -18,6 +18,22 @@ var objFormParameters = {
     {name:"comment",label:"Commentaire",type:"String",required:false,validation:null},
   ]
 };
+// To search we only have ONE field named "search" and a special SQL table with full text indexes
+var objSearchParameters = {
+  table_name: objFormParameters.table_name+"_search",
+  primary_key: objFormParameters.primary_key,
+  autoincrement_column: objFormParameters.autoincrement_column,
+  fields:[
+    {
+      name:"search",label:"Nom, Compte, Commentaires",type:"String",required:true,validation:null,maximum_length:255,
+      match_fields:[
+        "name",
+        "login",
+        "comment"
+      ]
+    },
+  ]
+};
 // *** PARAMETERS (MENU)
 var objMenu = {text:"Lecteurs",link:"/user/"};
 
@@ -144,6 +160,38 @@ router.get('/view', function(req, res, next) {
 
 });
 
-// TODO search, delete
+
+
+
+
+// ************************************************************************************* SEARCH
+// GET search (form)
+router.get('/search', function(req, res, next) {
+
+  res.render('user/new', {req:req, title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu,objMenu], form:objSearchParameters, message:{text:"Veuillez remplir le formulaire",type:"info"}, action:"search"});
+
+});
+// POST search (form validation then search records in database)
+router.post('/search', function(req, res, next) {
+  if (req.body["_CANCEL"] != null)
+  {
+    // Cancel insert : Redirect to menu
+    res.redirect('./');
+  } // if (req.body["_CANCEL"] != null)
+  else if (req.body["_OK"] != null)
+  {
+    db.search_record(req, res, next, objSearchParameters, null /* objSQLOptions */, function(err, result, fields) {
+      if (err) throw err;
+      // Display records with "list" template
+      res.render('user/list', { title: req.app.locals.title, subtitle: "Liste", menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, records:result });
+    });
+  } // else if (req.body["_CANCEL"] != null)
+  else
+  {
+    // Neither _OK nor _CANCEL: error!
+    throw new Error("ERROR: Invalid form state (must be _OK or _CANCEL)");
+  }
+
+});
 
 module.exports = router;

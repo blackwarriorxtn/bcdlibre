@@ -26,7 +26,13 @@ var objSearchParameters = {
   primary_key: objFormParameters.primary_key,
   autoincrement_column: objFormParameters.autoincrement_column,
   fields:[
-    {name:"search",label:"Titre, Auteur, Description",type:"String",required:true,validation:null,maximum_length:255},
+    {
+      name:"search",label:"Titre, Auteur, Description",type:"String",required:true,validation:null,maximum_length:255,
+      match_fields:[
+        "title",
+        "description"
+      ]
+    },
   ]
 };
 // *** PARAMETERS (MENU)
