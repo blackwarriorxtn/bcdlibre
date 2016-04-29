@@ -22,11 +22,11 @@ $( document ).ready(function() {
       $(event.target).parent().removeClass("has-error has-warning").addClass("has-success");
     }
   });
-  $("#CANCEL").on('click', function(event) {
+  $("#_CANCEL").on('click', function(event) {
     // Remove all errors so that submit event can be processed without validation
     $(".has-error").removeClass("has-error");
   });
-  $("#new_form").on('submit', function(event) {
+  $("#_FORM_NEW").on('submit', function(event) {
     var objErrors = $(".has-error");
     var blnValue = (objErrors.length == 0);
     if(!blnValue)
@@ -35,6 +35,29 @@ $( document ).ready(function() {
       // Set focus on first field in error
       objErrors[0].focus();
     }
+  });
+  $("#_MODIFY").on('click', function(event) {
+    // Change form action
+    $("#_FORM_VIEW").attr("action", "update");
+    // Enable fieldset under form
+    $("#_FORM_VIEW > fieldset").prop("disabled", false);
+    // Disable Add/Modify/Delete buttons
+    $("#_ADD").prop("disabled", true);
+    $("#_MODIFY").prop("disabled", true);
+    $("#_DELETE").prop("disabled", true);
+    // Show OK/Cancel buttons
+    $("#_OK_CANCEL").removeClass("hidden").addClass("show");
+  });
+  $("#_DELETE").on('click', function(event) {
+    // Change form action
+    $("#_FORM_VIEW").attr("action", "delete");
+    // Let fieldset disabled
+    // Disable Add/Modify/Delete buttons
+    $("#_ADD").prop("disabled", true);
+    $("#_MODIFY").prop("disabled", true);
+    $("#_DELETE").prop("disabled", true);
+    // Show OK/Cancel buttons
+    $("#_OK_CANCEL").removeClass("hidden").addClass("show");
   });
 });
 </script>

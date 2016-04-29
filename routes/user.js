@@ -51,12 +51,12 @@ router.get('/new', function(req, res, next) {
 });
 // POST new user (form validation then insert new record in database)
 router.post('/new', function(req, res, next) {
-  if (req.body["CANCEL"] != null)
+  if (req.body["_CANCEL"] != null)
   {
     // Cancel insert : Redirect to menu
     res.redirect('./');
-  } // if (req.body["CANCEL"] != null)
-  else if (req.body["OK"] != null)
+  } // if (req.body["_CANCEL"] != null)
+  else if (req.body["_OK"] != null)
   {
     db.insert_record(req, res, next, objFormParameters, function(err, result, fields) {
       if (err) throw err;
@@ -64,7 +64,7 @@ router.post('/new', function(req, res, next) {
       // Redirect to list of users
       res.redirect('list'); // TODO res.redirect('view') compute parameters
     });
-  } // else if (req.body["OK"] != null)
+  } // else if (req.body["_OK"] != null)
   else
   {
     // Neither OK nor CANCEL: error!
@@ -77,7 +77,7 @@ router.get('/view', function(req, res, next) {
   db.view_record(req, res, next, objFormParameters, function(err, result, fields) {
     if (err) throw err;
     // Display first record with "view" template
-    res.render('user/view', { title: req.app.locals.title, subtitle: "Fiche", menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, record:result[0] });
+    res.render('user/view', { title: req.app.locals.title, subtitle: "Fiche", menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, record:result[0], message:null });
   });
 
 });

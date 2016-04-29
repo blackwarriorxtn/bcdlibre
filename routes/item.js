@@ -45,12 +45,12 @@ router.get('/new', function(req, res, next) {
 });
 // POST new (form validation then insert new record in database)
 router.post('/new', function(req, res, next) {
-  if (req.body["CANCEL"] != null)
+  if (req.body["_CANCEL"] != null)
   {
     // Cancel insert : Redirect to menu
     res.redirect('./');
-  } // if (req.body["CANCEL"] != null)
-  else if (req.body["OK"] != null)
+  } // if (req.body["_CANCEL"] != null)
+  else if (req.body["_OK"] != null)
   {
     db.insert_record(req, res, next, objFormParameters, function(err, result, fields, objSQLConnection) {
       if (err)
@@ -62,27 +62,88 @@ router.post('/new', function(req, res, next) {
         // Always add at least ONE exemplary of the book (item => item_detail)
         db.runsql("INSERT INTO item(item_detail_id) VALUES(LAST_INSERT_ID());" /* strSQL */, function(err, rows, fields) {
           if (err) throw err;
-          // Redirect to list of users
+          // Redirect to list
           res.redirect('list'); // TODO res.redirect('view') compute parameters
         }, objSQLConnection);
 
       }
     });
-  } // else if (req.body["CANCEL"] != null)
+  } // else if (req.body["_CANCEL"] != null)
   else
   {
-    // Neither OK nor CANCEL: error!
-    throw new Error("ERROR: Invalid form state (must be OK or CANCEL)");
+    // Neither _OK nor _CANCEL: error!
+    throw new Error("ERROR: Invalid form state (must be _OK or _CANCEL)");
   }
 
 });
+
+// POST update (form validation then update all fields in database)
+router.post('/update', function(req, res, next) {
+  if (req.body["_CANCEL"] != null)
+  {
+    // Cancel : Redirect to menu
+    res.redirect('./');
+  } // if (req.body["_CANCEL"] != null)
+  else if (req.body["_OK"] != null)
+  {
+    db.update_record(req, res, next, objFormParameters, function(err, result, fields, objSQLConnection) {
+      if (err)
+      {
+        db.handle_error(err, res, "item/update", { title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, message:"Impossible de modifier ce livre ("+err+")" });
+      }
+      else
+      {
+        // Redirect to list
+        res.redirect('list');
+
+      }
+    });
+  } // else if (req.body["_CANCEL"] != null)
+  else
+  {
+    // Neither _OK nor _CANCEL: error!
+    throw new Error("ERROR: Invalid form state (must be _OK or _CANCEL)");
+  }
+
+});
+
+// POST delete (form validation then delete record in database)
+router.post('/delete', function(req, res, next) {
+  if (req.body["_CANCEL"] != null)
+  {
+    // Cancel : Redirect to menu
+    res.redirect('./');
+  } // if (req.body["_CANCEL"] != null)
+  else if (req.body["_OK"] != null)
+  {
+    db.delete_record(req, res, next, objFormParameters, function(err, result, fields, objSQLConnection) {
+      if (err)
+      {
+        db.handle_error(err, res, "item/delete", { title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, message:"Impossible d'effacer ce livre ("+err+")" });
+      }
+      else
+      {
+        // Redirect to list
+        res.redirect('list');
+
+      }
+    });
+  } // else if (req.body["_CANCEL"] != null)
+  else
+  {
+    // Neither _OK nor _CANCEL: error!
+    throw new Error("ERROR: Invalid form state (must be _OK or _CANCEL)");
+  }
+
+});
+
 // GET view
 router.get('/view', function(req, res, next) {
 
   db.view_record(req, res, next, objFormParameters, function(err, result, fields) {
     if (err) throw err;
     // Display first record with "view" template
-    res.render('item/view', { title: req.app.locals.title, subtitle: "Fiche", menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, record:result[0] });
+    res.render('item/view', { title: req.app.locals.title, subtitle: "Fiche", menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, record:result[0], message:null });
   });
 
 });

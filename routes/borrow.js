@@ -51,12 +51,12 @@ router.get('/new', function(req, res, next) {
 });
 // POST new (form validation then insert new record in database)
 router.post('/new', function(req, res, next) {
-  if (req.body["CANCEL"] != null)
+  if (req.body["_CANCEL"] != null)
   {
     // Cancel insert : Redirect to menu
     res.redirect('./');
   } // if (req.body["CANCEL"] != null)
-  else if (req.body["OK"] != null)
+  else if (req.body["_OK"] != null)
   {
     db.insert_record(req, res, next, objFormParameters, function(err, result, fields) {
       if (err)
