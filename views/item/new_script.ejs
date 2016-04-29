@@ -57,8 +57,9 @@ function check_isbn(event, strValue)
 // Bind events and callbacks
 $( document ).ready(function() {
   // Bind ISBN search - on keyup event code 13 (ENTER) - MAYBE switch to onfocusout?
-  $('#isbn13').on('keyup',function(event){
-    if (event.which == 13)
+  $('#isbn13').on('focusout',function(event){
+    // On n'appelle le Web Service que si le titre et l'auteur n'ont pas déjà été remplis (donc s'ils sont vides)
+    if ($('#title').val() == "" && $('#author').val() == "")
     {
       var strValue = $(event.target).val();
       if (strValue && (strValue.length = 10 || strValue.length >= 13))
