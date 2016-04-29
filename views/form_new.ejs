@@ -1,7 +1,7 @@
 <!-- page_form -->
 <%- include('form_message', {message: message}) %>
 <div class="panel-body">
-<form id="_FORM_NEW" class="form-horizontal" action="new" method="post">
+<form id="_FORM_NEW" class="form-horizontal" action="<%=action%>" method="post">
   <%
   var intDisplayCount = 0;
   for(var i=0; i< form.fields.length; i++)

@@ -20,6 +20,15 @@ var objFormParameters = {
     {name:"description",label:"Description (Synopsis)",type:"String",required:false,validation:null,maximum_length:65535},
   ]
 };
+// To search we only have ONE field named "search" and a special SQL table with full text indexes
+var objSearchParameters = {
+  table_name: objFormParameters.table_name+"_search",
+  primary_key: objFormParameters.primary_key,
+  autoincrement_column: objFormParameters.autoincrement_column,
+  fields:[
+    {name:"search",label:"Titre, Auteur, Description",type:"String",required:true,validation:null,maximum_length:255},
+  ]
+};
 // *** PARAMETERS (MENU)
 var objMenu = {text:"Livres",link:"/item/"};
 
@@ -37,10 +46,16 @@ router.get('/list', function(req, res, next) {
   });
 
 });
+
+
+
+
+
+// ************************************************************************************* NEW
 // GET new (form)
 router.get('/new', function(req, res, next) {
 
-  res.render('item/new', {req:req, title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, message:{text:"Veuillez remplir le formulaire",type:"info"}});
+  res.render('item/new', {req:req, title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, message:{text:"Veuillez remplir le formulaire",type:"info"}, action:"new"});
 
 });
 // POST new (form validation then insert new record in database)
@@ -55,7 +70,7 @@ router.post('/new', function(req, res, next) {
     db.insert_record(req, res, next, objFormParameters, function(err, result, fields, objSQLConnection) {
       if (err)
       {
-        db.handle_error(err, res, "item/new", { title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, message:"Ce livre est déjà dans l'inventaire ("+err+")" });
+        db.handle_error(err, res, "item/new", { title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, message:{text:"Ce livre est déjà dans l'inventaire ("+err+")",type:"error"}, action:"new" });
       }
       else
       {
@@ -77,6 +92,11 @@ router.post('/new', function(req, res, next) {
 
 });
 
+
+
+
+
+// ************************************************************************************* UPDATE
 // POST update (form validation then update all fields in database)
 router.post('/update', function(req, res, next) {
   if (req.body["_CANCEL"] != null)
@@ -107,6 +127,11 @@ router.post('/update', function(req, res, next) {
 
 });
 
+
+
+
+
+// ************************************************************************************* DELETE
 // POST delete (form validation then delete record in database)
 router.post('/delete', function(req, res, next) {
   if (req.body["_CANCEL"] != null)
@@ -137,6 +162,11 @@ router.post('/delete', function(req, res, next) {
 
 });
 
+
+
+
+
+// ************************************************************************************* VIEW
 // GET view
 router.get('/view', function(req, res, next) {
 
@@ -148,6 +178,11 @@ router.get('/view', function(req, res, next) {
 
 });
 
+
+
+
+
+// ************************************************************************************* WEB SERVICES
 // GET web service (fetch isbn information)
 router.get('/webservice', function(req, objLocalWebServiceResult, next) {
 
@@ -307,6 +342,38 @@ router.get('/webservice', function(req, objLocalWebServiceResult, next) {
 
 });
 
-// TODO new, search, delete
+
+
+
+// ************************************************************************************* SEARCH
+// GET search (form)
+router.get('/search', function(req, res, next) {
+
+  res.render('item/new', {req:req, title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu,objMenu], form:objSearchParameters, message:{text:"Veuillez remplir le formulaire",type:"info"}, action:"search"});
+
+});
+// POST search (form validation then search records in database)
+router.post('/search', function(req, res, next) {
+  if (req.body["_CANCEL"] != null)
+  {
+    // Cancel insert : Redirect to menu
+    res.redirect('./');
+  } // if (req.body["_CANCEL"] != null)
+  else if (req.body["_OK"] != null)
+  {
+    db.search_record(req, res, next, objSearchParameters, null /* objSQLOptions */, function(err, result, fields) {
+      if (err) throw err;
+      // Display records with "list" template
+      res.render('item/list', { title: req.app.locals.title, subtitle: "Liste", menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, records:result });
+    });
+  } // else if (req.body["_CANCEL"] != null)
+  else
+  {
+    // Neither _OK nor _CANCEL: error!
+    throw new Error("ERROR: Invalid form state (must be _OK or _CANCEL)");
+  }
+
+});
+
 
 module.exports = router;

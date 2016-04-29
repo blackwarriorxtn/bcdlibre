@@ -62,12 +62,15 @@ CREATE TABLE item_detail_search(
   item_detail_id INTEGER NOT NULL COMMENT 'Link to the item_detail table',
   title VARCHAR(255) NOT NULL COMMENT 'Item Title',
   author VARCHAR(255) NOT NULL COMMENT 'Item Author',
+  description TEXT NULL COMMENT 'Item Description (synopsis)',
 
   PRIMARY KEY(id),
   KEY item_detail_search_title(title),
   KEY item_detail_search_author(author),
+  KEY item_detail_search_description(description(64)),
   FULLTEXT KEY item_ft_title(title),
-  FULLTEXT KEY item_ft_author(author)
+  FULLTEXT KEY item_ft_author(author), 
+  FULLTEXT KEY item_ft_description(description)
 
 )  ENGINE=MyISAM COMMENT 'Search engine for items (MyISAM Format for FULL TEXT SEARCHES)'
 ;
@@ -81,7 +84,7 @@ SET SESSION SQL_MODE="";;
 DROP TRIGGER IF EXISTS `item_detail_after_insert`;;
 CREATE DEFINER=CURRENT_USER TRIGGER `item_detail_after_insert` AFTER INSERT ON `item_detail` 
 FOR EACH ROW BEGIN
-  INSERT INTO item_detail_search(item_detail_id, title, author) VALUES(NEW.id, NEW.title, NEW.author);
+  INSERT INTO item_detail_search(item_detail_id, title, author, description) VALUES(NEW.id, NEW.title, NEW.author, NEW.description);
 END ;;
 /* UPDATE : After UPDATE table, UPDATE search table */
 DROP TRIGGER IF EXISTS `item_detail_after_update`;;
@@ -89,7 +92,8 @@ CREATE DEFINER=CURRENT_USER TRIGGER `item_detail_after_update` AFTER UPDATE ON `
 FOR EACH ROW BEGIN
   UPDATE item_detail_search SET 
     item_detail_search.title = NEW.title, 
-    item_detail_search.author = NEW.author 
+    item_detail_search.author = NEW.author,  
+    item_detail_search.description = NEW.description
   WHERE item_detail_search.item_detail_id = NEW.id;
 END ;;
 /* DELETE : After DELETE table, DELETE search table */
@@ -130,12 +134,15 @@ CREATE TABLE user_search(
   user_id INTEGER NOT NULL COMMENT 'Link to the user table',
   name VARCHAR(255) NOT NULL COMMENT 'User name',
   login VARCHAR(64) NOT NULL COMMENT 'User login',
+  comment TEXT NULL COMMENT 'User Comment', 
 
   PRIMARY KEY(id),
   KEY user_search_name(name),
   KEY user_search_login(login),
+  KEY user_search_comment(comment(64)),
   FULLTEXT KEY user_ft_name(name),
-  FULLTEXT KEY user_ft_login(login)
+  FULLTEXT KEY user_ft_login(login),
+  FULLTEXT KEY user_ft_comment(comment)
 
 )  ENGINE=MyISAM COMMENT 'Search engine for users (MyISAM Format for FULL TEXT SEARCHES)'
 ;
@@ -150,7 +157,7 @@ SET SESSION SQL_MODE="";;
 DROP TRIGGER IF EXISTS `user_after_insert`;;
 CREATE DEFINER=CURRENT_USER TRIGGER `user_after_insert` AFTER INSERT ON `user` 
 FOR EACH ROW BEGIN
-  INSERT INTO user_search(user_id, name, login) VALUES(NEW.id, NEW.name, NEW.login);
+  INSERT INTO user_search(user_id, name, login, comment) VALUES(NEW.id, NEW.name, NEW.login, NEW.comment);
 END ;;
 /* UPDATE : After UPDATE table, UPDATE search table */
 DROP TRIGGER IF EXISTS `user_after_update`;;
@@ -158,7 +165,8 @@ CREATE DEFINER=CURRENT_USER TRIGGER `user_after_update` AFTER UPDATE ON `user`
 FOR EACH ROW BEGIN
   UPDATE user_search SET 
     user_search.name = NEW.name, 
-    user_search.login = NEW.login 
+    user_search.login = NEW.login, 
+    user_search.comment = NEW.comment
   WHERE user_search.user_id = NEW.id;
 END ;;
 /* DELETE : After DELETE table, DELETE search table */

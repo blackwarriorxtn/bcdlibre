@@ -406,6 +406,69 @@ var handle_error = function(err, res, template_name, options)
   }
 }
 
+var search_record = function(req, res, next, objFormParameters, objSQLOptions, fnCallback)
+{
+  // Must be something in the body
+  if (!req.body) return res.sendStatus(400);
+
+  var objSQLConnection = new_connection();
+
+  var arrSQLNamesEqualValues = new Array();
+  var arrSQLWhere = new Array();
+  for (var strSentName in req.body)
+  {
+    if (form_ignore_fields.indexOf(strSentName) == -1)
+    {
+      var strSQLValue = null;
+      var objField = null;
+      for (var intField = 0; intField < objFormParameters.fields.length; intField++)
+      {
+        var strFieldName = objFormParameters.fields[intField].name;
+        if (strFieldName)
+        {
+          // DEBUG console.log("strFieldName=\""+strFieldName+"\"\n");
+          if (strSentName == strFieldName.valueOf())
+          {
+
+            // Known field : store attributes to check value and prepare storage
+            objField = objFormParameters.fields[intField];
+
+          } // if (strSentName == strFieldName.valueOf())
+
+        } // if (strFieldName)
+
+      } // for (var intField = 0; intField < objFormParameters.fields; intField++)
+
+      if (objField == null)
+      {
+
+        // Unknown field: error!
+        throw new Error("ERROR: field \""+strSentName+"\" is unknown!");
+
+      } // if (objField == null)
+      else
+      {
+        strSQLValue = check_field_value(req.body[strSentName],objField,objSQLConnection);
+      } // else if (objField == null)
+
+      // Build where clause with primary key names and values
+      arrSQLWhere.push("MATCH (title,description) AGAINST ("+strSQLValue+" IN BOOLEAN MODE)");
+
+    } // if (form_ignore_fields.indexOf(strSentName) == -1)
+
+  } // for (var objField in req.body)
+
+  var strSQL = "SELECT * FROM "+objSQLConnection.escapeId(objFormParameters.table_name)
+             + "\nWHERE "+arrSQLWhere.join("\n AND ")+"\n;"
+             ;
+  // DEBUG
+  console.log(strSQL);
+
+  runsql(strSQL, function(err, rows, fields) {
+    fnCallback(err, rows, fields);
+  });
+
+}
 
 module.exports.new_connection = new_connection;
 module.exports.runsql = runsql;
@@ -416,4 +479,5 @@ module.exports.update_record = update_record;
 module.exports.delete_record = delete_record;
 module.exports.view_record = view_record;
 module.exports.list_record = list_record;
+module.exports.search_record = search_record;
 module.exports.handle_error = handle_error;

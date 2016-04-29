@@ -62,3 +62,31 @@ VALUES('9780596527334','CSS','Eric Meyer','Demonstrates the control and flexibil
 
 SELECT * FROM item_detail
 */
+
+
+/* TEST SEARCHES 
+
+* Title starting with...
+EXPLAIN
+SELECT * FROM item_detail_search WHERE title LIKE 'Le fant%'
+
+* Title containing...
+EXPLAIN
+SELECT * FROM item_detail_search WHERE MATCH (title) AGAINST ('fantôme côté' IN BOOLEAN MODE)
+
+EXPLAIN
+SELECT * FROM item_detail_search WHERE MATCH (title) AGAINST ('fantome cote' IN BOOLEAN MODE)
+
+EXPLAIN
+SELECT * FROM item_detail_search WHERE MATCH (title) AGAINST ('1+1' IN BOOLEAN MODE)
+
+* Description containing...
+
+EXPLAIN
+SELECT * FROM item_detail_search WHERE MATCH (title,description) AGAINST ('fantome cote' IN BOOLEAN MODE)
+
+EXPLAIN
+SELECT * FROM `item_detail_search` WHERE MATCH (title,description) AGAINST ('pensé' IN BOOLEAN MODE)
+
+
+*/
