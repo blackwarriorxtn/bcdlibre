@@ -62,7 +62,7 @@ router.get('/list', function(req, res, next) {
 // GET new user (form)
 router.get('/new', function(req, res, next) {
 
-  res.render('user/new', {title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, message:{text:"Veuillez remplir le formulaire",type:"info"}});
+  res.render('user/new', {title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, message:{text:"Veuillez remplir le formulaire",type:"info"}, action:"new"});
 
 });
 
