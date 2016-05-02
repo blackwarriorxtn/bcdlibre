@@ -3,11 +3,11 @@
 
 ## Install prerequisites
 
-* [http://dev.mysql.com/downloads/mysql/](mysql 5.5)
-* [https://git-scm.com/](git)
-* [https://nodejs.org](nodejs)
+* [mysql 5.5](http://dev.mysql.com/downloads/mysql/)
+* [git](https://git-scm.com/)
+* [nodejs](https://nodejs.org)
 
-Please note that nodejs installation is automated with the setup.sh script (see below). 
+Please note that nodejs installation is automated with the setup.sh script (see below).
 
 ## Launch setup
 
