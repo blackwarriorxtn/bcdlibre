@@ -2,21 +2,19 @@
 # INSTALL
 
 * Install prerequisites
-
-** mysql 5.5
-** git
-** nodejs
+  * mysql 5.5
+  * git
+  * nodejs
 
 * Launch setup
-
-** On Windows:
+  * On Windows:
 
     # Get the source code
     git clone git://github.com/e-dot/bibliopuce.git
     CD /D bibliopuce
     CMD /C setup\setup.bat
 
-** On Linux:
+  * On Linux:
 
     # Login as root
     sudo adduser bibliopuce
