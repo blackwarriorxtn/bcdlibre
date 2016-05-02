@@ -7,7 +7,7 @@ Logiciel de gestion d'une petite bibliothèque (gestion d'emprunt de livres)
 
 ## Install Bibliopuce
 
-Please read [setup/readme.txt](setup/readme.txt)
+Please read [setup/install.md](setup/install.md)
 
 ## Start Bibliopuce
 
