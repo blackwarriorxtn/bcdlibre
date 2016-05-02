@@ -7,20 +7,17 @@ Logiciel de gestion d'une petite bibliothèque (gestion d'emprunt de livres)
 
 ## Install Bibliopuce
 
-Please read setup/readme.txt
+Please read [setup/readme.txt](setup/readme.txt)
 
 ## Start Bibliopuce
 
 ### On Windows
 
-```cd bibliopuce```
-
-```start.bat```
+    cd bibliopuce
+    start.bat
 
 ### On Linux
 
-```su - bibliopuce```
-
-```cd bibliopuce```
-
-```npm start```
+    su - bibliopuce
+    cd bibliopuce
+    npm start
