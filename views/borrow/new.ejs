@@ -13,26 +13,23 @@
           <!-- Custom form -->
           <%- include('../form_message', {message: message}) %>
           <div class="panel-body">
-          <form action="" method="post" id="_FORM_NEW">
-            <div class="row">
-              <div class="col-md-12">
-                  <input type="text" class="form-control" name="item_search" id="item_search" autocomplete="off" spellcheck="false" size="50" placeholder="Taper l'identifiant du livre à emprunter (ISBN ou Titre)" autofocus>
-                  <p id="item_id_static" class="form-control-static"></p>
-                  <input type="hidden" name="item_id" id="item_id">
-              </div><!-- class="col-md-12" -->
-            </div><!-- class="row" -->
-            <div class="row">
-              <div class="col-md-12">
-                  <input type="text" class="form-control" name="user_search" id="user_search" autocomplete="off" spellcheck="false" size="50" placeholder="Taper le nom ou le compte du lecteur)">
-                  <p id="user_id_static" class="form-control-static"></p>
-                  <input type="hidden" name="user_id" id="user_id">
-              </div><!-- class="col-md-12" -->
-            </div><!-- class="row" -->
-            <div class="row">
-              <div class="col-md-12">
-              <%- include('../form_okcancel') %>
-              </div>
-            </div>
+          <form id="_FORM_NEW" class="form-inline" action="new" method="post">
+            <input type="hidden" name="item_id" id="item_id">
+            <input type="hidden" name="user_id" id="user_id">
+                <div class="form-group has-feedback">
+                    <input type="text" class="form-control form-control-required form-dont-submit" name="item_search" id="item_search" autocomplete="off" spellcheck="false" size="50" placeholder="Taper l'identifiant du livre à emprunter (ISBN ou Titre)" autofocus>
+                    <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+                    <span id="_STATUS_item_search" class="sr-only">(success)</span>
+                </div><!-- class="form-group has-feedback" -->
+                <div class="form-group has-feedback">
+                    <input type="text" class="form-control form-control-required form-dont-submit" name="user_search" id="user_search" autocomplete="off" spellcheck="false" size="50" placeholder="Taper le nom ou le compte du lecteur)">
+                    <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+                    <span id="_STATUS_user_search" class="sr-only">(success)</span>
+                </div><!-- class="form-group has-feedback" -->
+
+<p>
+            <%- include('../form_okcancel', { visible:true }) %>
+</p>
           </form>
           </div><!-- class="panel-body" -->
         </div>

@@ -27,13 +27,11 @@
                placeholder="<%= form.fields[i].label %>" <%= (intDisplayCount==0 ? " autofocus" : "") %>
                <%- (form.fields[i].maximum_length ? " maxlength=\""+form.fields[i].maximum_length+"\"" : "") %>
                 aria-describedby="_STATUS_<%= form.fields[i].name %>">
-               <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
-               <span id="_STATUS_<%= form.fields[i].name %>" class="sr-only">(success)</span>
         <%
         } // else if (form.fields[i].maximum_length > 255)
         %>
-        <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
-        <span id="inputSuccess<%=i%>Status" class="sr-only">(success)</span>
+        <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+        <span id="_STATUS_<%= form.fields[i].name %>" class="sr-only">(success)</span>
         </div><!-- class="col-sm-10" -->
     </div><!-- class="form-group has-feedback" --><%
 

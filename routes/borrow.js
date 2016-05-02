@@ -12,7 +12,7 @@ var objFormParameters = {
   autoincrement_column: "id",
   fields:[
     {name:"id",label:"#",type:"String",required:false,validation:null},
-    {name:"begin_date",label:"Début",type:"DateTime",required:true,validation:null},
+    {name:"begin_date",label:"Début",type:"DateTime",required:true,validation:function (strValue){return(new Date().toSQL())}},
     {name:"end_date",label:"Fin",type:"DateTime",required:false,validation:null},
     {name:"item_id",label:"Livre",type:"Integer",required:true,validation:null},
     {name:"user_id",label:"Lecteur",type:"Integer",required:false,validation:null},
@@ -82,7 +82,7 @@ router.post('/new', function(req, res, next) {
 router.get('/webservice/items', function(req, res, next) {
 
   // Custom SQL, list of items not already borrowed (LEFT OUTER JOIN borrow ... WHERE borrow.id IS NULL)
-  db.runsql('SELECT item.id AS `id`, CONCAT_WS(\', \', title, author, isbn13) AS `label`  \n\
+  db.runsql('SELECT item.id AS `id`, CONCAT_WS(\', \', title, author, isbn13) AS `text`  \n\
 FROM item \n\
 JOIN item_detail ON item.item_detail_id = item_detail.id \n\
 LEFT OUTER JOIN borrow ON borrow.item_id = item.id \n\
@@ -100,18 +100,14 @@ WHERE borrow.id IS NULL \n\
 router.get('/webservice/users', function(req, res, next) {
 
   // Custom SQL, list of items not already borrowed (LEFT OUTER JOIN borrow ... WHERE borrow.id IS NULL)
-  db.runsql('SELECT CONCAT_WS(\', \', name, login) AS `text`  \n\
+  db.runsql('SELECT user.id AS `id`, CONCAT_WS(\', \', name, login, comment) AS `text`  \n\
 FROM user \n\
 ; \n\
 ', function(err, rows, fields) {
     if (err) throw err;
     // Return result as JSON
-    var arrOut = new Array();
-    for (var row = 0; row < rows.length; row++)
-    {
-      arrOut.push(rows[row].text);
-    }
-    res.json(arrOut);
+    // Return result as JSON
+    res.json(rows);
   });
 
 });

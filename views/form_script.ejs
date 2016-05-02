@@ -43,8 +43,14 @@ $( document ).ready(function() {
   $("#_FORM_NEW").on('submit', function(event) {
     var objErrors = $(".has-error");
     var blnValue = (objErrors.length == 0);
-    if(!blnValue)
+    if(blnValue)
     {
+      // No error: do form submit, but do not send autocomplete fields
+      $(".form-dont-submit").prop("disabled", true);
+    }
+    else
+    {
+      // There are errors: do not submit form (block callback)
       event.preventDefault();
       // Set focus on first field in error
       $(objErrors.first()).find(".form-control").focus();
