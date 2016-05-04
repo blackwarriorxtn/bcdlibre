@@ -306,7 +306,8 @@ var delete_record = function(req, res, next, objFormParameters, fnCallback)
       else
       {
 
-        // Nothing (ignore field value)
+        // Build where clause with any key names and values
+        arrSQLWhere.push(objSQLConnection.escapeId(objField.name)+"="+strSQLValue); // TODO handle name translation from HTML FORM to SQL TABLE COLUMN
 
       } // else if (objFormParameters.autoincrement_column == strSentName)
 
