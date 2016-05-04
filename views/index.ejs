@@ -9,9 +9,13 @@
         <%- include('page_header', {title: title, subtitle: "Menu principal", menus:menus}) %>
         <div class="container-fluid">
           <%- include('page_menu', {items:[
-            {link:"borrow/", label:"Emprunts", icon:"share", tooltip:"Gérer les emprunts et les retours"},
+            {link:"borrow/new", label:"Emprunter", icon:"share", tooltip:"Emprunter un livre"},
+            {link:"borrow/delete", label:"Retourner", icon:"refresh", tooltip:"Retourner un livre"},
+            {link:"manage/", label:"Gérer", icon:"cog", tooltip:"Gérer les livres (inventaire) et les lecteurs"},
+/*
             {link:"item/", label:"Livres", icon:"book", tooltip:"Gérer les livres (inventaire)"},
             {link:"user/", label:"Lecteurs", icon:"user", tooltip:"Gérer les lecteurs (emprunteurs)"},
+*/
           ]}) %>
         </div>
       </div>

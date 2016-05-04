@@ -48,7 +48,7 @@ router.get('/list', function(req, res, next) {
   db.list_record(req, res, next, objFormParameters, null /* objSQLOptions */, function(err, result, fields) {
     if (err) throw err;
     // Display records with "list" template
-    res.render('item/list', { title: req.app.locals.title, subtitle: "Liste", menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, records:result });
+    res.render('item/list', { title: req.app.locals.title, subtitle: "Liste", menus:[req.app.locals.main_menu].concat(objMenu), form:objFormParameters, records:result });
   });
 
 });
@@ -61,7 +61,7 @@ router.get('/list', function(req, res, next) {
 // GET new (form)
 router.get('/new', function(req, res, next) {
 
-  res.render('item/new', {req:req, title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, message:{text:"Veuillez remplir le formulaire",type:"info"}, action:"new"});
+  res.render('item/new', {req:req, title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu].concat(objMenu), form:objFormParameters, message:{text:"Veuillez remplir le formulaire",type:"info"}, action:"new"});
 
 });
 // POST new (form validation then insert new record in database)
@@ -76,7 +76,7 @@ router.post('/new', function(req, res, next) {
     db.insert_record(req, res, next, objFormParameters, function(err, result, fields, objSQLConnection) {
       if (err)
       {
-        db.handle_error(err, res, "item/new", { title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, message:{text:"Ce livre est déjà dans l'inventaire ("+err+")",type:"error"}, action:"new" });
+        db.handle_error(err, res, "item/new", { title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu].concat(objMenu), form:objFormParameters, message:{text:"Ce livre est déjà dans l'inventaire ("+err+")",type:"error"}, action:"new" });
       }
       else
       {
@@ -115,7 +115,7 @@ router.post('/update', function(req, res, next) {
     db.update_record(req, res, next, objFormParameters, function(err, result, fields, objSQLConnection) {
       if (err)
       {
-        db.handle_error(err, res, "item/update", { title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, message:"Impossible de modifier ce livre ("+err+")" });
+        db.handle_error(err, res, "item/update", { title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu].concat(objMenu), form:objFormParameters, message:"Impossible de modifier ce livre ("+err+")" });
       }
       else
       {
@@ -150,7 +150,7 @@ router.post('/delete', function(req, res, next) {
     db.delete_record(req, res, next, objFormParameters, function(err, result, fields, objSQLConnection) {
       if (err)
       {
-        db.handle_error(err, res, "item/delete", { title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, message:"Impossible d'effacer ce livre ("+err+")" });
+        db.handle_error(err, res, "item/delete", { title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu].concat(objMenu), form:objFormParameters, message:"Impossible d'effacer ce livre ("+err+")" });
       }
       else
       {
@@ -179,7 +179,7 @@ router.get('/view', function(req, res, next) {
   db.view_record(req, res, next, objFormParameters, function(err, result, fields) {
     if (err) throw err;
     // Display first record with "view" template
-    res.render('item/view', { title: req.app.locals.title, subtitle: "Fiche", menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, record:result[0], message:null });
+    res.render('item/view', { title: req.app.locals.title, subtitle: "Fiche", menus:[req.app.locals.main_menu].concat(objMenu), form:objFormParameters, record:result[0], message:null });
   });
 
 });
@@ -355,7 +355,7 @@ router.get('/webservice', function(req, objLocalWebServiceResult, next) {
 // GET search (form)
 router.get('/search', function(req, res, next) {
 
-  res.render('item/new', {req:req, title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu,objMenu], form:objSearchParameters, message:{text:"Veuillez remplir le formulaire",type:"info"}, action:"search"});
+  res.render('item/new', {req:req, title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu].concat(objMenu), form:objSearchParameters, message:{text:"Veuillez remplir le formulaire",type:"info"}, action:"search"});
 
 });
 // POST search (form validation then search records in database)
@@ -370,7 +370,7 @@ router.post('/search', function(req, res, next) {
     db.search_record(req, res, next, objSearchParameters, null /* objSQLOptions */, function(err, result, fields) {
       if (err) throw err;
       // Display records with "list" template
-      res.render('item/list', { title: req.app.locals.title, subtitle: "Liste", menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, records:result });
+      res.render('item/list', { title: req.app.locals.title, subtitle: "Liste", menus:[req.app.locals.main_menu].concat(objMenu), form:objFormParameters, records:result });
     });
   } // else if (req.body["_CANCEL"] != null)
   else
