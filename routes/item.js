@@ -36,11 +36,11 @@ var objSearchParameters = {
   ]
 };
 // *** PARAMETERS (MENU)
-var objMenu = {text:"Livres",link:"/item/"};
+var objMenu = [{text:"Gérer",link:"/manage/"},{text:"Livres",link:"/item/"}];
 
 // GET menu
 router.get('/', function(req, res, next) {
-  res.render('item/index', { title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu] });
+  res.render('item/index', { title: req.app.locals.title, subtitle: null, menus:[req.app.locals.main_menu].concat(objMenu) });
 });
 // Get list
 router.get('/list', function(req, res, next) {
@@ -61,7 +61,7 @@ router.get('/list', function(req, res, next) {
 // GET new (form)
 router.get('/new', function(req, res, next) {
 
-  res.render('item/new', {req:req, title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu].concat(objMenu), form:objFormParameters, message:{text:"Veuillez remplir le formulaire",type:"info"}, action:"new"});
+  res.render('item/new', {req:req, title: req.app.locals.title, subtitle: null, menus:[req.app.locals.main_menu].concat(objMenu), form:objFormParameters, message:{text:"Veuillez remplir le formulaire",type:"info"}, action:"new"});
 
 });
 // POST new (form validation then insert new record in database)
@@ -76,7 +76,7 @@ router.post('/new', function(req, res, next) {
     db.insert_record(req, res, next, objFormParameters, function(err, result, fields, objSQLConnection) {
       if (err)
       {
-        db.handle_error(err, res, "item/new", { title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu].concat(objMenu), form:objFormParameters, message:{text:"Ce livre est déjà dans l'inventaire ("+err+")",type:"error"}, action:"new" });
+        db.handle_error(err, res, "item/new", { title: req.app.locals.title, subtitle: null, menus:[req.app.locals.main_menu].concat(objMenu), form:objFormParameters, message:{text:"Ce livre est déjà dans l'inventaire ("+err+")",type:"error"}, action:"new" });
       }
       else
       {
@@ -115,7 +115,7 @@ router.post('/update', function(req, res, next) {
     db.update_record(req, res, next, objFormParameters, function(err, result, fields, objSQLConnection) {
       if (err)
       {
-        db.handle_error(err, res, "item/update", { title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu].concat(objMenu), form:objFormParameters, message:"Impossible de modifier ce livre ("+err+")" });
+        db.handle_error(err, res, "item/update", { title: req.app.locals.title, subtitle: null, menus:[req.app.locals.main_menu].concat(objMenu), form:objFormParameters, message:"Impossible de modifier ce livre ("+err+")" });
       }
       else
       {
@@ -150,7 +150,7 @@ router.post('/delete', function(req, res, next) {
     db.delete_record(req, res, next, objFormParameters, function(err, result, fields, objSQLConnection) {
       if (err)
       {
-        db.handle_error(err, res, "item/delete", { title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu].concat(objMenu), form:objFormParameters, message:"Impossible d'effacer ce livre ("+err+")" });
+        db.handle_error(err, res, "item/delete", { title: req.app.locals.title, subtitle: null, menus:[req.app.locals.main_menu].concat(objMenu), form:objFormParameters, message:"Impossible d'effacer ce livre ("+err+")" });
       }
       else
       {
@@ -355,7 +355,7 @@ router.get('/webservice', function(req, objLocalWebServiceResult, next) {
 // GET search (form)
 router.get('/search', function(req, res, next) {
 
-  res.render('item/new', {req:req, title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu].concat(objMenu), form:objSearchParameters, message:{text:"Veuillez remplir le formulaire",type:"info"}, action:"search"});
+  res.render('item/new', {req:req, title: req.app.locals.title, subtitle: "Recherche", menus:[req.app.locals.main_menu].concat(objMenu), form:objSearchParameters, message:{text:"Veuillez remplir le formulaire",type:"info"}, action:"search"});
 
 });
 // POST search (form validation then search records in database)

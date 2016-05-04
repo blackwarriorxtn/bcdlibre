@@ -1,4 +1,11 @@
 <div class="page-header">
+  <%
+  if (subtitle == null || subtitle == "")
+  {
+    subtitle = (menus ? menus[menus.length - 1].text : "");
+    menus.pop();
+  }
+  %>
   <h1><%= title %> <small><%= subtitle %></small></h1>
   <ol class="breadcrumb">
     <% for(var i=0; i< menus.length; i++) {
