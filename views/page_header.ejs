@@ -6,7 +6,14 @@
     menus.pop();
   }
   %>
-  <h1><%= title %> <small><%= subtitle %></small></h1>
+  <div class="row">
+    <div class="col-md-11"><h1><%= title %> <small><%= subtitle %></small></h1></div><!-- class="col-md-11" -->
+    <div class="col-md-1">
+      <a href="/manage" class="btn" title="Gérer les livres (inventaire) et les lecteurs (utilisateurs)">
+        <h2><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></h2>
+      </a>
+    </div><!-- class="col-md-1" -->
+  </div><!-- class="row" -->
   <ol class="breadcrumb">
     <% for(var i=0; i< menus.length; i++) {
       if (menus[i].link == null) { %>

@@ -76,6 +76,10 @@ router.post('/new', function(req, res, next) {
     db.insert_record(req, res, next, objFormParameters, function(err, result, fields, objSQLConnection) {
       if (err)
       {
+        if (objSQLConnection)
+        {
+          objSQLConnection.end();
+        }
         db.handle_error(err, res, "item/new", { title: req.app.locals.title, subtitle: null, menus:[req.app.locals.main_menu].concat(objMenu), form:objFormParameters, message:{text:"Ce livre est déjà dans l'inventaire ("+err+")",type:"error"}, action:"new" });
       }
       else
@@ -83,6 +87,10 @@ router.post('/new', function(req, res, next) {
         // Always add at least ONE exemplary of the book (item => item_detail)
         db.runsql("INSERT INTO item(item_detail_id) VALUES(LAST_INSERT_ID());" /* strSQL */, function(err, rows, fields) {
           if (err) throw err;
+          if (objSQLConnection)
+          {
+            objSQLConnection.end();
+          }
           // Redirect to list
           res.redirect('list'); // TODO res.redirect('view') compute parameters
         }, objSQLConnection);

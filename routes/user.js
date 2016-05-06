@@ -99,6 +99,10 @@ router.post('/update', function(req, res, next) {
   else if (req.body["_OK"] != null)
   {
     db.update_record(req, res, next, objFormParameters, function(err, result, fields, objSQLConnection) {
+      if (objSQLConnection)
+      {
+        objSQLConnection.end();
+      }
       if (err)
       {
         db.handle_error(err, res, "user/update", { title: req.app.locals.title, subtitle: null, menus:[req.app.locals.main_menu].concat(objMenu), form:objFormParameters, message:"Impossible de modifier ce lecteur ("+err+")" });
@@ -129,6 +133,10 @@ router.post('/delete', function(req, res, next) {
   else if (req.body["_OK"] != null)
   {
     db.delete_record(req, res, next, objFormParameters, function(err, result, fields, objSQLConnection) {
+      if (objSQLConnection)
+      {
+        objSQLConnection.end();
+      }
       if (err)
       {
         db.handle_error(err, res, "user/delete", { title: req.app.locals.title, subtitle: null, menus:[req.app.locals.main_menu].concat(objMenu), form:objFormParameters, message:"Impossible d'effacer ce lecteur ("+err+")" });
