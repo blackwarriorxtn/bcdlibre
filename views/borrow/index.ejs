@@ -9,10 +9,10 @@
         <%- include('../page_header', {title: title, subtitle: subtitle, menus:[{text:"Menu principal", link:"/"}]}) %>
         <div class="container">
           <%- include('../page_menu', {items:[
-            {link:"new", label:"Nouveau", icon:"plus", tooltip:"Ajouter un emprunt (sortir un livre)"},
-            {link:"list", label:"Liste", icon:"th-list", tooltip:"Liste des emprunts (livres sortis)"},
-            {link:"search", label:"Recherche", icon:"search", tooltip:"Rechercher un emprunt"},
-            {link:"delete", label:"Retour", icon:"save", tooltip:"Rendre un livre (retour en bibliothèque)"},
+            {link:"new", label:"Emprunter", icon:"share", tooltip:"Ajouter un emprunt (sortir un livre)"},
+            {link:"delete", label:"Retourner", icon:"refresh", tooltip:"Rendre un livre (retour en bibliothèque)"},
+            {link:"search", label:"Rechercher", icon:"search", tooltip:"Rechercher un emprunt"},
+            {link:"list", label:"Lister", icon:"th-list", tooltip:"Liste des emprunts (livres sortis)"},
           ]}) %>
         </div>
       </div>
