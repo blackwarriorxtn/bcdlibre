@@ -5,6 +5,7 @@
 <title>Example of Twitter Typeahead</title>
 <script type="text/javascript" src="js/jquery-1.12.3.min.js"></script>
 <script type="text/javascript" src="typeahead/0.11.1/typeahead.jquery.min.js"></script>
+<script type="text/javascript" src="typeahead/0.11.1/bloodhound.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
   var substringMatcher = function(strs) {
@@ -45,10 +46,27 @@ $('#the-basics .typeahead').typeahead({
   highlight: true,
   minLength: 1
 },
-{
+ {
   name: 'states',
   source: substringMatcher(states)
-});});  
+  });
+
+  var bestPictures = new Bloodhound({
+    datumTokenizer: Bloodhound.tokenizers.obj.whitespace,
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    remote: {
+      url: '/borrow/webservice/users?action=borrow&text=%QUERYSTRING',
+      wildcard: '%QUERYSTRING'
+    }
+  });
+
+  $('#remote .typeahead').typeahead(null, {
+    name: 'best-pictures',
+    display: 'text',
+    source: bestPictures
+  });
+
+});
 </script>
 
 </head>
@@ -56,5 +74,10 @@ $('#the-basics .typeahead').typeahead({
   <div id="the-basics">
     <input class="typeahead" type="text" placeholder="States of USA" autofocus>
   </div>
+
+
+  <div id="remote">
+    <input class="typeahead" type="text" placeholder="Oscar winners for Best Picture">
+  </div>
 </body>
-</html>                                		
+</html>

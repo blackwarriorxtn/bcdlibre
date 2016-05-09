@@ -3,23 +3,6 @@
 $(document).ready(function(){
 
   // Initial setup of autocomplete
-  var users = new Bloodhound({
-    datumTokenizer: Bloodhound.tokenizers.whitespace,
-    queryTokenizer: Bloodhound.tokenizers.whitespace,
-    // url points to a json web service that contains an array of users
-    remote: {
-      url: 'webservice/users?action=borrow'
-    }
-  });
-
-  var items = new Bloodhound({
-    datumTokenizer: Bloodhound.tokenizers.whitespace,
-    queryTokenizer: Bloodhound.tokenizers.whitespace,
-    // url points to a json web service that contains an array of users
-    remote: {
-      url: 'webservice/items?action=borrow'
-    }
-  });
 
   // Enable auto-complete feature (typeahead) for fields "item" and "user"
   $('#item_search').typeahead({
@@ -29,11 +12,21 @@ $(document).ready(function(){
   },
   {
     name: 'items',
-    source: items,
+    source: new Bloodhound({
+      datumTokenizer: Bloodhound.tokenizers.whitespace('text'),
+      queryTokenizer: Bloodhound.tokenizers.whitespace,
+      // url points to a json web service that contains an array of users
+      remote: {
+        url: 'webservice/items?action=borrow&text=%QUERYSTRING',
+        wildcard: '%QUERYSTRING'
+      },
+      identify: function(obj) { return obj.id; }
+    }),
     display: function (suggestion) {
       return(suggestion.text);
     }
   });
+
   $('#user_search').typeahead({
     hint: true,
     highlight: true,
@@ -41,7 +34,16 @@ $(document).ready(function(){
   },
   {
     name: 'users',
-    source: users,
+    source: new Bloodhound({
+      datumTokenizer: Bloodhound.tokenizers.whitespace,
+      queryTokenizer: Bloodhound.tokenizers.whitespace,
+      // url points to a json web service that contains an array of users
+      remote: {
+        url: 'webservice/users?action=borrow&text=%QUERYSTRING',
+        wildcard: '%QUERYSTRING'
+      },
+      identify: function(obj) { return obj.id; }
+    }),
     display: function (suggestion) {
       return(suggestion.text);
     }

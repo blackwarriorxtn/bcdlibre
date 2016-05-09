@@ -149,7 +149,15 @@ router.post('/delete', function(req, res, next) {
 // Web Service returning items to borrow OR return
 router.get('/webservice/items', function(req, res, next) {
 
-  console.log("req.query=%j", req.query);
+  var objSQLConnection = db.new_connection();
+
+  console.log("/webservice/items:req.query=%j", req.query);
+  var strSQLWhere = null;
+  if (req.query.text)
+  {
+    var strSQLText = objSQLConnection.escape(req.query.text);
+    strSQLWhere = " MATCH(title,author,isbn13) AGAINST ("+strSQLText+" IN BOOLEAN MODE)\n";
+  }
   if (req.query && req.query.action == "borrow")
   {
     // Custom SQL, list of items not already borrowed (LEFT OUTER JOIN borrow ... WHERE borrow.id IS NULL)
@@ -158,11 +166,13 @@ router.get('/webservice/items', function(req, res, next) {
   JOIN item_detail ON item.item_detail_id = item_detail.id \n\
   LEFT OUTER JOIN borrow ON borrow.item_id = item.id \n\
   WHERE borrow.id IS NULL \n\
+  '+(strSQLWhere == null ? "" : "AND "+strSQLWhere)+'\
   GROUP BY item.id \n\
   ; \n\
   ', function(err, rows, fields) {
       if (err) throw err;
       // Return result as JSON
+      console.log("/webservice/items:rows=%j", rows);
       res.json(rows);
     });
   } // if (req.body.action == "borrow")
@@ -174,11 +184,13 @@ router.get('/webservice/items', function(req, res, next) {
   JOIN item_detail ON item.item_detail_id = item_detail.id \n\
   LEFT OUTER JOIN borrow ON borrow.item_id = item.id \n\
   WHERE borrow.id IS NOT NULL \n\
+  '+(strSQLWhere == null ? "" : "AND "+strSQLWhere)+'\
   GROUP BY item.id \n\
   ; \n\
   ', function(err, rows, fields) {
       if (err) throw err;
       // Return result as JSON
+      console.log("/webservice/items:rows=%j", rows);
       res.json(rows);
     });
   } // if (req.query && req.query.action == "return")
@@ -188,31 +200,48 @@ router.get('/webservice/items', function(req, res, next) {
     db.runsql('SELECT item.id AS `id`, CONCAT_WS(\', \', title, author, isbn13) AS `text`  \n\
   FROM item \n\
   JOIN item_detail ON item.item_detail_id = item_detail.id \n\
+  '+(strSQLWhere == null ? "" : "WHERE "+strSQLWhere)+'\
   ; \n\
   ', function(err, rows, fields) {
       if (err) throw err;
       // Return result as JSON
+      console.log("/webservice/items:rows=%j", rows);
       res.json(rows);
     });
   } // else if (req.query && req.query.action == "return")
+
+  if (objSQLConnection)
+  {
+    objSQLConnection.end();
+  }
 
 });
 
 // Web Service returning users borrowing OR returning a book
 router.get('/webservice/users', function(req, res, next) {
 
-  console.log("req.query=%j", req.query);
+  var objSQLConnection = db.new_connection();
+  console.log("/webservice/users:req.query=%j", req.query);
+  var strSQLWhere = null;
+  if (req.query.text)
+  {
+    var strSQLText = objSQLConnection.escape(req.query.text);
+    strSQLWhere = " MATCH (name,login,comment) AGAINST ("+strSQLText+" IN BOOLEAN MODE)\n";
+  }
   if (req.query && req.query.action == "borrow")
   {
-    // Custom SQL, list of users allowed to borrow (ALL users - no maximum is enforced)
+    // Custom SQL, list of users matching a string allowed to borrow (ALL users - no maximum is enforced)
     db.runsql('SELECT user.id AS `id`, CONCAT_WS(\', \', name, login, comment) AS `text`  \n\
   FROM user \n\
+  '+(strSQLWhere == null ? "" : "WHERE "+strSQLWhere)+'\
   ; \n\
   ', function(err, rows, fields) {
       if (err) throw err;
       // Return result as JSON
+      console.log("/webservice/users:rows=%j", rows);
       res.json(rows);
-    });
+    },
+  objSQLConnection);
   } // if (req.body.action == "borrow")
   else if (req.query && req.query.action == "return")
   {
@@ -221,26 +250,37 @@ router.get('/webservice/users', function(req, res, next) {
   FROM user \n\
   LEFT OUTER JOIN borrow ON borrow.user_id = user.id \n\
   WHERE borrow.id IS NOT NULL \n\
+  '+(strSQLWhere == null ? "" : "AND "+strSQLWhere)+'\
   GROUP BY user.id \n\
   ; \n\
   ', function(err, rows, fields) {
       if (err) throw err;
       // Return result as JSON
+      console.log("/webservice/users:rows=%j", rows);
       res.json(rows);
-    });
+    },
+  objSQLConnection);
   } // if (req.query && req.query.action == "return")
   else
   {
     // Custom SQL, list of ALL users
     db.runsql('SELECT user.id AS `id`, CONCAT_WS(\', \', name, login, comment) AS `text`  \n\
   FROM user \n\
+  '+(strSQLWhere == null ? "" : "WHERE "+strSQLWhere)+'\
   ; \n\
   ', function(err, rows, fields) {
       if (err) throw err;
       // Return result as JSON
+      console.log("/webservice/users:rows=%j", rows);
       res.json(rows);
-    });
+    },
+  objSQLConnection);
   } // else if (req.query && req.query.action == "return")
+
+  if (objSQLConnection)
+  {
+    objSQLConnection.end();
+  }
 
 });
 
