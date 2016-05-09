@@ -156,7 +156,7 @@ router.get('/webservice/items', function(req, res, next) {
   if (req.query.text)
   {
     var strSQLText = objSQLConnection.escape(req.query.text);
-    strSQLWhere = " MATCH(title,author,isbn13) AGAINST ("+strSQLText+" IN BOOLEAN MODE)\n";
+    strSQLWhere = " MATCH(item_detail_search.title,item_detail_search.author,item_detail_search.isbn13) AGAINST ("+strSQLText+" IN BOOLEAN MODE)\n";
   }
   if (req.query && req.query.action == "borrow")
   {
@@ -164,6 +164,7 @@ router.get('/webservice/items', function(req, res, next) {
     db.runsql('SELECT item.id AS `id`, CONCAT_WS(\', \', title, author, isbn13) AS `text`  \n\
   FROM item \n\
   JOIN item_detail ON item.item_detail_id = item_detail.id \n\
+  JOIN item_detail_search ON item_detail_search.item_detail_id = item_detail.id \n\
   LEFT OUTER JOIN borrow ON borrow.item_id = item.id \n\
   WHERE borrow.id IS NULL \n\
   '+(strSQLWhere == null ? "" : "AND "+strSQLWhere)+'\
@@ -182,6 +183,7 @@ router.get('/webservice/items', function(req, res, next) {
     db.runsql('SELECT item.id AS `id`, CONCAT_WS(\', \', title, author, isbn13) AS `text`  \n\
   FROM item \n\
   JOIN item_detail ON item.item_detail_id = item_detail.id \n\
+  JOIN item_detail_search ON item_detail_search.item_detail_id = item_detail.id \n\
   LEFT OUTER JOIN borrow ON borrow.item_id = item.id \n\
   WHERE borrow.id IS NOT NULL \n\
   '+(strSQLWhere == null ? "" : "AND "+strSQLWhere)+'\
@@ -200,6 +202,7 @@ router.get('/webservice/items', function(req, res, next) {
     db.runsql('SELECT item.id AS `id`, CONCAT_WS(\', \', title, author, isbn13) AS `text`  \n\
   FROM item \n\
   JOIN item_detail ON item.item_detail_id = item_detail.id \n\
+  JOIN item_detail_search ON item_detail_search.item_detail_id = item_detail.id \n\
   '+(strSQLWhere == null ? "" : "WHERE "+strSQLWhere)+'\
   ; \n\
   ', function(err, rows, fields) {
