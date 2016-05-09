@@ -63,6 +63,7 @@ CREATE TABLE item_detail_search(
   title VARCHAR(255) NOT NULL COMMENT 'Item Title',
   author VARCHAR(255) NOT NULL COMMENT 'Item Author',
   description TEXT NULL COMMENT 'Item Description (synopsis)',
+  isbn13 VARCHAR(13) NULL COMMENT 'International Standard Book Number (ISBN13)',
 
   PRIMARY KEY(id),
   KEY item_detail_search_title(title),
@@ -70,7 +71,8 @@ CREATE TABLE item_detail_search(
   KEY item_detail_search_description(description(64)),
   FULLTEXT KEY item_ft_title(title),
   FULLTEXT KEY item_ft_author(author), 
-  FULLTEXT KEY item_ft_description(description)
+  FULLTEXT KEY item_ft_description(description),
+  FULLTEXT KEY item_ft_isbn13(isbn13)
 
 )  ENGINE=MyISAM COMMENT 'Search engine for items (MyISAM Format for FULL TEXT SEARCHES)'
 ;
@@ -84,7 +86,7 @@ SET SESSION SQL_MODE="";;
 DROP TRIGGER IF EXISTS `item_detail_after_insert`;;
 CREATE DEFINER=CURRENT_USER TRIGGER `item_detail_after_insert` AFTER INSERT ON `item_detail` 
 FOR EACH ROW BEGIN
-  INSERT INTO item_detail_search(item_detail_id, title, author, description) VALUES(NEW.id, NEW.title, NEW.author, NEW.description);
+  INSERT INTO item_detail_search(item_detail_id, title, author, description, isbn13) VALUES(NEW.id, NEW.title, NEW.author, NEW.description, NEW.isbn13);
 END ;;
 /* UPDATE : After UPDATE table, UPDATE search table */
 DROP TRIGGER IF EXISTS `item_detail_after_update`;;
@@ -93,7 +95,8 @@ FOR EACH ROW BEGIN
   UPDATE item_detail_search SET 
     item_detail_search.title = NEW.title, 
     item_detail_search.author = NEW.author,  
-    item_detail_search.description = NEW.description
+    item_detail_search.description = NEW.description,
+    item_detail_search.isbn13 = NEW.isbn13
   WHERE item_detail_search.item_detail_id = NEW.id;
 END ;;
 /* DELETE : After DELETE table, DELETE search table */

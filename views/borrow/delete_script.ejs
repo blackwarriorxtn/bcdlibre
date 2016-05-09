@@ -8,7 +8,8 @@ $(document).ready(function(){
     queryTokenizer: Bloodhound.tokenizers.whitespace,
     // url points to a json web service that contains an array of users
     remote: {
-      url: 'webservice/users?action=return'
+      url: 'webservice/users?action=return&text=%QUERYSTRING',
+      wildcard: '%QUERYSTRING'
     }
   });
 
@@ -17,7 +18,8 @@ $(document).ready(function(){
     queryTokenizer: Bloodhound.tokenizers.whitespace,
     // url points to a json web service that contains an array of users
     remote: {
-      url: 'webservice/items?action=return'
+      url: 'webservice/items?action=return&text=%QUERYSTRING',
+      wildcard: '%QUERYSTRING'
     }
   });
 

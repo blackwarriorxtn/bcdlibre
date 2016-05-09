@@ -161,7 +161,7 @@ router.get('/webservice/items', function(req, res, next) {
   if (req.query && req.query.action == "borrow")
   {
     // Custom SQL, list of items not already borrowed (LEFT OUTER JOIN borrow ... WHERE borrow.id IS NULL)
-    db.runsql('SELECT item.id AS `id`, CONCAT_WS(\', \', title, author, isbn13) AS `text`  \n\
+    db.runsql('SELECT item.id AS `id`, CONCAT_WS(\', \', item_detail.title, item_detail.author, item_detail.isbn13) AS `text`  \n\
   FROM item \n\
   JOIN item_detail ON item.item_detail_id = item_detail.id \n\
   JOIN item_detail_search ON item_detail_search.item_detail_id = item_detail.id \n\
@@ -180,7 +180,7 @@ router.get('/webservice/items', function(req, res, next) {
   else if (req.query && req.query.action == "return")
   {
     // Custom SQL, list of items already borrowed (LEFT OUTER JOIN borrow ... WHERE borrow.id IS NOT NULL)
-    db.runsql('SELECT item.id AS `id`, CONCAT_WS(\', \', title, author, isbn13) AS `text`  \n\
+    db.runsql('SELECT item.id AS `id`, CONCAT_WS(\', \', item_detail.title, item_detail.author, item_detail.isbn13) AS `text`  \n\
   FROM item \n\
   JOIN item_detail ON item.item_detail_id = item_detail.id \n\
   JOIN item_detail_search ON item_detail_search.item_detail_id = item_detail.id \n\
@@ -199,7 +199,7 @@ router.get('/webservice/items', function(req, res, next) {
   else
   {
     // Custom SQL, list of ALL items
-    db.runsql('SELECT item.id AS `id`, CONCAT_WS(\', \', title, author, isbn13) AS `text`  \n\
+    db.runsql('SELECT item.id AS `id`, CONCAT_WS(\', \', item_detail.title, item_detail.author, item_detail.isbn13) AS `text`  \n\
   FROM item \n\
   JOIN item_detail ON item.item_detail_id = item_detail.id \n\
   JOIN item_detail_search ON item_detail_search.item_detail_id = item_detail.id \n\
@@ -229,13 +229,14 @@ router.get('/webservice/users', function(req, res, next) {
   if (req.query.text)
   {
     var strSQLText = objSQLConnection.escape(req.query.text);
-    strSQLWhere = " MATCH (name,login,comment) AGAINST ("+strSQLText+" IN BOOLEAN MODE)\n";
+    strSQLWhere = " MATCH (user_search.name,user_search.login,user_search.comment) AGAINST ("+strSQLText+" IN BOOLEAN MODE)\n";
   }
   if (req.query && req.query.action == "borrow")
   {
     // Custom SQL, list of users matching a string allowed to borrow (ALL users - no maximum is enforced)
-    db.runsql('SELECT user.id AS `id`, CONCAT_WS(\', \', name, login, comment) AS `text`  \n\
+    db.runsql('SELECT user.id AS `id`, CONCAT_WS(\', \', user.name, user.login, user.comment) AS `text`  \n\
   FROM user \n\
+  JOIN user_search ON user_search.user_id = user_search.id \n\
   '+(strSQLWhere == null ? "" : "WHERE "+strSQLWhere)+'\
   ; \n\
   ', function(err, rows, fields) {
@@ -249,8 +250,9 @@ router.get('/webservice/users', function(req, res, next) {
   else if (req.query && req.query.action == "return")
   {
     // Custom SQL, list of users having already borrowed (LEFT OUTER JOIN borrow ... WHERE borrow.id IS NOT NULL)
-    db.runsql('SELECT user.id AS `id`, CONCAT_WS(\', \', name, login, comment) AS `text`  \n\
+    db.runsql('SELECT user.id AS `id`, CONCAT_WS(\', \', user.name, user.login, user.comment) AS `text`  \n\
   FROM user \n\
+  JOIN user_search ON user_search.user_id = user_search.id \n\
   LEFT OUTER JOIN borrow ON borrow.user_id = user.id \n\
   WHERE borrow.id IS NOT NULL \n\
   '+(strSQLWhere == null ? "" : "AND "+strSQLWhere)+'\
@@ -267,8 +269,9 @@ router.get('/webservice/users', function(req, res, next) {
   else
   {
     // Custom SQL, list of ALL users
-    db.runsql('SELECT user.id AS `id`, CONCAT_WS(\', \', name, login, comment) AS `text`  \n\
+    db.runsql('SELECT user.id AS `id`, CONCAT_WS(\', \', user.name, user.login, user.comment) AS `text`  \n\
   FROM user \n\
+  JOIN user_search ON user_search.user_id = user_search.id \n\
   '+(strSQLWhere == null ? "" : "WHERE "+strSQLWhere)+'\
   ; \n\
   ', function(err, rows, fields) {
