@@ -24,22 +24,10 @@ $(document).ready(function(){
   });
 
   // Enable auto-complete feature (typeahead) for fields "item" and "user"
-  $('#item_search').typeahead({
-    hint: true,
-    highlight: true,
-    minLength: 1
-  },
-  {
-    name: 'items',
-    source: items,
-    display: function (suggestion) {
-      return(suggestion.text);
-    }
-  });
   $('#user_search').typeahead({
     hint: true,
     highlight: true,
-    minLength: 1
+    minLength: 3
   },
   {
     name: 'users',
@@ -48,16 +36,28 @@ $(document).ready(function(){
       return(suggestion.text);
     }
   });
+  $('#item_search').typeahead({
+    hint: true,
+    highlight: true,
+    minLength: 3
+  },
+  {
+    name: 'items',
+    source: items,
+    display: function (suggestion) {
+      return(suggestion.text);
+    }
+  });
 
   // Callbacks for auto-completion
-  $('#user_search').bind('typeahead:select', function(event, suggestion) {
-    console.log('Selection: ',suggestion);
-    $("#user_id").val(suggestion.id);
-    $(event.target).closest(".form-group").removeClass("has-error has-warning").addClass("has-success");
-  });
   $('#item_search').bind('typeahead:select', function(event, suggestion) {
     console.log('Selection: ',suggestion);
     $("#item_id").val(suggestion.id);
+    $(event.target).closest(".form-group").removeClass("has-error has-warning").addClass("has-success");
+  });
+  $('#user_search').bind('typeahead:select', function(event, suggestion) {
+    console.log('Selection: ',suggestion);
+    $("#user_id").val(suggestion.id);
     $(event.target).closest(".form-group").removeClass("has-error has-warning").addClass("has-success");
   });
 
