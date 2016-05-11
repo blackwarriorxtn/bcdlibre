@@ -117,6 +117,8 @@ router.post('/delete', function(req, res, next) {
   } // if (req.body["CANCEL"] != null)
   else if (req.body["_OK"] != null)
   {
+    // DEBUG
+    console.log("req.body=%j", req.body);
     db.delete_record(req, res, next, objFormParameters, function(err, result, fields) {
       if (err)
       {
@@ -180,11 +182,16 @@ router.get('/webservice/items', function(req, res, next) {
   else if (req.query && req.query.action == "return")
   {
     // Custom SQL, list of items already borrowed (LEFT OUTER JOIN borrow ... WHERE borrow.id IS NOT NULL)
-    db.runsql('SELECT item.id AS `id`, CONCAT_WS(\', \', item_detail.title, item_detail.author, item_detail.isbn13) AS `text`  \n\
+    db.runsql('\
+  SELECT item.id AS `id`, \n\
+    CONCAT_WS(\', \', item_detail.title, item_detail.author, item_detail.isbn13) AS `text`, \n\
+    borrow.user_id AS `borrower_id`,  \n\
+    user.login AS `borrower_login`  \n\
   FROM item \n\
   JOIN item_detail ON item.item_detail_id = item_detail.id \n\
   JOIN item_detail_search ON item_detail_search.item_detail_id = item_detail.id \n\
   LEFT OUTER JOIN borrow ON borrow.item_id = item.id \n\
+  LEFT OUTER JOIN user ON user.id = borrow.user_id \n\
   WHERE borrow.id IS NOT NULL \n\
   '+(strSQLWhere == null ? "" : "AND "+strSQLWhere)+'\
   GROUP BY item.id \n\
@@ -234,7 +241,7 @@ router.get('/webservice/users', function(req, res, next) {
   if (req.query && req.query.action == "borrow")
   {
     // Custom SQL, list of users matching a string allowed to borrow (ALL users - no maximum is enforced)
-    db.runsql('SELECT user.id AS `id`, CONCAT_WS(\', \', user.name, user.login, user.comment) AS `text`  \n\
+    db.runsql('SELECT user.id AS `id`, CONCAT_WS(\', \', CONCAT(\'#\',user.id), user.name, user.login, user.comment) AS `text`  \n\
   FROM user \n\
   JOIN user_search ON user_search.user_id = user_search.id \n\
   '+(strSQLWhere == null ? "" : "WHERE "+strSQLWhere)+'\
@@ -250,7 +257,7 @@ router.get('/webservice/users', function(req, res, next) {
   else if (req.query && req.query.action == "return")
   {
     // Custom SQL, list of users having already borrowed (LEFT OUTER JOIN borrow ... WHERE borrow.id IS NOT NULL)
-    db.runsql('SELECT user.id AS `id`, CONCAT_WS(\', \', user.name, user.login, user.comment) AS `text`  \n\
+    db.runsql('SELECT user.id AS `id`, CONCAT_WS(\', \', CONCAT(\'#\',user.id), user.name, user.login, user.comment) AS `text`  \n\
   FROM user \n\
   JOIN user_search ON user_search.user_id = user_search.id \n\
   LEFT OUTER JOIN borrow ON borrow.user_id = user.id \n\
@@ -269,7 +276,7 @@ router.get('/webservice/users', function(req, res, next) {
   else
   {
     // Custom SQL, list of ALL users
-    db.runsql('SELECT user.id AS `id`, CONCAT_WS(\', \', user.name, user.login, user.comment) AS `text`  \n\
+    db.runsql('SELECT user.id AS `id`, CONCAT_WS(\', \', CONCAT(\'#\',user.id), user.name, user.login, user.comment) AS `text`  \n\
   FROM user \n\
   JOIN user_search ON user_search.user_id = user_search.id \n\
   '+(strSQLWhere == null ? "" : "WHERE "+strSQLWhere)+'\
@@ -282,6 +289,49 @@ router.get('/webservice/users', function(req, res, next) {
     },
   objSQLConnection);
   } // else if (req.query && req.query.action == "return")
+
+  if (objSQLConnection)
+  {
+    objSQLConnection.end();
+  }
+
+});
+
+
+// Web Service for returning books (get list of borrows i.e. books+users)
+router.get('/webservice/borrows', function(req, res, next) {
+
+  var objSQLConnection = db.new_connection();
+  console.log("/webservice/borrows:req.query=%j", req.query);
+  var strSQLWhere = null;
+  if (req.query.text)
+  {
+    var strSQLText = objSQLConnection.escape(req.query.text);
+    // Match against items AND users
+    strSQLWhere = " MATCH (item_detail_search.title,item_detail_search.author,item_detail_search.isbn13, user_search.name,user_search.login,user_search.comment) AGAINST ("+strSQLText+" IN BOOLEAN MODE)\n";
+  }
+  // Custom SQL, list of borrows matching a string
+  db.runsql('\
+  SELECT borrow.id  AS `id`, \n\
+    CONCAT_WS(\', \', item_detail.title, item_detail.author, item_detail.isbn13, user.login, user.name, user.comment) AS `text`, \n\
+    borrow.user_id AS `borrower_id`,  \n\
+    user.login AS `borrower_login`  \n\
+  FROM borrow \n\
+  JOIN item ON borrow.item_id = item.id \n\
+  JOIN item_detail ON item.item_detail_id = item_detail.id \n\
+  JOIN item_detail_search ON item_detail_search.item_detail_id = item_detail.id \n\
+  JOIN user ON user.id = borrow.user_id \n\
+  JOIN user_search ON user_search.user_id = user.id \n\
+'+(strSQLWhere == null ? "" : "AND "+strSQLWhere)+'\
+GROUP BY item.id, user.id \n\
+; \n\
+', function(err, rows, fields) {
+    if (err) throw err;
+    // Return result as JSON
+    console.log("/webservice/borrows:rows=%j", rows);
+    res.json(rows);
+  },
+  objSQLConnection);
 
   if (objSQLConnection)
   {

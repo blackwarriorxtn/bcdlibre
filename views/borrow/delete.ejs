@@ -14,18 +14,12 @@
           <%- include('../form_message', {message: message}) %>
           <div class="panel-body">
           <form id="_FORM_NEW" class="form-inline" action="delete" method="post">
-            <input type="hidden" name="item_id" id="item_id">
-            <input type="hidden" name="user_id" id="user_id">
-                <div class="form-group has-feedback">
-                    <input type="text" class="form-control form-control-required form-dont-submit" name="item_search" id="item_search" autocomplete="off" spellcheck="false" size="50" placeholder="Taper l'identifiant du livre à emprunter (ISBN ou Titre)" autofocus>
-                    <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
-                    <span id="_STATUS_item_search" class="sr-only">(success)</span>
-                </div><!-- class="form-group has-feedback" -->
-                <div class="form-group has-feedback">
-                    <input type="text" class="form-control form-control-required form-dont-submit" name="user_search" id="user_search" autocomplete="off" spellcheck="false" size="50" placeholder="Taper le nom ou le compte du lecteur)">
-                    <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
-                    <span id="_STATUS_user_search" class="sr-only">(success)</span>
-                </div><!-- class="form-group has-feedback" -->
+            <input type="hidden" name="id" id="id">
+            <div class="form-group has-feedback">
+                <input type="text" class="form-control form-control-required form-dont-submit" name="borrow_search" id="borrow_search" autocomplete="off" spellcheck="false" size="50" placeholder="Livre et emprunteur (ISBN, Titre, Nom, Compte)" autofocus>
+                <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+                <span id="_STATUS_borrow_search" class="sr-only">(success)</span>
+            </div><!-- class="form-group has-feedback" -->
 
 <p>
             <%- include('../form_okcancel', { visible:true }) %>

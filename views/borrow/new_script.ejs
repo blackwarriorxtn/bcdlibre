@@ -50,14 +50,19 @@ $(document).ready(function(){
   });
 
   // Callbacks for auto-completion
-  $('#user_search').bind('typeahead:select', function(event, suggestion) {
-    console.log('Selection: ',suggestion);
-    $("#user_id").val(suggestion.id);
-    $(event.target).closest(".form-group").removeClass("has-error has-warning").addClass("has-success");
-  });
   $('#item_search').bind('typeahead:select', function(event, suggestion) {
     console.log('Selection: ',suggestion);
     $("#item_id").val(suggestion.id);
+    $(event.target).closest(".form-group").removeClass("has-error has-warning").addClass("has-success");
+    // Set focus on next field (user)
+    $("#user_search").focus();
+  }).bind('typeahead:render', function(e) {
+    // Automatically select first option returned by autocomplete
+    $('#_FORM_NEW').parent().find('.tt-selectable:first').addClass('tt-cursor');
+  });
+  $('#user_search').bind('typeahead:select', function(event, suggestion) {
+    console.log('Selection: ',suggestion);
+    $("#user_id").val(suggestion.id);
     $(event.target).closest(".form-group").removeClass("has-error has-warning").addClass("has-success");
   });
 

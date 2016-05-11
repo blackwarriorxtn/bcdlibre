@@ -13,52 +13,38 @@ $(document).ready(function(){
     }
   });
 
-  var items = new Bloodhound({
+  var borrows = new Bloodhound({
     datumTokenizer: Bloodhound.tokenizers.whitespace,
     queryTokenizer: Bloodhound.tokenizers.whitespace,
     // url points to a json web service that contains an array of users
     remote: {
-      url: 'webservice/items?action=return&text=%QUERYSTRING',
+      url: 'webservice/borrows?action=return&text=%QUERYSTRING',
       wildcard: '%QUERYSTRING'
     }
   });
 
-  // Enable auto-complete feature (typeahead) for fields "item" and "user"
-  $('#user_search').typeahead({
+  // Enable auto-complete feature (typeahead) for fields "borrow_search"
+  $('#borrow_search').typeahead({
     hint: true,
     highlight: true,
-    minLength: 3
+    minLength: 2
   },
   {
-    name: 'users',
-    source: users,
-    display: function (suggestion) {
-      return(suggestion.text);
-    }
-  });
-  $('#item_search').typeahead({
-    hint: true,
-    highlight: true,
-    minLength: 3
-  },
-  {
-    name: 'items',
-    source: items,
+    name: 'borrows',
+    source: borrows,
     display: function (suggestion) {
       return(suggestion.text);
     }
   });
 
   // Callbacks for auto-completion
-  $('#item_search').bind('typeahead:select', function(event, suggestion) {
+  $('#borrow_search').bind('typeahead:select', function(event, suggestion) {
     console.log('Selection: ',suggestion);
-    $("#item_id").val(suggestion.id);
+    $("#id").val(suggestion.id);
     $(event.target).closest(".form-group").removeClass("has-error has-warning").addClass("has-success");
-  });
-  $('#user_search').bind('typeahead:select', function(event, suggestion) {
-    console.log('Selection: ',suggestion);
-    $("#user_id").val(suggestion.id);
-    $(event.target).closest(".form-group").removeClass("has-error has-warning").addClass("has-success");
+  }).bind('typeahead:render', function(e) {
+    // Automatically select first option returned by autocomplete
+    $('#_FORM_NEW').parent().find('.tt-selectable:first').addClass('tt-cursor');
   });
 
 });
