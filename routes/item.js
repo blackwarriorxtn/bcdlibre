@@ -215,7 +215,7 @@ router.get('/view', function(req, res, next) {
 // GET web service (fetch isbn information)
 router.get('/webservice', function(req, objLocalWebServiceResult, next) {
 
-  var objMyContext = new module_context(req, res, next);
+  var objMyContext = new module_context(req, objLocalWebServiceResult, next);
   var objWebServiceResult = {status:"KO"};
 
   // Must be something in the body
