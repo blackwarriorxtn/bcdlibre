@@ -12,20 +12,22 @@
         <div class="container">
           <!-- Custom form -->
           <%- include('../form_message', {message: message}) %>
-          <div class="panel-body">
-          <form id="_FORM_NEW" class="form-inline" action="delete" method="post">
+          <form id="_FORM_NEW" class="form-vertical" action="delete" method="post">
             <input type="hidden" name="id" id="id">
+            <div class="row">
+            <div class="col-xs-12 col-md-12">
             <div class="form-group has-feedback">
-                <input type="text" class="form-control form-control-required form-dont-submit" name="borrow_search" id="borrow_search" autocomplete="off" spellcheck="false" size="50" placeholder="Livre et emprunteur (ISBN, Titre, Nom, Compte)" autofocus>
+                <input type="text" class="form-control form-control-required form-dont-submit input-lg" name="borrow_search" id="borrow_search" autocomplete="off" spellcheck="false" size="50" placeholder="Livre et emprunteur (ISBN, Titre, Nom, Compte)" autofocus>
                 <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
                 <span id="_STATUS_borrow_search" class="sr-only">(success)</span>
             </div><!-- class="form-group has-feedback" -->
+            </div>
+          </div><!-- class="row" -->
 
 <p>
             <%- include('../form_okcancel', { visible:true }) %>
 </p>
           </form>
-          </div><!-- class="panel-body" -->
         </div>
       </div>
     </div>

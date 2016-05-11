@@ -2,13 +2,14 @@
 <html>
   <head>
     <%- include('../html_head', {title: title}) %>
+    <%- include('../form_script') %>
   </head>
   <body>
     <div id="page">
       <div id="main">
         <%- include('../page_header', {title: title, subtitle: subtitle, menus:menus}) %>
         <div class="container">
-          <table class="table">
+          <table class="table table-hover table-striped table-bordered">
             <caption>Liste des lecteurs</caption>
             <thead>
               <tr>
@@ -20,7 +21,7 @@
             </thead>
             <tbody>
               <% for(var i=0; i< records.length; i++) { %>
-                <tr>
+                <tr data-href="view?id=<%- records[i].id %>">
                   <td><a href="view?id=<%- records[i].id %>"><%= records[i].id %></a></td>
                   <td><%= records[i].login %></td>
                   <td><%= records[i].name %></td>

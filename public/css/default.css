@@ -31,3 +31,9 @@ html, body
 .bib-row-menu {
   margin-bottom: 15px;
 }
+
+/* Change cursor on clickable rows (rows with the data-href attribute) */
+tr[data-href]
+{
+  cursor: pointer;
+}

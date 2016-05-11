@@ -7,12 +7,12 @@
   }
   %>
   <div class="row">
-    <div class="col-md-9"><h1><%= title %> <small><%= subtitle %></small></h1></div><!-- class="col-md-11" -->
-    <div class="col-md-3 text-right">
+    <div class="col-xs-9 col-md-9"><h1><%= title %> <small><%= subtitle %></small></h1></div><!-- class="col-xs-9 col-md-9" -->
+    <div class="col-xs-3 col-md-3 text-right">
       <a href="/manage" class="btn" title="Gérer les livres (inventaire) et les lecteurs (utilisateurs)">
         <h3><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></h3>
       </a>
-    </div><!-- class="col-md-1" -->
+    </div><!-- class="col-xs-3 col-md-3" -->
   </div><!-- class="row" -->
   <ol class="breadcrumb">
     <% for(var i=0; i< menus.length; i++) {

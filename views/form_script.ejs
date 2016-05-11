@@ -85,5 +85,10 @@ $( document ).ready(function() {
     // Show OK/Cancel buttons
     $("#_OK_CANCEL").removeClass("hidden").addClass("show");
   });
+
+  // Make clickable rows in tables - if they have the valide HTML5 attribute "data-href"
+  $('tr[data-href]').click(function(){
+    window.document.location = $(this).data("href");
+  });
 });
 </script>
