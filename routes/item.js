@@ -202,7 +202,7 @@ router.get('/view', function(req, res, next) {
   db.view_record(req, res, next, objMyContext.objFormParameters, function(err, result, fields) {
     if (err) throw err;
     // Display first record with "view" template
-    res.render('item/view', { title: req.app.locals.title, subtitle: "Fiche", menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, record:result[0], message:null });
+    res.render('item/view', { title: req.app.locals.title, subtitle: req.i18n.__("Fiche"), menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, record:result[0], message:null });
   });
 
 });
@@ -380,7 +380,7 @@ router.get('/webservice', function(req, objLocalWebServiceResult, next) {
 router.get('/search', function(req, res, next) {
 
   var objMyContext = new module_context(req, res, next);
-  res.render('item/new', {req:req, title: req.app.locals.title, subtitle: "Recherche", menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objSearchParameters, message:{text:"Veuillez remplir le formulaire",type:"info"}, action:"search"});
+  res.render('item/new', {req:req, title: req.app.locals.title, subtitle: req.i18n.__("Recherche"), menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objSearchParameters, message:{text:"Veuillez remplir le formulaire",type:"info"}, action:"search"});
 
 });
 // POST search (form validation then search records in database)
@@ -397,7 +397,7 @@ router.post('/search', function(req, res, next) {
     db.search_record(req, res, next, objMyContext.objSearchParameters, null /* objSQLOptions */, function(err, result, fields) {
       if (err) throw err;
       // Display records with "list" template
-      res.render('item/list', { title: req.app.locals.title, subtitle: "Liste", menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, records:result });
+      res.render('item/list', { title: req.app.locals.title, subtitle: req.i18n.__("Liste"), menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, records:result });
     });
   } // else if (req.body["_CANCEL"] != null)
   else
