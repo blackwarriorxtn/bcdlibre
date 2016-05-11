@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <%- include('../html_head', {title: title}) %>
+    <%- include('../form_script') %>
+  </head>
+  <body>
+    <div id="page">
+      <div id="main">
+        <%- include('../page_header', {title: title, subtitle: subtitle, menus:menus}) %>
+        <div class="container">
+
+          <%- include('../form_view', {form:form, message:message}) %>
+
+        </div><!-- class="container" -->
+      </div><!-- id="main" -->
+    </div><!-- id="page" -->
+
+    <%- include('../page_footer') %>
+  </body>
+</html>

@@ -41,7 +41,7 @@ router.get('/', function(req, res, next) {
 router.get('/list', function(req, res, next) {
 
   // Custom SQL
-  db.runsql('SELECT borrow.begin_date, user.*, item.*, item_detail.* \n\
+  db.runsql('SELECT borrow.id, borrow.begin_date, user.name, item_detail.title \n\
   FROM borrow \n\
   JOIN user ON user.id = borrow.user_id \n\
   JOIN item ON item.id = borrow.item_id \n\
@@ -51,7 +51,23 @@ router.get('/list', function(req, res, next) {
 ', function(err, rows, fields) {
     if (err) throw err;
     // Display records with "list" template
-    res.render('borrow/list', { title: req.app.locals.title, subtitle: "Liste", menus:[{text:"Menu principal",link:"/"},{text:objMenu.text,link:"/borrow/"}], borrows:rows });
+    res.render('borrow/list', { title: req.app.locals.title, subtitle: "Liste", menus:[{text:"Menu principal",link:"/"},{text:objMenu.text,link:"/borrow/"}], records:rows });
+  });
+
+});
+
+
+
+
+
+// ************************************************************************************* VIEW
+// GET view
+router.get('/view', function(req, res, next) {
+
+  db.view_record(req, res, next, objFormParameters, function(err, result, fields) {
+    if (err) throw err;
+    // Display first record with "view" template
+    res.render('borrow/view', { title: req.app.locals.title, subtitle: "Fiche", menus:[req.app.locals.main_menu].concat(objMenu), form:objFormParameters, record:result[0], message:null });
   });
 
 });

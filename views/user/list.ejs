@@ -8,7 +8,8 @@
     <div id="page">
       <div id="main">
         <%- include('../page_header', {title: title, subtitle: subtitle, menus:menus}) %>
-        <div class="container">
+        <div class="container-fluid">
+          <% if (records && records.length > 0) { %>
           <table class="table table-hover table-striped table-bordered">
             <caption>Liste des lecteurs</caption>
             <thead>
@@ -30,9 +31,16 @@
               <% } // for %>
             </tbody>
           </table>
-        </div>
-      </div>
-    </div>
+          <%
+          } // if (records && records.length > 0)
+          else
+          {
+            %><div class="text-info">Aucun lecteur dans la liste.</div><%
+          } // else if (records && records.length > 0)
+          %>
+        </div><!-- class="container-fluid" -->
+      </div><!-- id="main" -->
+    </div><!-- id="page" -->
 
     <%- include('../page_footer') %>
   </body>

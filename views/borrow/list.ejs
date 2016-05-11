@@ -2,34 +2,45 @@
 <html>
   <head>
     <%- include('../html_head', {title: title}) %>
+    <%- include('../form_script') %>
   </head>
   <body>
     <div id="page">
       <div id="main">
         <%- include('../page_header', {title: title, subtitle: subtitle, menus:menus}) %>
-        <div class="container">
-          <table class="table">
-            <caption>Liste des emprunts</caption>
-            <thead>
-              <tr>
-                <th>Début</th>
-                <th>Nom</th>
-                <th>Titre</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% for(var i=0; i< borrows.length; i++) { %>
+        <div class="container-fluid">
+          <% if (records && records.length > 0) { %>
+            <table class="table table-hover table-striped table-bordered">
+              <caption>Liste des emprunts</caption>
+              <thead>
                 <tr>
-                  <td><%= borrows[i].begin_date.toLocaleString() %></td>
-                  <td><%= borrows[i].name %></td>
-                  <td><%= borrows[i].title %></td>
+                  <th>#</th>
+                  <th>Début</th>
+                  <th>Nom</th>
+                  <th>Titre</th>
                 </tr>
-              <% } // for %>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+              </thead>
+              <tbody>
+                <% for(var i=0; i< records.length; i++) { %>
+                  <tr data-href="view?id=<%- records[i].id %>">
+                    <td><a href="view?id=<%- records[i].id %>"><%= records[i].id %></a></td>
+                    <td><%= records[i].begin_date.toLocaleString() %></td>
+                    <td><%= records[i].name %></td>
+                    <td><%= records[i].title %></td>
+                  </tr>
+                <% } // for %>
+              </tbody>
+            </table>
+          <%
+          } // if (records && records.length > 0)
+          else
+          {
+            %><div class="text-info">Aucun emprunt en cours.</div><%
+          } // else if (records && records.length > 0)
+          %>
+        </div><!-- class="container-fluid" -->
+      </div><!-- id="main" -->
+    </div><!-- id="page" -->
 
     <%- include('../page_footer') %>
   </body>
