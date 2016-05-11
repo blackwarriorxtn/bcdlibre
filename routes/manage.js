@@ -3,12 +3,19 @@ var router = express.Router();
 var mysql      = require('mysql');
 var db = require('./db'); // database utilities
 
-// *** PARAMETERS (MENU)
-var objMenu = {text:"Gérer",link:"/manage/"};
+function module_context(req, res, next)
+{
+  // *** PARAMETERS (MENU)
+  this.objMenu = {text:req.i18n.__("Gérer"),link:"/manage/"};
+  this.objMainMenu = {text:req.i18n.__("Menu principal"),link:"/"};
+}
 
 /* ******************************************************************************** GET menu */
 router.get('/', function(req, res, next) {
-  res.render('manage/index', { title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu] });
+
+  var objMyContext = new module_context(req, res, next);
+  res.render('manage/index', { title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu) });
+
 });
 
 module.exports = router;

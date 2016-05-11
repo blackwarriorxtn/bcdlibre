@@ -11,13 +11,13 @@
         <div class="container-fluid">
           <% if (records && records.length > 0) { %>
           <table class="table table-hover table-striped table-bordered">
-            <caption>Liste des lecteurs</caption>
+            <caption><%=__("Liste des lecteurs")%></caption>
             <thead>
               <tr>
                 <th>#</th>
-                <th>Compte</th>
-                <th>Nom</th>
-                <th>Téléphone</th>
+                <th><%=__("Compte")%></th>
+                <th><%=__("Nom")%></th>
+                <th><%=__("Téléphone")%></th>
               </tr>
             </thead>
             <tbody>
@@ -35,7 +35,7 @@
           } // if (records && records.length > 0)
           else
           {
-            %><div class="text-info">Aucun lecteur dans la liste.</div><%
+            %><div class="text-info"><%=__("Aucun lecteur dans la liste.")%></div><%
           } // else if (records && records.length > 0)
           %>
         </div><!-- class="container-fluid" -->

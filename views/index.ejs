@@ -6,17 +6,12 @@
   <body>
     <div id="page">
       <div id="main">
-        <%- include('page_header', {title: title, subtitle: "Menu principal", menus:menus}) %>
+        <%- include('page_header', {title: title, subtitle: __("Menu principal"), menus:menus}) %>
         <div class="container-fluid">
           <%- include('page_menu', {items:[
-            {link:"borrow/new", label:"Emprunter", icon:"share", tooltip:"Emprunter un livre"},
-            {link:"borrow/delete", label:"Retourner", icon:"refresh", tooltip:"Retourner un livre"},
-            {link:"item/search", label:"Rechercher", icon:"search", tooltip:"Rechercher un livre"},
-/*
-{link:"manage/", label:"Gérer", icon:"cog", tooltip:"Gérer les livres (inventaire) et les lecteurs"},
-            {link:"item/", label:"Livres", icon:"book", tooltip:"Gérer les livres (inventaire)"},
-            {link:"user/", label:"Lecteurs", icon:"user", tooltip:"Gérer les lecteurs (emprunteurs)"},
-*/
+            {link:"borrow/new", label:__("Emprunter"), icon:"share", tooltip:__("Emprunter un livre")},
+            {link:"borrow/delete", label:__("Retourner"), icon:"refresh", tooltip:__("Retourner un livre")},
+            {link:"item/search", label:__("Rechercher"), icon:"search", tooltip:__("Rechercher un livre")},
           ]}) %>
         </div>
       </div>

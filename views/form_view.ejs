@@ -5,12 +5,12 @@
   <!-- Use a disabled form to display field values (non placeholder) -->
   <form id="_FORM_VIEW" class="form-horizontal" action="undefined" method="post">
     <div class="form-group">
-      <input id="_ADD" name="_ADD" class="btn btn-default" type="button" value="Ajouter">
+      <input id="_ADD" name="_ADD" class="btn btn-default" type="button" value="<%=__('Ajouter')%>">
       <%
         if (record)
         {%>
-      <input id="_MODIFY" name="_MODIFY" class="btn btn-default" type="button" value="Modifier">
-      <input id="_DELETE" name="_DELETE" class="btn btn-default" type="button" value="Supprimer">
+      <input id="_MODIFY" name="_MODIFY" class="btn btn-default" type="button" value="<%=__('Modifier')%>">
+      <input id="_DELETE" name="_DELETE" class="btn btn-default" type="button" value="<%=__('Supprimer')%>">
       <%} // if (record)%>
     </div><!-- class="form-group" -->
     <%

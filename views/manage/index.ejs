@@ -9,8 +9,8 @@
         <%- include('../page_header', {title: title, subtitle: subtitle, menus:menus}) %>
         <div class="container-fluid">
           <%- include('../page_menu', {items:[
-            {link:"../item/", label:"Livres", icon:"book", tooltip:"Gérer les livres (inventaire)"},
-            {link:"../user/", label:"Lecteurs", icon:"user", tooltip:"Gérer les lecteurs (emprunteurs)"},
+            {link:"../item/", label:__("Livres"), icon:"book", tooltip:__("Gérer les livres (inventaire)")},
+            {link:"../user/", label:__("Lecteurs"), icon:"user", tooltip:__("Gérer les lecteurs (emprunteurs)")},
           ]}) %>
         </div>
       </div>

@@ -11,6 +11,9 @@ Logiciel de gestion d'une petite bibliothèque (gestion d'emprunt de livres)
   * Compatible with barcode reader
 * User management
 * Borrowing management
+* Support multiple languages
+  * english
+  * french
 * Open source and free forever
 * Written in dynamic scripting languages (Javascript and SQL):
   * Front-end: [HTML5](https://en.wikipedia.org/wiki/HTML5), [jQuery](https://jquery.com/), [Bootstrap](http://getbootstrap.com/), [Twitter's typeahead](https://twitter.github.io/typeahead.js/)

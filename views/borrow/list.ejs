@@ -15,9 +15,9 @@
               <thead>
                 <tr>
                   <th>#</th>
-                  <th>Début</th>
-                  <th>Nom</th>
-                  <th>Titre</th>
+                  <th><%=__('Début')%></th>
+                  <th><%=__('Nom')%></th>
+                  <th><%=__('Titre')%></th>
                 </tr>
               </thead>
               <tbody>
@@ -35,7 +35,7 @@
           } // if (records && records.length > 0)
           else
           {
-            %><div class="text-info">Aucun emprunt en cours.</div><%
+            %><div class="text-info"><%=__('Aucun emprunt en cours.')%></div><%
           } // else if (records && records.length > 0)
           %>
         </div><!-- class="container-fluid" -->

@@ -6,13 +6,13 @@
   <body>
     <div id="page">
       <div id="main">
-        <%- include('../page_header', {title: title, subtitle: subtitle, menus:[{text:"Menu principal", link:"/"}]}) %>
+        <%- include('../page_header', {title: title, subtitle: subtitle, menus:[{text:__("Menu principal"), link:"/"}]}) %>
         <div class="container">
           <%- include('../page_menu', {items:[
-            {link:"new", label:"Emprunter", icon:"share", tooltip:"Ajouter un emprunt (sortir un livre)"},
-            {link:"delete", label:"Retourner", icon:"refresh", tooltip:"Rendre un livre (retour en bibliothèque)"},
-            {link:"search", label:"Rechercher", icon:"search", tooltip:"Rechercher un emprunt"},
-            {link:"list", label:"Lister", icon:"th-list", tooltip:"Liste des emprunts (livres sortis)"},
+            {link:"new", label:__("Emprunter"), icon:"share", tooltip:__("Ajouter un emprunt (sortir un livre)")},
+            {link:"delete", label:__("Retourner"), icon:"refresh", tooltip:__("Rendre un livre (retour en bibliothèque)")},
+            {link:"search", label:__("Rechercher"), icon:"search", tooltip:__("Rechercher un emprunt")},
+            {link:"list", label:__("Lister"), icon:"th-list", tooltip:__("Liste des emprunts (livres sortis)")},
           ]}) %>
         </div>
       </div>

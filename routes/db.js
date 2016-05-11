@@ -82,7 +82,7 @@ var check_field_value = function(strValue, objFieldDescription, objSQLConnection
     if (strSQLValid == null)
     {
       // Invalid value according to custom function - error
-      throw new Error("Invalid value : field \""+objFieldDescription.name+"\" can't store value "+(strValue == null ? "null" : "\""+strValue+"\""));
+      throw new Error(__("Invalid value : field \"%s\" can't store value %s", objFieldDescription.name, (strValue == null ? "null" : "\""+strValue+"\"")));
     }
     else
     {
@@ -196,7 +196,7 @@ var update_record = function(req, res, next, objFormParameters, fnCallback)
       {
 
         // Unknown field: error!
-        throw new Error("ERROR: field \""+strSentName+"\" is unknown!");
+        throw new Error(req.i18n.__("ERROR: field \"%s\" is unknown!",strSentName));
 
       } // if (objField == null)
       else
@@ -217,7 +217,7 @@ var update_record = function(req, res, next, objFormParameters, fnCallback)
         {
 
           // Unknown field: error!
-          throw new Error("ERROR: field \""+strSentName+"\" is unknown!");
+          throw new Error(req.i18n.__("ERROR: field \"%s\" is unknown!",strSentName));
 
         } // if (objField == null)
         else
@@ -288,7 +288,7 @@ var delete_record = function(req, res, next, objFormParameters, fnCallback)
       {
 
         // Unknown field: error!
-        throw new Error("ERROR: field \""+strSentName+"\" is unknown!");
+        throw new Error(req.i18n.__("ERROR: field \"%s\" is unknown!",strSentName));
 
       } // if (objField == null)
       else
@@ -365,7 +365,7 @@ var view_record = function(req, res, next, objFormParameters, fnCallback)
       }
       else
       {
-        throw new Error("Can't find parameter \""+strPKName+"\" in request");
+        throw new Error(req.i18n.__("Can't find parameter \"%s\" in request",strPKName));
       }
     } // if (strPKName)
   } // for (var intPK = 0; intPK < objFormParameters.primary_key.length; intPK++)
@@ -459,7 +459,7 @@ var search_record = function(req, res, next, objFormParameters, objSQLOptions, f
       {
 
         // Unknown field: error!
-        throw new Error("ERROR: field \""+strSentName+"\" is unknown!");
+        throw new Error(req.i18n.__("ERROR: field \"%s\" is unknown!",strSentName));
 
       } // if (objField == null)
       else

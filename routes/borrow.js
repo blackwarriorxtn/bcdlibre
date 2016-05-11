@@ -4,23 +4,25 @@ var mysql      = require('mysql');
 var db = require('./db'); // database utilities
 
 // ******************************************************************************** borrow
-
-// *** PARAMETERS (SQL)
-var objFormParameters = {
-  table_name: "borrow",
-  primary_key: ["id"],
-  autoincrement_column: "id",
-  fields:[
-    {name:"id",label:"#",type:"String",required:false,validation:null},
-    {name:"begin_date",label:"Début",type:"DateTime",required:true,validation:function (strValue){return(new Date().toSQL())}},
-    {name:"end_date",label:"Fin",type:"DateTime",required:false,validation:null},
-    {name:"item_id",label:"Livre",type:"Integer",required:true,validation:null},
-    {name:"user_id",label:"Lecteur",type:"Integer",required:false,validation:null},
-  ]
-};
-// *** PARAMETERS (MENU)
-var objMenu = {text:"Emprunts",link:"/borrow/"};
-
+function module_context(req, res, next)
+{
+  // *** PARAMETERS (SQL)
+  this.objFormParameters = {
+    table_name: "borrow",
+    primary_key: ["id"],
+    autoincrement_column: "id",
+    fields:[
+      {name:"id",label:"#",type:"String",required:false,validation:null},
+      {name:"begin_date",label:req.i18n.__("Début"),type:"DateTime",required:true,validation:function (strValue){return(new Date().toSQL())}},
+      {name:"end_date",label:req.i18n.__("Fin"),type:"DateTime",required:false,validation:null},
+      {name:"item_id",label:req.i18n.__("Livre"),type:"Integer",required:true,validation:null},
+      {name:"user_id",label:req.i18n.__("Lecteur"),type:"Integer",required:false,validation:null},
+    ]
+  };
+  // *** PARAMETERS (MENU)
+  this.objMenu = {text:req.i18n.__("Emprunts"),link:"/borrow/"};
+  this.objMainMenu = {text:req.i18n.__("Menu principal"),link:"/"};
+}
 
 
 
@@ -29,7 +31,8 @@ var objMenu = {text:"Emprunts",link:"/borrow/"};
 // ************************************************************************************* MENU
 // GET menu
 router.get('/', function(req, res, next) {
-  res.render('borrow/index', { title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu] });
+  var objMyContext = new module_context(req, res, next);
+  res.render('borrow/index', { title: req.app.locals.title, subtitle: objMyContext.objMenu.text, menus:[objMyContext.objMainMenu] });
 });
 
 
@@ -40,6 +43,7 @@ router.get('/', function(req, res, next) {
 // Get list of borrowing
 router.get('/list', function(req, res, next) {
 
+  var objMyContext = new module_context(req, res, next);
   // Custom SQL
   db.runsql('SELECT borrow.id, borrow.begin_date, user.name, item_detail.title \n\
   FROM borrow \n\
@@ -51,7 +55,7 @@ router.get('/list', function(req, res, next) {
 ', function(err, rows, fields) {
     if (err) throw err;
     // Display records with "list" template
-    res.render('borrow/list', { title: req.app.locals.title, subtitle: "Liste", menus:[{text:"Menu principal",link:"/"},{text:objMenu.text,link:"/borrow/"}], records:rows });
+    res.render('borrow/list', { title: req.app.locals.title, subtitle: req.i18n.__("Liste"), menus:[{text:req.i18n.__("Menu principal"),link:"/"},{text:objMyContext.objMenu.text,link:"/borrow/"}], records:rows });
   });
 
 });
@@ -64,10 +68,11 @@ router.get('/list', function(req, res, next) {
 // GET view
 router.get('/view', function(req, res, next) {
 
-  db.view_record(req, res, next, objFormParameters, function(err, result, fields) {
+  var objMyContext = new module_context(req, res, next);
+  db.view_record(req, res, next, objMyContext.objFormParameters, function(err, result, fields) {
     if (err) throw err;
     // Display first record with "view" template
-    res.render('borrow/view', { title: req.app.locals.title, subtitle: "Fiche", menus:[req.app.locals.main_menu].concat(objMenu), form:objFormParameters, record:result[0], message:null });
+    res.render('borrow/view', { title: req.app.locals.title, subtitle: req.i18n.__("Fiche"), menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, record:result[0], message:null });
   });
 
 });
@@ -80,11 +85,14 @@ router.get('/view', function(req, res, next) {
 // GET new (form)
 router.get('/new', function(req, res, next) {
 
-  res.render('borrow/new', {req:req, title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, message:{text:"Veuillez saisir le livre et le lecteur",type:"info"}});
+  var objMyContext = new module_context(req, res, next);
+  res.render('borrow/new', {req:req, title: req.app.locals.title, subtitle: objMyContext.objMenu.text, menus:[objMyContext.objMainMenu,objMyContext.objMenu], form:objMyContext.objFormParameters, message:{text:req.i18n.__("Veuillez saisir le livre et le lecteur"),type:"info"}});
 
 });
 // POST new (form validation then insert new record in database)
 router.post('/new', function(req, res, next) {
+
+  var objMyContext = new module_context(req, res, next);
   if (req.body["_CANCEL"] != null)
   {
     // Cancel insert : Redirect to menu
@@ -92,10 +100,10 @@ router.post('/new', function(req, res, next) {
   } // if (req.body["CANCEL"] != null)
   else if (req.body["_OK"] != null)
   {
-    db.insert_record(req, res, next, objFormParameters, function(err, result, fields) {
+    db.insert_record(req, res, next, objMyContext.objFormParameters, function(err, result, fields) {
       if (err)
       {
-        db.handle_error(err, res, "borrow/new", { title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, message:"Impossible d'emprunter ce livre ("+err+")" });
+        db.handle_error(err, res, "borrow/new", { title: req.app.locals.title, subtitle: objMyContext.objMenu.text, menus:[objMyContext.objMainMenu,objMyContext.objMenu], form:objMyContext.objFormParameters, message:"Impossible d'emprunter ce livre ("+err+")" });
       }
       else
       {
@@ -121,11 +129,14 @@ router.post('/new', function(req, res, next) {
 // GET delete (form)
 router.get('/delete', function(req, res, next) {
 
-  res.render('borrow/delete', {req:req, title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, message:{text:"Veuillez saisir le livre et le lecteur",type:"info"}});
+  var objMyContext = new module_context(req, res, next);
+  res.render('borrow/delete', {req:req, title: req.app.locals.title, subtitle: objMyContext.objMenu.text, menus:[objMyContext.objMainMenu,objMyContext.objMenu], form:objMyContext.objFormParameters, message:{text:req.i18n.__("Veuillez saisir le livre et le lecteur"),type:"info"}});
 
 });
 // POST delete (form validation then delete record from database)
 router.post('/delete', function(req, res, next) {
+
+  var objMyContext = new module_context(req, res, next);
   if (req.body["_CANCEL"] != null)
   {
     // Cancel insert : Redirect to menu
@@ -135,10 +146,10 @@ router.post('/delete', function(req, res, next) {
   {
     // DEBUG
     console.log("req.body=%j", req.body);
-    db.delete_record(req, res, next, objFormParameters, function(err, result, fields) {
+    db.delete_record(req, res, next, objMyContext.objFormParameters, function(err, result, fields) {
       if (err)
       {
-        db.handle_error(err, res, "borrow/delete", { title: req.app.locals.title, subtitle: objMenu.text, menus:[req.app.locals.main_menu,objMenu], form:objFormParameters, message:"Impossible de rendre ce livre ("+err+")" });
+        db.handle_error(err, res, "borrow/delete", { title: req.app.locals.title, subtitle: objMyContext.objMenu.text, menus:[objMyContext.objMainMenu,objMyContext.objMenu], form:objMyContext.objFormParameters, message:"Impossible de rendre ce livre ("+err+")" });
       }
       else
       {
@@ -167,6 +178,7 @@ router.post('/delete', function(req, res, next) {
 // Web Service returning items to borrow OR return
 router.get('/webservice/items', function(req, res, next) {
 
+  var objMyContext = new module_context(req, res, next);
   var objSQLConnection = db.new_connection();
 
   console.log("/webservice/items:req.query=%j", req.query);
@@ -246,6 +258,7 @@ router.get('/webservice/items', function(req, res, next) {
 // Web Service returning users borrowing OR returning a book
 router.get('/webservice/users', function(req, res, next) {
 
+  var objMyContext = new module_context(req, res, next);
   var objSQLConnection = db.new_connection();
   console.log("/webservice/users:req.query=%j", req.query);
   var strSQLWhere = null;
@@ -317,6 +330,7 @@ router.get('/webservice/users', function(req, res, next) {
 // Web Service for returning books (get list of borrows i.e. books+users)
 router.get('/webservice/borrows', function(req, res, next) {
 
+  var objMyContext = new module_context(req, res, next);
   var objSQLConnection = db.new_connection();
   console.log("/webservice/borrows:req.query=%j", req.query);
   var strSQLWhere = null;

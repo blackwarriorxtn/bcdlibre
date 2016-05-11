@@ -11,14 +11,14 @@
         <div class="container-fluid">
           <% if (records && records.length > 0) { %>
           <table class="table table-hover table-striped table-bordered">
-            <caption>Liste des livres</caption>
+            <caption><%=__("Liste des livres")%></caption>
             <thead>
               <tr>
                 <th>#</th>
-                <th>ISBN</th>
-                <th>Titre</th>
-                <th>Auteur</th>
-                <th>Description</th>
+                <th><%=__("ISBN")%></th>
+                <th><%=__("Titre")%></th>
+                <th><%=__("Auteur")%></th>
+                <th><%=__("Description")%></th>
               </tr>
             </thead>
             <tbody>
@@ -37,7 +37,7 @@
           } // if (records && records.length > 0)
           else
           {
-            %><div class="text-info">Aucun livre dans l'inventaire.</div><%
+            %><div class="text-info"><%=__("Aucun livre dans l'inventaire.")%></div><%
           } // else if (records && records.length > 0)
           %>
         </div><!-- class="container" -->

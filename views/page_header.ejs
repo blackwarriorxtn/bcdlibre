@@ -9,24 +9,28 @@
   <div class="row">
     <div class="col-xs-9 col-md-9"><h1><%= title %> <small><%= subtitle %></small></h1></div><!-- class="col-xs-9 col-md-9" -->
     <div class="col-xs-3 col-md-3 text-right">
-      <a href="/manage" class="btn" title="Gérer les livres (inventaire) et les lecteurs (utilisateurs)">
+      <a href="/manage" class="btn" title="<%=__('Gérer les livres (inventaire) et les lecteurs (utilisateurs)')%>">
         <h3><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></h3>
       </a>
     </div><!-- class="col-xs-3 col-md-3" -->
   </div><!-- class="row" -->
+  <% if (menus) { %>
   <ol class="breadcrumb">
     <% for(var i=0; i< menus.length; i++) {
-      if (menus[i].link == null) { %>
-    <li><%= menus[i].text %></li><%
-      }
-      else { %>
-        <li class="active">
-            <a href="<%= menus[i].link %>">
-                <%= menus[i].text %>
-            </a>
-        </li><%
-      } // else if if (menus[i].link == null)
-  } // for %>
+        if (menus[i]) {
+          if (menus[i].link == null) { %>
+        <li><%= menus[i].text %></li><%
+        }
+        else { %>
+          <li class="active">
+              <a href="<%= menus[i].link %>">
+                  <%= menus[i].text %>
+              </a>
+          </li><%
+        } // else if if (menus[i].link == null)
+      } // if (menus[i]) {
+    } // for %>
     <li><%= subtitle %></li>
   </ol>
+  <% } // if (menus)%>
 </div>

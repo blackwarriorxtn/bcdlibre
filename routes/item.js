@@ -6,49 +6,56 @@ var request = require('request');
 var async = require('async');
 
 // ******************************************************************************** item
-
-// *** PARAMETERS (SQL)
-var objFormParameters = {
-  table_name: "item_detail",
-  primary_key: ["id"],
-  autoincrement_column: "id",
-  fields:[
-    {name:"id",label:"#",type:"String",required:false,validation:null},
-    {name:"isbn13",label:"Numéro ISBN",type:"String",required:false,validation:null,maximum_length:13},
-    {name:"title",label:"Titre",type:"String",required:true,validation:null,maximum_length:255},
-    {name:"author",label:"Auteur",type:"String",required:true,validation:null,maximum_length:255},
-    {name:"description",label:"Description (Synopsis)",type:"String",required:false,validation:null,maximum_length:65535},
-  ]
-};
-// To search we only have ONE field named "search" and a special SQL table with full text indexes
-var objSearchParameters = {
-  table_name: objFormParameters.table_name+"_search",
-  primary_key: objFormParameters.primary_key,
-  autoincrement_column: objFormParameters.autoincrement_column,
-  fields:[
-    {
-      name:"search",label:"Titre, Auteur, Description",type:"String",required:true,validation:null,maximum_length:255,
-      match_fields:[
-        "title",
-        "description"
-      ]
-    },
-  ]
-};
-// *** PARAMETERS (MENU)
-var objMenu = [{text:"Gérer",link:"/manage/"},{text:"Livres",link:"/item/"}];
+function module_context(req, res, next)
+{
+  // *** PARAMETERS (SQL)
+  this.objFormParameters = {
+    table_name: "item_detail",
+    primary_key: ["id"],
+    autoincrement_column: "id",
+    fields:[
+      {name:"id",label:"#",type:"String",required:false,validation:null},
+      {name:"isbn13",label:req.i18n.__("Numéro ISBN"),type:"String",required:false,validation:null,maximum_length:13},
+      {name:"title",label:req.i18n.__("Titre"),type:"String",required:true,validation:null,maximum_length:255},
+      {name:"author",label:req.i18n.__("Auteur"),type:"String",required:true,validation:null,maximum_length:255},
+      {name:"description",label:req.i18n.__("Description (Synopsis)"),type:"String",required:false,validation:null,maximum_length:65535},
+    ]
+  };
+  // To search we only have ONE field named "search" and a special SQL table with full text indexes
+  this.objSearchParameters = {
+    table_name: this.objFormParameters.table_name+"_search",
+    primary_key: this.objFormParameters.primary_key,
+    autoincrement_column: this.objFormParameters.autoincrement_column,
+    fields:[
+      {
+        name:"search",label:req.i18n.__("Titre, Auteur, Description"),type:"String",required:true,validation:null,maximum_length:255,
+        match_fields:[
+          "title",
+          "description"
+        ]
+      },
+    ]
+  };
+  // *** PARAMETERS (MENU)
+  this.objMenu = [{text:req.i18n.__("Gérer"),link:"/manage/"},{text:req.i18n.__("Livres"),link:"/item/"}];
+  this.objMainMenu = {text:req.i18n.__("Menu principal"),link:"/"};
+}
 
 // GET menu
 router.get('/', function(req, res, next) {
-  res.render('item/index', { title: req.app.locals.title, subtitle: null, menus:[req.app.locals.main_menu].concat(objMenu) });
+
+  var objMyContext = new module_context(req, res, next);
+  res.render('item/index', { title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu) });
+
 });
 // Get list
 router.get('/list', function(req, res, next) {
 
-  db.list_record(req, res, next, objFormParameters, null /* objSQLOptions */, function(err, result, fields) {
+  var objMyContext = new module_context(req, res, next);
+  db.list_record(req, res, next, objMyContext.objFormParameters, null /* objSQLOptions */, function(err, result, fields) {
     if (err) throw err;
     // Display records with "list" template
-    res.render('item/list', { title: req.app.locals.title, subtitle: "Liste", menus:[req.app.locals.main_menu].concat(objMenu), form:objFormParameters, records:result });
+    res.render('item/list', { title: req.app.locals.title, subtitle: req.i18n.__("Liste"), menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, records:result });
   });
 
 });
@@ -61,11 +68,14 @@ router.get('/list', function(req, res, next) {
 // GET new (form)
 router.get('/new', function(req, res, next) {
 
-  res.render('item/new', {req:req, title: req.app.locals.title, subtitle: null, menus:[req.app.locals.main_menu].concat(objMenu), form:objFormParameters, message:{text:"Veuillez remplir le formulaire",type:"info"}, action:"new"});
+  var objMyContext = new module_context(req, res, next);
+  res.render('item/new', {req:req, title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, message:{text:"Veuillez remplir le formulaire",type:"info"}, action:"new"});
 
 });
 // POST new (form validation then insert new record in database)
 router.post('/new', function(req, res, next) {
+
+  var objMyContext = new module_context(req, res, next);
   if (req.body["_CANCEL"] != null)
   {
     // Cancel insert : Redirect to menu
@@ -73,14 +83,14 @@ router.post('/new', function(req, res, next) {
   } // if (req.body["_CANCEL"] != null)
   else if (req.body["_OK"] != null)
   {
-    db.insert_record(req, res, next, objFormParameters, function(err, result, fields, objSQLConnection) {
+    db.insert_record(req, res, next, objMyContext.objFormParameters, function(err, result, fields, objSQLConnection) {
       if (err)
       {
         if (objSQLConnection)
         {
           objSQLConnection.end();
         }
-        db.handle_error(err, res, "item/new", { title: req.app.locals.title, subtitle: null, menus:[req.app.locals.main_menu].concat(objMenu), form:objFormParameters, message:{text:"Ce livre est déjà dans l'inventaire ("+err+")",type:"error"}, action:"new" });
+        db.handle_error(err, res, "item/new", { title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, message:{text:"Ce livre est déjà dans l'inventaire ("+err+")",type:"error"}, action:"new" });
       }
       else
       {
@@ -113,6 +123,8 @@ router.post('/new', function(req, res, next) {
 // ************************************************************************************* UPDATE
 // POST update (form validation then update all fields in database)
 router.post('/update', function(req, res, next) {
+
+  var objMyContext = new module_context(req, res, next);
   if (req.body["_CANCEL"] != null)
   {
     // Cancel : Redirect to menu
@@ -120,10 +132,10 @@ router.post('/update', function(req, res, next) {
   } // if (req.body["_CANCEL"] != null)
   else if (req.body["_OK"] != null)
   {
-    db.update_record(req, res, next, objFormParameters, function(err, result, fields, objSQLConnection) {
+    db.update_record(req, res, next, objMyContext.objFormParameters, function(err, result, fields, objSQLConnection) {
       if (err)
       {
-        db.handle_error(err, res, "item/update", { title: req.app.locals.title, subtitle: null, menus:[req.app.locals.main_menu].concat(objMenu), form:objFormParameters, message:"Impossible de modifier ce livre ("+err+")" });
+        db.handle_error(err, res, "item/update", { title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, message:"Impossible de modifier ce livre ("+err+")" });
       }
       else
       {
@@ -148,6 +160,8 @@ router.post('/update', function(req, res, next) {
 // ************************************************************************************* DELETE
 // POST delete (form validation then delete record in database)
 router.post('/delete', function(req, res, next) {
+
+  var objMyContext = new module_context(req, res, next);
   if (req.body["_CANCEL"] != null)
   {
     // Cancel : Redirect to menu
@@ -155,10 +169,10 @@ router.post('/delete', function(req, res, next) {
   } // if (req.body["_CANCEL"] != null)
   else if (req.body["_OK"] != null)
   {
-    db.delete_record(req, res, next, objFormParameters, function(err, result, fields, objSQLConnection) {
+    db.delete_record(req, res, next, objMyContext.objFormParameters, function(err, result, fields, objSQLConnection) {
       if (err)
       {
-        db.handle_error(err, res, "item/delete", { title: req.app.locals.title, subtitle: null, menus:[req.app.locals.main_menu].concat(objMenu), form:objFormParameters, message:"Impossible d'effacer ce livre ("+err+")" });
+        db.handle_error(err, res, "item/delete", { title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, message:"Impossible d'effacer ce livre ("+err+")" });
       }
       else
       {
@@ -184,10 +198,11 @@ router.post('/delete', function(req, res, next) {
 // GET view
 router.get('/view', function(req, res, next) {
 
-  db.view_record(req, res, next, objFormParameters, function(err, result, fields) {
+  var objMyContext = new module_context(req, res, next);
+  db.view_record(req, res, next, objMyContext.objFormParameters, function(err, result, fields) {
     if (err) throw err;
     // Display first record with "view" template
-    res.render('item/view', { title: req.app.locals.title, subtitle: "Fiche", menus:[req.app.locals.main_menu].concat(objMenu), form:objFormParameters, record:result[0], message:null });
+    res.render('item/view', { title: req.app.locals.title, subtitle: "Fiche", menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, record:result[0], message:null });
   });
 
 });
@@ -200,6 +215,7 @@ router.get('/view', function(req, res, next) {
 // GET web service (fetch isbn information)
 router.get('/webservice', function(req, objLocalWebServiceResult, next) {
 
+  var objMyContext = new module_context(req, res, next);
   var objWebServiceResult = {status:"KO"};
 
   // Must be something in the body
@@ -363,11 +379,14 @@ router.get('/webservice', function(req, objLocalWebServiceResult, next) {
 // GET search (form)
 router.get('/search', function(req, res, next) {
 
-  res.render('item/new', {req:req, title: req.app.locals.title, subtitle: "Recherche", menus:[req.app.locals.main_menu].concat(objMenu), form:objSearchParameters, message:{text:"Veuillez remplir le formulaire",type:"info"}, action:"search"});
+  var objMyContext = new module_context(req, res, next);
+  res.render('item/new', {req:req, title: req.app.locals.title, subtitle: "Recherche", menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objSearchParameters, message:{text:"Veuillez remplir le formulaire",type:"info"}, action:"search"});
 
 });
 // POST search (form validation then search records in database)
 router.post('/search', function(req, res, next) {
+
+  var objMyContext = new module_context(req, res, next);
   if (req.body["_CANCEL"] != null)
   {
     // Cancel insert : Redirect to menu
@@ -375,10 +394,10 @@ router.post('/search', function(req, res, next) {
   } // if (req.body["_CANCEL"] != null)
   else if (req.body["_OK"] != null)
   {
-    db.search_record(req, res, next, objSearchParameters, null /* objSQLOptions */, function(err, result, fields) {
+    db.search_record(req, res, next, objMyContext.objSearchParameters, null /* objSQLOptions */, function(err, result, fields) {
       if (err) throw err;
       // Display records with "list" template
-      res.render('item/list', { title: req.app.locals.title, subtitle: "Liste", menus:[req.app.locals.main_menu].concat(objMenu), form:objFormParameters, records:result });
+      res.render('item/list', { title: req.app.locals.title, subtitle: "Liste", menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, records:result });
     });
   } // else if (req.body["_CANCEL"] != null)
   else

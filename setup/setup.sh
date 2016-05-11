@@ -39,7 +39,7 @@ sudo apt-get install -y nodejs || handle_error "Can't install nodejs!"
 
 echo "[`date +'%Y-%m-%d %H:%M:%S'`] Installing node modules..."
 
-for module in express mysql ejs serve-favicon morgan cookie-parser body-parser debug async request apac
+for module in express mysql ejs serve-favicon morgan cookie-parser body-parser debug async request apac i18n-2
 do
   echo "[`date +'%Y-%m-%d %H:%M:%S'`] Installing module $module..."
   npm install $module || handle_error "Can't instal $module!"

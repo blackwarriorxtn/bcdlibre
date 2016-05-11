@@ -31,6 +31,7 @@ ECHO [%DATE% %TIME%] Install node modules...
 %COMSPEC% /C npm install debug || GOTO ERROR
 %COMSPEC% /C npm install async || GOTO ERROR
 %COMSPEC% /C npm install request || GOTO ERROR
+%COMSPEC% /C npm install i18n-2 || GOTO ERROR
 REM (MAYBE)%COMSPEC% /C npm install apac@latest || GOTO ERROR
 
 ECHO [%DATE% %TIME%] Create MySQL database...
