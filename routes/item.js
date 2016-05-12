@@ -31,6 +31,7 @@ function module_context(req, res, next)
         name:"search",label:req.i18n.__("Titre, Auteur, Description"),type:"String",required:true,validation:null,maximum_length:255,
         match_fields:[
           "title",
+          "author",
           "description"
         ]
       },
