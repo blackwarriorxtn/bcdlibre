@@ -46,7 +46,7 @@ do
 done
 
 # Configure mysql
-if [ -f /etc/mysql/my.cnf] ; then
+if [ -f /etc/mysql/my.cnf ] ; then
   echo "[`date +'%Y-%m-%d %H:%M:%S'`] Configuring mysql..."
   grep ft_min_word_len 1>/dev/null 2>/dev/null /etc/mysql/my.cnf
 
