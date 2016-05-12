@@ -11,16 +11,9 @@ $( document ).ready(function() {
   });
   // Check required fields when losing focus
   $(".form-control-required").on('focusout', function(event) {
-    // Validate required field: MUST NOT be empty on focus out (otherwise we set the error class)
-    var strValue = $(event.target).val().replace(/^ +/g, "").replace(/ +$/g, "");
-    if (strValue == "")
-    {
-      $(event.target).parent().addClass("has-error").removeClass("has-success has-warning");
-    }
-    else
-    {
-      $(event.target).parent().removeClass("has-error has-warning").addClass("has-success");
-    }
+
+    form_control_check_required($(event.target));
+
   });
   $("#_CANCEL").on('click', function(event) {
     // Remove all errors so that submit event can be processed without validation
@@ -41,6 +34,10 @@ $( document ).ready(function() {
     }
   });
   $("#_FORM_NEW").on('submit', function(event) {
+    // Recheck all mandatory fields - thus pressing the enter key, which submits forms, provoke a new check of all values (even if focus is not lost)
+    form_check_required($(event.target));
+
+    // Get list of controls in error
     var objErrors = $(".has-error");
     var blnValue = (objErrors.length == 0);
     if(blnValue)
@@ -86,7 +83,7 @@ $( document ).ready(function() {
     $("#_OK_CANCEL").removeClass("hidden").addClass("show");
   });
 
-  // Make clickable rows in tables - if they have the valide HTML5 attribute "data-href"
+  // Make clickable rows in tables - if they have the valid HTML5 attribute "data-href"
   $('tr[data-href]').click(function(){
     window.document.location = $(this).data("href");
   });
@@ -95,7 +92,7 @@ $( document ).ready(function() {
   form_control_autofocus(null /* strCSSParent */);
 });
 
-// Compute focus automatically and enforce it : Set focus on first visible non disabled mandatory field
+// Compute focus automatically and enforce it : Set focus on first visible enabled field
 function form_control_autofocus(strCSSParent)
 {
   if (strCSSParent == null)
@@ -104,5 +101,32 @@ function form_control_autofocus(strCSSParent)
   }
   $(strCSSParent).find(".form-control:enabled:visible:first").focus();
 }
-
+function form_check_required(objFormControls)
+{
+  if (objFormControls == null)
+  {
+    objFormControls = $(".form-control-required");
+  }
+  else
+  {
+    objFormControls = objFormControls.find(".form-control-required");
+  }
+  objFormControls.each(function(index) {
+    // Validate required field: MUST NOT be empty on focus out (otherwise we set the error class)
+    form_control_check_required($(this));
+  });
+}
+function form_control_check_required(objFormControl)
+{
+  // Validate required field: MUST NOT be empty on focus out (otherwise we set the error class)
+  var strValue = objFormControl.val().replace(/^ +/g, "").replace(/ +$/g, "");
+  if (strValue == "")
+  {
+    objFormControl.parent().addClass("has-error").removeClass("has-success has-warning");
+  }
+  else
+  {
+    objFormControl.parent().removeClass("has-error has-warning").addClass("has-success");
+  }
+}
 </script>
