@@ -54,9 +54,9 @@ if [ -f /etc/mysql/my.cnf ] ; then
   if [ "$?" != "0" ] ; then
     echo "[`date +'%Y-%m-%d %H:%M:%S'`] Set ft_min_word_len=1..."
     my_backup=/etc/mysql/my.cnf.`date +'%Y%m%d%H%M%S'`
-    cp /etc/mysql/my.cnf $my_backup || handle_error "Can't backup my.cnf!"
+    sudo cp /etc/mysql/my.cnf $my_backup || handle_error "Can't backup my.cnf!"
     # Append ft_min_word_len=1 after [mysqld]
-    sed -e '/^\[mysqld\]/aft_min_word_len=1' $my_backup > /etc/mysql/my.cnf
+    sudo sed -e '/^\[mysqld\]/aft_min_word_len=1' $my_backup > /etc/mysql/my.cnf
   else
     echo "[`date +'%Y-%m-%d %H:%M:%S'`] ft_min_word_len already configured in /etc/mysql/my.cnf"
   fi
