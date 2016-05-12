@@ -57,6 +57,8 @@ if [ -f /etc/mysql/my.cnf ] ; then
     sudo cp /etc/mysql/my.cnf $my_backup || handle_error "Can't backup my.cnf!"
     # Append ft_min_word_len=1 after [mysqld]
     sudo sed -e '/^\[mysqld\]/aft_min_word_len=1' $my_backup > /etc/mysql/my.cnf || handle_error "Can't add ft_min_word_len to my.cnf!"
+    sed -e '/^\[mysqld\]/aft_min_word_len=1' $my_backup > /tmp/my.cnf.new || handle_error "Can't add ft_min_word_len to /tmp/my.cnf.new!"
+    sudo cp /tmp/my.cnf.new /etc/mysql/my.cnf || handle_error "Can't copy /tmp/my.cnf.new to my.cnf!"
     # Restart MySQL
     sudo service mysql restart
   else
