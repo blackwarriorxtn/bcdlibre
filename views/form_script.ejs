@@ -72,7 +72,7 @@ $( document ).ready(function() {
     // Show OK/Cancel buttons
     $("#_OK_CANCEL").removeClass("hidden").addClass("show");
     // Set focus on first field
-    $("#_FORM_VIEW").find(".form-control").first().focus();
+    form_control_autofocus("#_FORM_VIEW");
   });
   $("#_DELETE").on('click', function(event) {
     // Change form action
@@ -90,5 +90,19 @@ $( document ).ready(function() {
   $('tr[data-href]').click(function(){
     window.document.location = $(this).data("href");
   });
+
+  // Set focus automatically
+  form_control_autofocus(null /* strCSSParent */);
 });
+
+// Compute focus automatically and enforce it : Set focus on first visible non disabled mandatory field
+function form_control_autofocus(strCSSParent)
+{
+  if (strCSSParent == null)
+  {
+    strCSSParent = "body";
+  }
+  $(strCSSParent).find(".form-control:enabled:visible:first").focus();
+}
+
 </script>

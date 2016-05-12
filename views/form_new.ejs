@@ -17,14 +17,14 @@
         if (form.fields[i].maximum_length > 255)
         {
           %><textarea class="form-control<%= (form.fields[i].required ? " form-control-required" : "") %>" name="<%= form.fields[i].name %>" id="<%= form.fields[i].name %>" rows="5"
-                      placeholder="<%= form.fields[i].label %>" <%= (intDisplayCount==0 ? " autofocus" : "") %>
+                      placeholder="<%= form.fields[i].label %>"
                       ></textarea><%
         } // if (form.fields[i].maximum_length > 255)
         else
         {
         %>
         <input type="text" class="form-control<%= (form.fields[i].required ? " form-control-required" : "") %>" name="<%= form.fields[i].name %>" id="<%= form.fields[i].name %>"
-               placeholder="<%= form.fields[i].label %>" <%= (intDisplayCount==0 ? " autofocus" : "") %>
+               placeholder="<%= form.fields[i].label %>"
                <%- (form.fields[i].maximum_length ? " maxlength=\""+form.fields[i].maximum_length+"\"" : "") %>
                 aria-describedby="_STATUS_<%= form.fields[i].name %>">
         <%
