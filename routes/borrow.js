@@ -200,12 +200,20 @@ router.get('/webservice/items', function(req, res, next) {
   '+(strSQLWhere == null ? "" : "AND "+strSQLWhere)+'\
   GROUP BY item.id \n\
   ; \n\
-  ', function(err, rows, fields) {
-      if (err) throw err;
+  ', function(err, rows, fields, objSQLConnection) {
+      if (err)
+      {
+        // Cleanup
+        if (objSQLConnection)
+        {
+          objSQLConnection.end();
+        }
+        throw err;
+      }
       // Return result as JSON
       console.log("/webservice/items:rows=%j", rows);
       res.json(rows);
-    });
+    }, objSQLConnection);
   } // if (req.body.action == "borrow")
   else if (req.query && req.query.action == "return")
   {
@@ -229,7 +237,7 @@ router.get('/webservice/items', function(req, res, next) {
       // Return result as JSON
       console.log("/webservice/items:rows=%j", rows);
       res.json(rows);
-    });
+    }, objSQLConnection);
   } // if (req.query && req.query.action == "return")
   else
   {
@@ -241,13 +249,22 @@ router.get('/webservice/items', function(req, res, next) {
   '+(strSQLWhere == null ? "" : "WHERE "+strSQLWhere)+'\
   ; \n\
   ', function(err, rows, fields) {
-      if (err) throw err;
+      if (err)
+      {
+        // Cleanup
+        if (objSQLConnection)
+        {
+          objSQLConnection.end();
+        }
+        throw err;
+      }
       // Return result as JSON
       console.log("/webservice/items:rows=%j", rows);
       res.json(rows);
     });
   } // else if (req.query && req.query.action == "return")
 
+  // Cleanup
   if (objSQLConnection)
   {
     objSQLConnection.end();
@@ -276,7 +293,15 @@ router.get('/webservice/users', function(req, res, next) {
   '+(strSQLWhere == null ? "" : "WHERE "+strSQLWhere)+'\
   ; \n\
   ', function(err, rows, fields) {
-      if (err) throw err;
+      if (err)
+      {
+        // Cleanup
+        if (objSQLConnection)
+        {
+          objSQLConnection.end();
+        }
+        throw err;
+      }
       // Return result as JSON
       console.log("/webservice/users:rows=%j", rows);
       res.json(rows);
@@ -295,7 +320,15 @@ router.get('/webservice/users', function(req, res, next) {
   GROUP BY user.id \n\
   ; \n\
   ', function(err, rows, fields) {
-      if (err) throw err;
+      if (err)
+      {
+        // Cleanup
+        if (objSQLConnection)
+        {
+          objSQLConnection.end();
+        }
+        throw err;
+      }
       // Return result as JSON
       console.log("/webservice/users:rows=%j", rows);
       res.json(rows);
@@ -311,7 +344,15 @@ router.get('/webservice/users', function(req, res, next) {
   '+(strSQLWhere == null ? "" : "WHERE "+strSQLWhere)+'\
   ; \n\
   ', function(err, rows, fields) {
-      if (err) throw err;
+      if (err)
+      {
+        // Cleanup
+        if (objSQLConnection)
+        {
+          objSQLConnection.end();
+        }
+        throw err;
+      }
       // Return result as JSON
       console.log("/webservice/users:rows=%j", rows);
       res.json(rows);
@@ -356,7 +397,15 @@ router.get('/webservice/borrows', function(req, res, next) {
 GROUP BY item.id, user.id \n\
 ; \n\
 ', function(err, rows, fields) {
-    if (err) throw err;
+    if (err)
+    {
+      // Cleanup
+      if (objSQLConnection)
+      {
+        objSQLConnection.end();
+      }
+      throw err;
+    }
     // Return result as JSON
     console.log("/webservice/borrows:rows=%j", rows);
     res.json(rows);

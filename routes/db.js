@@ -81,7 +81,11 @@ var check_field_value = function(strValue, objFieldDescription, objSQLConnection
     var strSQLValid = objFieldDescription.validation(strValue, objFieldDescription, objSQLConnection);
     if (strSQLValid == null)
     {
-      // Invalid value according to custom function - error
+      // Invalid value according to custom function - cleanup then error
+      if (blnMustDisconnect)
+      {
+        objSQLConnection.end();
+      }
       throw new Error(__("Invalid value : field \"%s\" can't store value %s", objFieldDescription.name, (strValue == null ? "null" : "\""+strValue+"\"")));
     }
     else
@@ -149,11 +153,16 @@ var insert_record = function(req, res, next, objFormParameters, fnCallback)
     if (fnCallback)
     {
       // Custom function defined: call it with the same connection (to successfully use LAST_INSERT_ID() function)
+      // ATTENTION: this function MUST close the SQL connection after usage!
       fnCallback(err, rows, fields, objSQLConnection);
     }
     else
     {
-      // No custom function: Redirect to list
+      // No custom function: cleanup then redirect to list
+      if (objSQLConnection)
+      {
+        objSQLConnection.end();
+      }
       res.redirect('list');
     }
   }, objSQLConnection);
@@ -195,7 +204,11 @@ var update_record = function(req, res, next, objFormParameters, fnCallback)
       if (objField == null)
       {
 
-        // Unknown field: error!
+        // Unknown field: cleanup then error!
+        if (objSQLConnection)
+        {
+          objSQLConnection.end();
+        }
         throw new Error(req.i18n.__("ERROR: field \"%s\" is unknown!",strSentName));
 
       } // if (objField == null)
@@ -216,7 +229,11 @@ var update_record = function(req, res, next, objFormParameters, fnCallback)
         if (objField == null)
         {
 
-          // Unknown field: error!
+          // Unknown field: cleanup then error!
+          if (objSQLConnection)
+          {
+            objSQLConnection.end();
+          }
           throw new Error(req.i18n.__("ERROR: field \"%s\" is unknown!",strSentName));
 
         } // if (objField == null)
@@ -242,11 +259,16 @@ var update_record = function(req, res, next, objFormParameters, fnCallback)
     if (fnCallback)
     {
       // Custom function defined: call it with the same connection (to successfully use LAST_INSERT_ID() function)
+      // ATTENTION: this function MUST close the SQL connection after usage!
       fnCallback(err, rows, fields, objSQLConnection);
     }
     else
     {
-      // No custom function: Redirect to list
+      // No custom function: Cleanup then redirect to list
+      if (objSQLConnection)
+      {
+        objSQLConnection.end();
+      }
       res.redirect('list');
     }
   }, objSQLConnection);
@@ -287,7 +309,11 @@ var delete_record = function(req, res, next, objFormParameters, fnCallback)
       if (objField == null)
       {
 
-        // Unknown field: error!
+        // Unknown field: cleanup then error!
+        if (objSQLConnection)
+        {
+          objSQLConnection.end();
+        }
         throw new Error(req.i18n.__("ERROR: field \"%s\" is unknown!",strSentName));
 
       } // if (objField == null)
@@ -326,11 +352,16 @@ var delete_record = function(req, res, next, objFormParameters, fnCallback)
     if (fnCallback)
     {
       // Custom function defined: call it with the same connection (to successfully use LAST_INSERT_ID() function)
+      // ATTENTION: this function MUST close the SQL connection after usage!
       fnCallback(err, rows, fields, objSQLConnection);
     }
     else
     {
-      // No custom function: Redirect to list
+      // No custom function: Cleanup then redirect to list
+      if (objSQLConnection)
+      {
+        objSQLConnection.end();
+      }
       res.redirect('list');
     }
   }, objSQLConnection);
@@ -377,8 +408,14 @@ var view_record = function(req, res, next, objFormParameters, fnCallback)
   console.log(strSQL);
 
   runsql(strSQL, function(err, rows, fields) {
+    // MUST HAVE a custom function defined
     fnCallback(err, rows, fields);
-  });
+  }, objSQLConnection);
+
+  if (objSQLConnection)
+  {
+    objSQLConnection.end();
+  }
 }
 
 var list_record = function(req, res, next, objFormParameters, objSQLOptions, fnCallback)
@@ -406,6 +443,11 @@ var list_record = function(req, res, next, objFormParameters, objSQLOptions, fnC
   runsql(strSQL, function(err, rows, fields) {
     fnCallback(err, rows, fields);
   });
+
+  if (objSQLConnection)
+  {
+    objSQLConnection.end();
+  }
 }
 
 var handle_error = function(err, res, template_name, options)
@@ -484,6 +526,10 @@ var search_record = function(req, res, next, objFormParameters, objSQLOptions, f
     fnCallback(err, rows, fields);
   });
 
+  if (objSQLConnection)
+  {
+    objSQLConnection.end();
+  }
 }
 
 module.exports.new_connection = new_connection;

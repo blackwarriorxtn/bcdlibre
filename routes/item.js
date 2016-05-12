@@ -96,11 +96,11 @@ router.post('/new', function(req, res, next) {
       {
         // Always add at least ONE exemplary of the book (item => item_detail)
         db.runsql("INSERT INTO item(item_detail_id) VALUES(LAST_INSERT_ID());" /* strSQL */, function(err, rows, fields) {
-          if (err) throw err;
           if (objSQLConnection)
           {
             objSQLConnection.end();
           }
+          if (err) throw err;
           // Redirect to list
           res.redirect('list'); // TODO res.redirect('view') compute parameters
         }, objSQLConnection);
@@ -133,6 +133,10 @@ router.post('/update', function(req, res, next) {
   else if (req.body["_OK"] != null)
   {
     db.update_record(req, res, next, objMyContext.objFormParameters, function(err, result, fields, objSQLConnection) {
+      if (objSQLConnection)
+      {
+        objSQLConnection.end();
+      }
       if (err)
       {
         db.handle_error(err, res, "item/update", { title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, message:"Impossible de modifier ce livre ("+err+")" });
@@ -170,6 +174,10 @@ router.post('/delete', function(req, res, next) {
   else if (req.body["_OK"] != null)
   {
     db.delete_record(req, res, next, objMyContext.objFormParameters, function(err, result, fields, objSQLConnection) {
+      if (objSQLConnection)
+      {
+        objSQLConnection.end();
+      }
       if (err)
       {
         db.handle_error(err, res, "item/delete", { title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, message:"Impossible d'effacer ce livre ("+err+")" });
