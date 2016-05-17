@@ -102,8 +102,9 @@ router.post('/new', function(req, res, next) {
             objSQLConnection.end();
           }
           if (err) throw err;
-          // Redirect to list
-          res.redirect('list'); // TODO res.redirect('view') compute parameters
+          // Display add form again
+          var objMyContext = new module_context(req, res, next);
+          res.render('item/new', {req:req, title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, message:{text:"Fiche ajoutée avec succès. Veuillez remplir la fiche suivante",type:"info"}, action:"new"});
         }, objSQLConnection);
 
       }
