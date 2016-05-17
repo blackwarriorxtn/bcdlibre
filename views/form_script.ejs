@@ -99,7 +99,14 @@ function form_control_autofocus(strCSSParent)
   {
     strCSSParent = "body";
   }
-  $(strCSSParent).find(".form-control:enabled:visible:first").focus();
+  // WARNING: workaround typeahead limitation: Try to find typeahead field first (the one with class tt-input)
+  var objFocus = $(strCSSParent).find(".form-control.tt-input:enabled:visible:first");
+  if (objFocus && objFocus.length == 0)
+  {
+    // No typeahead field: try to find a standard field (one with CSS class .form-control)
+    objFocus = $(strCSSParent).find(".form-control:enabled:visible:first");
+  }
+  objFocus.focus();
 }
 function form_check_required(objFormControls)
 {
