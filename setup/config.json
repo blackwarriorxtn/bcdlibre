@@ -7,5 +7,12 @@
     "database_name": "bibliopuce",
     "application_user_name": "bibliopuce",
     "application_user_password": "FPxWFYVux7BhEuU9"
+  },
+  "webservices": {
+    "aws" : {
+      "awsId":     "AKIAJ7R5TX3DPO3IAPBA",
+      "awsSecret": "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",
+      "assocId":   "bibliopucedem-20"
+    }
   }
 }

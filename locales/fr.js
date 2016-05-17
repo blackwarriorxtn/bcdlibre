@@ -62,5 +62,6 @@
 	"Aucun lecteur dans la liste.": "Aucun lecteur dans la liste.",
 	"Aucun livre dans l'inventaire.": "Aucun livre dans l'inventaire.",
 	"Aucun emprunt en cours.": "Aucun emprunt en cours.",
-	"Veuillez saisir le livre et le lecteur": "Veuillez saisir le livre et le lecteur"
+	"Veuillez saisir le livre et le lecteur": "Veuillez saisir le livre et le lecteur",
+	"Série": "Série"
 }

@@ -4,6 +4,11 @@ var mysql      = require('mysql');
 var db = require('./db'); // database utilities
 var request = require('request');
 var async = require('async');
+var config = require('../setup/config.js');
+
+var strAWSId = config.webservices.aws.awsId;
+var strAWSSecret = config.webservices.aws.awsSecret;
+var strAWSAssocId = config.webservices.aws.assocId;
 
 // ******************************************************************************** item
 function module_context(req, res, next)
@@ -19,6 +24,7 @@ function module_context(req, res, next)
       {name:"title",label:req.i18n.__("Titre"),type:"String",required:true,validation:null,maximum_length:255},
       {name:"author",label:req.i18n.__("Auteur"),type:"String",required:true,validation:null,maximum_length:255},
       {name:"description",label:req.i18n.__("Description (Synopsis)"),type:"String",required:false,validation:null,maximum_length:65535},
+      {name:"series_title",label:req.i18n.__("Série"),type:"String",required:false,validation:null,maximum_length:255},
     ]
   };
   // To search we only have ONE field named "search" and a special SQL table with full text indexes
@@ -248,7 +254,8 @@ router.get('/webservice', function(req, objLocalWebServiceResult, next) {
 
   const urls= [
     "http://xisbn.worldcat.org/webservices/xid/isbn/"+encodeURIComponent(strISBN)+"?method=getMetadata&format=json&fl="+encodeURIComponent('*'),
-    "https://www.googleapis.com/books/v1/volumes?q=isbn:"+encodeURIComponent(strISBN)
+    "https://www.googleapis.com/books/v1/volumes?q=isbn:"+encodeURIComponent(strISBN),
+    "http://localhost:3000/item/aws?isbn="+encodeURIComponent(strISBN)
   ];
   async.map(urls, function (url, callback) {
     // DEBUG
@@ -314,6 +321,7 @@ router.get('/webservice', function(req, objLocalWebServiceResult, next) {
           else
           {
             // Worldcat error : ignore it
+            console.log("Worldcat error : ignore it");
           }
         }
         else if (res[intResult].kind)
@@ -355,6 +363,73 @@ router.get('/webservice', function(req, objLocalWebServiceResult, next) {
           else
           {
             // Google error : ignore it
+            console.log("Google error : ignore it");
+          }
+        }
+        else if (res[intResult].ItemLookupResponse)
+        {
+          // Amazon Web Service result
+          if (res[intResult].ItemLookupResponse.Items && res[intResult].ItemLookupResponse.Items.Item)
+          {
+            // Handle multiple results (build aggregated result)
+            var objResults = res[intResult].ItemLookupResponse.Items.Item;
+            for (var intItem = 0; intItem < objResults.length; intItem++)
+            {
+              var objResultItem = objResults[intItem].ItemAttributes;
+              // DEBUG
+              console.log("Amazon Web Service result: %j", objResultItem);
+              if (objResultItem.Author)
+              {
+                var strNewValue = objResultItem.Author;
+                // DEBUG console.log("Amazon Web Service Authors = %s",strNewValue);
+                // WARNING: don't overwrite result from another Web Service, unless this result is longuer (ok, it's a silly way to finding the most appropriate answer)
+                if (objWebServiceResult.authors == null || objWebServiceResult.authors.length < strNewValue.length)
+                {
+                  objWebServiceResult.authors = strNewValue;
+                }
+              }
+              if (objResultItem.Title)
+              {
+                // DEBUG
+                console.log("Amazon Web Service Title (raw) = %j",objResultItem.Title);
+                var strNewValue = objResultItem.Title;
+                // Amazon post-processing: guess series, if any
+                var arrMatchSeries = strNewValue.match(/^(.*)\(La série de livres ([^)]+)\)(.*)$/);
+                if (arrMatchSeries)
+                {
+                  // DEBUG
+                  console.log("Amazon Web Service Title / Serie = %s / %s",arrMatchSeries[1], arrMatchSeries[2]);
+                  strNewValue = (arrMatchSeries[1] == null ? "" : arrMatchSeries[1].replace(/^ +/, " ").replace(/ +$/, "")) + (arrMatchSeries[3] == null ? "" : arrMatchSeries[3].replace(/^ +/, " ").replace(/ +$/, ""));
+                  if (arrMatchSeries[2] != null && arrMatchSeries[2] != "")
+                  {
+                    objWebServiceResult.series_title = arrMatchSeries[2].replace(/^ +/, "").replace(/ +$/, "");
+                  }
+                }
+                // Remove some annoyance like "French Edition"
+                strNewValue = strNewValue.replace(/ *\(French Edition\)/, "");
+                // DEBUG
+                console.log("Amazon Web Service Title (processed) = %s",strNewValue);
+                // WARNING: don't overwrite result from another Web Service, unless this result is longuer (ok, it's a silly way to finding the most appropriate answer)
+                if (objWebServiceResult.title == null || objWebServiceResult.title.length < strNewValue.length)
+                {
+                  objWebServiceResult.title = strNewValue;
+                }
+              }
+              /* TODO Description ?
+              if (objResultItem.description)
+              {
+                objWebServiceResult.description = objResultItem.description;
+              }
+              */
+              objWebServiceResult.isbn = strISBN;
+              // TODO handle publisher? language? hyperlink to more information on amazon?
+              objWebServiceResult.status = "OK";
+            } // for (var intItem = 0; intItem < objResults.length; intItem++)
+          }
+          else
+          {
+            // Amazon Web Service error : ignore it
+            console.log("Amazon Web Service error : ignore it");
           }
         }
         else
@@ -382,6 +457,64 @@ router.get('/webservice', function(req, objLocalWebServiceResult, next) {
 
 });
 
+// GET info from Amazon Web Service (fetch isbn information with Amazon ID/Password)
+router.get('/aws', function(req, objLocalWebServiceResult, next) {
+
+  console.log("webservice/aws");
+  var objMyContext = new module_context(req, objLocalWebServiceResult, next);
+  var objWebServiceResult = {status:"KO"};
+
+  // Must be something in the body
+  if (!req.body)
+  {
+    console.log("ERROR: Web Service called with an empty body");
+    return objLocalWebServiceResult.sendStatus(400);
+  }
+
+  // DEBUG
+  console.log("req.query.isbn=%s\n",req.query.isbn);
+
+  var strISBN = req.query.isbn;
+  // ISBN must not be empty
+  if (strISBN == null || strISBN == "")
+  {
+    console.log("ERROR: Web Service called with an empty isbn parameter");
+    return objLocalWebServiceResult.sendStatus(400);
+  }
+
+  var OperationHelper = require('apac').OperationHelper;
+
+  var opHelper = new OperationHelper({
+      awsId:     strAWSId,
+      awsSecret: strAWSSecret,
+      assocId:   strAWSAssocId,
+      /* Enable automatic throttling option to workaround Amazon's limit of one request per second per IP */
+      maxRequestsPerSecond: 1
+  });
+
+  opHelper.execute('ItemLookup', {
+      'IdType': 'ISBN',
+      'ItemId': strISBN,
+      'SearchIndex': 'Books',
+      'ResponseGroup': 'ItemAttributes'
+  }, function(error, results) {
+      if (error)
+      {
+        console.log('Error: ' + error + "\n")
+        objLocalWebServiceResult.status = "KO";
+        objLocalWebServiceResult.message = error;
+        objLocalWebServiceResult.json(results);
+      }
+      else
+      {
+        console.log("Results: %j\n", results);
+        objLocalWebServiceResult.status = "OK";
+        objLocalWebServiceResult.message = "OK";
+        objLocalWebServiceResult.json(results);
+      }
+  });
+
+});
 
 
 

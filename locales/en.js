@@ -62,5 +62,6 @@
 	"Aucun lecteur dans la liste.": "No reader found.",
 	"Aucun livre dans l'inventaire.": "No book found.",
 	"Aucun emprunt en cours.": "No borrowing found.",
-	"Veuillez saisir le livre et le lecteur": "Please enter book and borrower information"
+	"Veuillez saisir le livre et le lecteur": "Please enter book and borrower information",
+	"Série": "Serie"
 }

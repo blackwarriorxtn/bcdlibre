@@ -31,6 +31,7 @@ CREATE TABLE item_detail(
   author VARCHAR(255) NOT NULL COMMENT 'Item Author',
   description TEXT NULL COMMENT 'Item Description (synopsis)',
   isbn13 VARCHAR(13) NULL COMMENT 'International Standard Book Number (ISBN13)',
+  series_title VARCHAR(255) NULL COMMENT 'Item Series Title', 
 
   PRIMARY KEY(id),
   UNIQUE KEY id_isbn13(isbn13)
@@ -64,15 +65,19 @@ CREATE TABLE item_detail_search(
   author VARCHAR(255) NOT NULL COMMENT 'Item Author',
   description TEXT NULL COMMENT 'Item Description (synopsis)',
   isbn13 VARCHAR(13) NULL COMMENT 'International Standard Book Number (ISBN13)',
+  series_title VARCHAR(255) NULL COMMENT 'Item Series Title', 
 
   PRIMARY KEY(id),
   KEY item_detail_search_title(title),
   KEY item_detail_search_author(author),
+  KEY item_detail_search_isbn13(isbn13),
   KEY item_detail_search_description(description(64)),
+  KEY item_detail_search_series_title(series_title),
   FULLTEXT KEY item_ft_title(title),
   FULLTEXT KEY item_ft_author(author), 
   FULLTEXT KEY item_ft_description(description),
-  FULLTEXT KEY item_ft_isbn13(isbn13)
+  FULLTEXT KEY item_ft_isbn13(isbn13),
+  FULLTEXT KEY item_ft_series_title(series_title)
 
 )  ENGINE=MyISAM COMMENT 'Search engine for items (MyISAM Format for FULL TEXT SEARCHES)'
 ;
@@ -86,7 +91,7 @@ SET SESSION SQL_MODE="";;
 DROP TRIGGER IF EXISTS `item_detail_after_insert`;;
 CREATE DEFINER=CURRENT_USER TRIGGER `item_detail_after_insert` AFTER INSERT ON `item_detail` 
 FOR EACH ROW BEGIN
-  INSERT INTO item_detail_search(item_detail_id, title, author, description, isbn13) VALUES(NEW.id, NEW.title, NEW.author, NEW.description, NEW.isbn13);
+  INSERT INTO item_detail_search(item_detail_id, title, author, description, isbn13, series_title) VALUES(NEW.id, NEW.title, NEW.author, NEW.description, NEW.isbn13, NEW.series_title);
 END ;;
 /* UPDATE : After UPDATE table, UPDATE search table */
 DROP TRIGGER IF EXISTS `item_detail_after_update`;;
@@ -96,7 +101,8 @@ FOR EACH ROW BEGIN
     item_detail_search.title = NEW.title, 
     item_detail_search.author = NEW.author,  
     item_detail_search.description = NEW.description,
-    item_detail_search.isbn13 = NEW.isbn13
+    item_detail_search.isbn13 = NEW.isbn13, 
+    item_detail_search.series_title = NEW.series_title
   WHERE item_detail_search.item_detail_id = NEW.id;
 END ;;
 /* DELETE : After DELETE table, DELETE search table */

@@ -29,11 +29,20 @@ function check_isbn(event, strValue)
       }
       if (data.description)
       {
-        var strDescription = data.description
+        var strDescription = data.description;
         if (strDescription && strDescription.length > 0)
         {
           $("#description").val(strDescription);
-          $("#author").parent().addClass("has-success").removeClass("has-warning has-error");
+          $("#description").parent().addClass("has-success").removeClass("has-warning has-error");
+        }
+      }
+      if (data.series_title)
+      {
+        var strSeriesTitle = data.series_title;
+        if (strSeriesTitle && strSeriesTitle.length > 0)
+        {
+          $("#series_title").val(strSeriesTitle);
+          $("#series_title").parent().addClass("has-success").removeClass("has-warning has-error");
         }
       }
       // Success
