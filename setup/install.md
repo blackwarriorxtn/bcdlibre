@@ -24,6 +24,11 @@ Please note that nodejs installation is automated with the setup.sh script (see 
 
 ### On Linux (Debian 8):
 
+#### Install prerequisites
+
+    apt-get install sudo
+    apt-get install mysql-server
+
 #### Login as root - create dedicated user
 
     sudo adduser bibliopuce
@@ -37,4 +42,4 @@ Please note that nodejs installation is automated with the setup.sh script (see 
 #### Start setup script
 
     cd bibliopuce
-    bash setup\setup.sh
+    bash setup/setup.sh
