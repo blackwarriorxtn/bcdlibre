@@ -10,6 +10,63 @@ var strAWSId = config.webservices.aws.awsId;
 var strAWSSecret = config.webservices.aws.awsSecret;
 var strAWSAssocId = config.webservices.aws.assocId;
 
+
+function aws_post_processing(strISBN, objResultItem, objWebServiceResult)
+{
+  // DEBUG
+  console.log("Amazon Web Service result: %j", objResultItem);
+  if (objResultItem.Author)
+  {
+    var strNewValue = objResultItem.Author;
+    // DEBUG console.log("Amazon Web Service Authors = %s",strNewValue);
+    // WARNING: don't overwrite result from another Web Service, unless this result is longuer (ok, it's a silly way to finding the most appropriate answer)
+    if (objWebServiceResult.authors == null || objWebServiceResult.authors.length < strNewValue.length)
+    {
+      objWebServiceResult.authors = strNewValue;
+    }
+  }
+  if (objResultItem.Title)
+  {
+    // DEBUG
+    console.log("Amazon Web Service Title (raw) = %j",objResultItem.Title);
+    var strNewValue = objResultItem.Title;
+    // Amazon post-processing: guess series, if any
+    var arrMatchSeries = strNewValue.match(/^(.*)\(La série de livres ([^)]+)\)(.*)$/);
+    if (arrMatchSeries == null)
+    {
+      arrMatchSeries = strNewValue.match(/^(.*)Collection ([^:]+):(.*)$/);
+    }
+    if (arrMatchSeries)
+    {
+      // DEBUG
+      console.log("Amazon Web Service Title / Serie = %s / %s",arrMatchSeries[1], arrMatchSeries[2]);
+      strNewValue = (arrMatchSeries[1] == null ? "" : arrMatchSeries[1].replace(/^ +/, " ").replace(/ +$/, "")) + (arrMatchSeries[3] == null ? "" : arrMatchSeries[3].replace(/^ +/, " ").replace(/ +$/, ""));
+      if (arrMatchSeries[2] != null && arrMatchSeries[2] != "")
+      {
+        objWebServiceResult.series_title = arrMatchSeries[2].replace(/^ +/, "").replace(/ +$/, "");
+      }
+    }
+    // Remove some annoyance like "French Edition" or "De 5 à 7 ans" (UTF8), trailing spaces...
+    strNewValue = strNewValue.replace(/ *\(French Edition\)/, "").replace(/ *- De [0-9]+ ..? [0-9]+ ans/, "").replace(/^ +/, "").replace(/ +$/, "");
+    // DEBUG
+    console.log("Amazon Web Service Title (processed) = %s",strNewValue);
+    // WARNING: don't overwrite result from another Web Service, unless this result is longuer (ok, it's a silly way to finding the most appropriate answer)
+    if (objWebServiceResult.title == null || objWebServiceResult.title.length < strNewValue.length)
+    {
+      objWebServiceResult.title = strNewValue;
+    }
+  }
+  /* TODO Description ?
+  if (objResultItem.description)
+  {
+    objWebServiceResult.description = objResultItem.description;
+  }
+  */
+  objWebServiceResult.isbn = strISBN;
+  // TODO handle publisher? language? hyperlink to more information on amazon?
+  objWebServiceResult.status = "OK";
+}
+
 // ******************************************************************************** item
 function module_context(req, res, next)
 {
@@ -366,65 +423,33 @@ router.get('/webservice', function(req, objLocalWebServiceResult, next) {
             console.log("Google error : ignore it");
           }
         }
-        else if (res[intResult].ItemLookupResponse)
+        else if (res[intResult].ItemLookupResponse || res[intResult].ItemLookupErrorResponse)
         {
           // Amazon Web Service result
-          if (res[intResult].ItemLookupResponse.Items && res[intResult].ItemLookupResponse.Items.Item)
+          if (res[intResult].ItemLookupResponse && res[intResult].ItemLookupResponse.Items && res[intResult].ItemLookupResponse.Items.Item)
           {
-            // Handle multiple results (build aggregated result)
+            // Handle one or more results (build aggregated result)
             var objResults = res[intResult].ItemLookupResponse.Items.Item;
-            for (var intItem = 0; intItem < objResults.length; intItem++)
+            if (objResults.length == null || objResults.length == 0)
             {
-              var objResultItem = objResults[intItem].ItemAttributes;
+              // One result only - Item is an object
               // DEBUG
-              console.log("Amazon Web Service result: %j", objResultItem);
-              if (objResultItem.Author)
+              console.log("one result: objResults= %j", objResults);
+              aws_post_processing(strISBN, objResults.ItemAttributes, objWebServiceResult);
+            }
+            else
+            {
+              // Multiples results - Item is an Array of objects
+              // DEBUG
+              console.log("multiple results: objResults= %j", objResults);
+              for (var intItem = 0; intItem < objResults.length; intItem++)
               {
-                var strNewValue = objResultItem.Author;
-                // DEBUG console.log("Amazon Web Service Authors = %s",strNewValue);
-                // WARNING: don't overwrite result from another Web Service, unless this result is longuer (ok, it's a silly way to finding the most appropriate answer)
-                if (objWebServiceResult.authors == null || objWebServiceResult.authors.length < strNewValue.length)
-                {
-                  objWebServiceResult.authors = strNewValue;
-                }
-              }
-              if (objResultItem.Title)
-              {
-                // DEBUG
-                console.log("Amazon Web Service Title (raw) = %j",objResultItem.Title);
-                var strNewValue = objResultItem.Title;
-                // Amazon post-processing: guess series, if any
-                var arrMatchSeries = strNewValue.match(/^(.*)\(La série de livres ([^)]+)\)(.*)$/);
-                if (arrMatchSeries)
-                {
-                  // DEBUG
-                  console.log("Amazon Web Service Title / Serie = %s / %s",arrMatchSeries[1], arrMatchSeries[2]);
-                  strNewValue = (arrMatchSeries[1] == null ? "" : arrMatchSeries[1].replace(/^ +/, " ").replace(/ +$/, "")) + (arrMatchSeries[3] == null ? "" : arrMatchSeries[3].replace(/^ +/, " ").replace(/ +$/, ""));
-                  if (arrMatchSeries[2] != null && arrMatchSeries[2] != "")
-                  {
-                    objWebServiceResult.series_title = arrMatchSeries[2].replace(/^ +/, "").replace(/ +$/, "");
-                  }
-                }
-                // Remove some annoyance like "French Edition"
-                strNewValue = strNewValue.replace(/ *\(French Edition\)/, "");
-                // DEBUG
-                console.log("Amazon Web Service Title (processed) = %s",strNewValue);
-                // WARNING: don't overwrite result from another Web Service, unless this result is longuer (ok, it's a silly way to finding the most appropriate answer)
-                if (objWebServiceResult.title == null || objWebServiceResult.title.length < strNewValue.length)
-                {
-                  objWebServiceResult.title = strNewValue;
-                }
-              }
-              /* TODO Description ?
-              if (objResultItem.description)
-              {
-                objWebServiceResult.description = objResultItem.description;
-              }
-              */
-              objWebServiceResult.isbn = strISBN;
-              // TODO handle publisher? language? hyperlink to more information on amazon?
-              objWebServiceResult.status = "OK";
-            } // for (var intItem = 0; intItem < objResults.length; intItem++)
+                var objResultItem = objResults[intItem].ItemAttributes;
+                aws_post_processing(strISBN, objResultItem, objWebServiceResult);
+              } // for (var intItem = 0; intItem < objResults.length; intItem++)
+
+            } // if (objResults.length == null || objResults.length == 0)
+
           }
           else
           {
