@@ -10,9 +10,9 @@
   },
   "webservices": {
     "aws" : {
-      "awsId":     "AKIAJ7R5TX3DPO3IAPBA",
-      "awsSecret": "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",
-      "assocId":   "bibliopucedem-20"
+      "awsId":     "AKIAJV23UJQLN6JVMEIA",
+      "awsSecret": "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",
+      "assocId":   "demobibliopuc-20"
     }
   }
 }
