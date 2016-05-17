@@ -16,8 +16,10 @@ $( document ).ready(function() {
 
   });
   $("#_CANCEL").on('click', function(event) {
-    // Remove all errors so that submit event can be processed without validation
-    $(".has-error").removeClass("has-error");
+    // Mark form as cancelled - thus the form will be submitted without checking field values
+    $(event.target).closest(".form-horizontal").addClass("form-cancel");
+    $(event.target).closest(".form-inline").addClass("form-cancel");
+    $(event.target).closest(".form-view").addClass("form-cancel");
   });
 
   // When use type on ESC key, cancel form (click on CANCEL button, if any)
@@ -34,13 +36,22 @@ $( document ).ready(function() {
     }
   });
   $("#_FORM_NEW").on('submit', function(event) {
-    // Recheck all mandatory fields - thus pressing the enter key, which submits forms, provoke a new check of all values (even if focus is not lost)
-    form_check_required($(event.target));
+    var blnSubmit = false;
+    var objErrors = null;
+    if ($(event.target).hasClass("form-cancel"))
+    {
+      blnSubmit = true;
+    }
+    else
+    {
+      // Recheck all mandatory fields - thus pressing the enter key, which submits forms, provoke a new check of all values (even if focus is not lost)
+      form_check_required($(event.target));
 
-    // Get list of controls in error
-    var objErrors = $(".has-error");
-    var blnValue = (objErrors.length == 0);
-    if(blnValue)
+      // Get list of controls in error
+      objErrors = $(".has-error");
+      blnSubmit = (objErrors.length == 0);
+    }
+    if(blnSubmit)
     {
       // No error: do form submit, but do not send autocomplete fields
       $(".form-dont-submit").prop("disabled", true);
@@ -50,7 +61,10 @@ $( document ).ready(function() {
       // There are errors: do not submit form (block callback)
       event.preventDefault();
       // Set focus on first field in error
-      $(objErrors.first()).find(".form-control").focus();
+      if (objErrors)
+      {
+        $(objErrors.first()).find(".form-control").focus();
+      }
     }
   });
   $("#_ADD").on('click', function(event) {
