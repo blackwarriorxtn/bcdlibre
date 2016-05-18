@@ -80,8 +80,8 @@ function module_context(req, res, next)
       {name:"isbn13",label:req.i18n.__("Numéro ISBN"),type:"String",required:false,validation:null,maximum_length:13},
       {name:"title",label:req.i18n.__("Titre"),type:"String",required:true,validation:null,maximum_length:255},
       {name:"author",label:req.i18n.__("Auteur"),type:"String",required:true,validation:null,maximum_length:255},
-      {name:"description",label:req.i18n.__("Description (Synopsis)"),type:"String",required:false,validation:null,maximum_length:65535},
       {name:"series_title",label:req.i18n.__("Série"),type:"String",required:false,validation:null,maximum_length:255},
+      {name:"description",label:req.i18n.__("Description (Synopsis)"),type:"String",required:false,validation:null,maximum_length:65535},
     ]
   };
   // To search we only have ONE field named "search" and a special SQL table with full text indexes
