@@ -2,64 +2,66 @@
 <%- include('form_message', {message: message}) %>
 <div class="panel-body">
 
-  <!-- Use a disabled form to display field values (non placeholder) -->
+  <!-- Use a disabled form to display field values (no placeholder) -->
   <form id="_FORM_VIEW" class="form-horizontal" action="undefined" method="post">
-    <div class="form-group">
-      <input id="_ADD" name="_ADD" class="btn btn-default" type="button" value="<%=__('Ajouter')%>">
+    <fieldset id="_FORM_VIEW_FIELDS">
+      <div class="form-group">
+        <input id="_ADD" name="_ADD" class="btn btn-default" type="button" value="<%=__('Ajouter')%>">
+        <%
+          if (record)
+          {%>
+        <input id="_MODIFY" name="_MODIFY" class="btn btn-default" type="button" value="<%=__('Modifier')%>">
+        <input id="_DELETE" name="_DELETE" class="btn btn-default" type="button" value="<%=__('Supprimer')%>">
+        <%} // if (record)%>
+      </div><!-- class="form-group" -->
       <%
         if (record)
-        {%>
-      <input id="_MODIFY" name="_MODIFY" class="btn btn-default" type="button" value="<%=__('Modifier')%>">
-      <input id="_DELETE" name="_DELETE" class="btn btn-default" type="button" value="<%=__('Supprimer')%>">
-      <%} // if (record)%>
-    </div><!-- class="form-group" -->
-    <%
-      if (record)
-      {
-        var blnFieldset = false;
-        for(var i=0; i< form.fields.length; i++)
         {
-          // Don't display field if it's an AUTOINCREMENT column
-          if (form.autoincrement_column != null && form.autoincrement_column.valueOf() == form.fields[i].name)
+          var blnFieldset = false;
+          for(var i=0; i< form.fields.length; i++)
           {
-            // Set hidden field with primary key
-            %><input type="hidden" name="<%= form.fields[i].name %>" id="<%= form.fields[i].name %>" value="<%= record[form.fields[i].name] %>"><%
-          }
-          else
-          {
-            if (!blnFieldset)
+            // Don't display field if it's an AUTOINCREMENT column
+            if (form.autoincrement_column != null && form.autoincrement_column.valueOf() == form.fields[i].name)
             {
-              blnFieldset = true;
-              %><fieldset disabled><%
-            } // if (!blnFieldset)
-        %>
-          <div class="form-group">
-            <label for="<%= form.fields[i].name %>" class="col-xs-2 col-md-2 control-label"><%= form.fields[i].label %></label>
-            <div class="col-xs-10 col-md-10">
-              <%
-            if (form.fields[i].maximum_length > 255)
-            {
-              %><textarea class="form-control" rows="5"><%= record[form.fields[i].name] %></textarea><%
-            } // if (form.fields[i].maximum_length > 255)
+              // Set hidden field with primary key
+              %><input type="hidden" name="<%= form.fields[i].name %>" id="<%= form.fields[i].name %>" value="<%= record[form.fields[i].name] %>"><%
+            }
             else
             {
-              %>
-              <input type="text" class="form-control" name="<%= form.fields[i].name %>" id="<%= form.fields[i].name %>" value="<%= record[form.fields[i].name] %>">
-              <%
-            } // else if (form.fields[i].maximum_length > 255)
-              %>
-            </div><!-- class="col-xs-10 col-md-10" -->
-          </div><!-- class="col-xs-2 col-md-2" --><%
-          } // if (form.autoincrement_column != form.fields[i].name)
-        } // for
+              if (!blnFieldset)
+              {
+                blnFieldset = true;
+                %><fieldset disabled><%
+              } // if (!blnFieldset)
+          %>
+            <div class="form-group">
+              <label for="<%= form.fields[i].name %>" class="col-xs-2 col-md-2 control-label"><%= form.fields[i].label %></label>
+              <div class="col-xs-10 col-md-10">
+                <%
+              if (form.fields[i].maximum_length > 255)
+              {
+                %><textarea class="form-control" rows="5"><%= record[form.fields[i].name] %></textarea><%
+              } // if (form.fields[i].maximum_length > 255)
+              else
+              {
+                %>
+                <input type="text" class="form-control" name="<%= form.fields[i].name %>" id="<%= form.fields[i].name %>" value="<%= record[form.fields[i].name] %>">
+                <%
+              } // else if (form.fields[i].maximum_length > 255)
+                %>
+              </div><!-- class="col-xs-10 col-md-10" -->
+            </div><!-- class="col-xs-2 col-md-2" --><%
+            } // if (form.autoincrement_column != form.fields[i].name)
+          } // for
 
-        if (blnFieldset)
-        {
-          blnFieldset = false;
-          %></fieldset><%
-        } // if (blnFieldset)
-      } // if (record)
-      %>
-    <%- include('form_okcancel', { visible:false }) %>
+          if (blnFieldset)
+          {
+            blnFieldset = false;
+            %></fieldset><%
+          } // if (blnFieldset)
+        } // if (record)
+        %>
+      <%- include('form_okcancel', { visible:false }) %>
+    </fieldset>
   </form>
 </div><!-- class="panel-body" -->

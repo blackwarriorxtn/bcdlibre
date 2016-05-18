@@ -2,6 +2,7 @@
 <%- include('form_message', {message: message}) %>
 <div class="panel-body">
 <form id="_FORM_NEW" class="form-horizontal" action="<%=action%>" method="post">
+  <fieldset id="_FORM_NEW_FIELDS">
   <%
   var intDisplayCount = 0;
   for(var i=0; i< form.fields.length; i++)
@@ -17,14 +18,14 @@
         if (form.fields[i].maximum_length > 255)
         {
           %><textarea class="form-control<%= (form.fields[i].required ? " form-control-required" : "") %>" name="<%= form.fields[i].name %>" id="<%= form.fields[i].name %>" rows="5"
-                      placeholder="<%= form.fields[i].label %>"
+                      placeholder="<%= form.fields[i].placeholder %>"
                       ></textarea><%
         } // if (form.fields[i].maximum_length > 255)
         else
         {
         %>
         <input type="text" class="form-control<%= (form.fields[i].required ? " form-control-required" : "") %>" name="<%= form.fields[i].name %>" id="<%= form.fields[i].name %>"
-               placeholder="<%= form.fields[i].label %>"
+               placeholder="<%= form.fields[i].placeholder %>"
                <%- (form.fields[i].maximum_length ? " maxlength=\""+form.fields[i].maximum_length+"\"" : "") %>
                 aria-describedby="_STATUS_<%= form.fields[i].name %>">
         <%
@@ -40,5 +41,6 @@
 
 } // for %>
 <%- include('form_okcancel', { visible:true }) %>
+</fieldset>
 </form>
 </div><!-- class="panel-body" -->

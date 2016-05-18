@@ -4,8 +4,11 @@ function check_isbn(event, strValue)
 {
   // Call a local Web Service to fetch book information based on its ISBN
   var strURL = "webservice?isbn="+encodeURIComponent(strValue);
+  // Lock GUI
+  form_lock_gui("#_FORM_NEW_FIELDS");
   var jqxhr = $.ajax(strURL)
   .done(function(data, textStatus, jqXHR) {
+    form_unlock_gui("#_FORM_NEW_FIELDS");
     // TODO Handle multiple results - let the user pick one in a list
     if (data && data.status && data.status == "OK")
     {
@@ -57,9 +60,10 @@ function check_isbn(event, strValue)
     }
   })
   .fail(function(jqXHR, textStatus, errorThrown) {
+    form_unlock_gui("#_FORM_NEW_FIELDS");
     // Error
     $("#isbn13").parent().addClass("has-error").removeClass("has-success has-warning");
-    $("#isbn13").parent().find(".glyphicon.form-control-feedback").addClass(" glyphicon-remove").removeClass("glyphicon-ok glyphicon-warning-sign");
+    $("#isbn13").parent().find(".glyphicon.form-control-feedback").addClass("glyphicon-remove").removeClass("glyphicon-ok glyphicon-warning-sign");
   })
 } // function check_isbn(event)
 
@@ -83,4 +87,17 @@ $( document ).ready(function() {
 
   });
 });
+
+// Lock GUI
+function form_lock_gui(strCSSSelector)
+{
+  $(strCSSSelector).prop("disabled", true).addClass("disabled");
+  $(strCSSSelector).find(".glyphicon.form-control-feedback").addClass("glyphicon-cloud-download");
+}
+function form_unlock_gui(strCSSSelector)
+{
+  $(strCSSSelector).prop("disabled", false).removeClass("disabled");
+  $(strCSSSelector).find(".glyphicon.form-control-feedback").removeClass("glyphicon-cloud-download");
+}
+
 </script>

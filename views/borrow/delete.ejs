@@ -13,20 +13,21 @@
           <!-- Custom form -->
           <%- include('../form_message', {message: message}) %>
           <form id="_FORM_NEW" class="form-vertical" action="delete" method="post">
-            <input type="hidden" name="id" id="id">
-            <div class="row">
-            <div class="col-xs-12 col-md-12">
-            <div class="form-group has-feedback">
-                <input type="text" class="form-control form-control-required form-dont-submit input-lg" name="borrow_search" id="borrow_search" autocomplete="off" spellcheck="false" size="50" placeholder="<%=__('Livre et emprunteur (ISBN, Titre, Nom, Compte)')%>">
-                <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
-                <span id="_STATUS_borrow_search" class="sr-only">(success)</span>
-            </div><!-- class="form-group has-feedback" -->
-            </div>
-          </div><!-- class="row" -->
-
+            <fieldset id="_FORM_NEW_FIELDS">
+              <input type="hidden" name="id" id="id">
+              <div class="row">
+              <div class="col-xs-12 col-md-12">
+              <div class="form-group has-feedback">
+                  <input type="text" class="form-control form-control-required form-dont-submit input-lg" name="borrow_search" id="borrow_search" autocomplete="off" spellcheck="false" size="50" placeholder="<%=__('Livre et emprunteur (ISBN, Titre, Nom, Compte)')%>">
+                  <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+                  <span id="_STATUS_borrow_search" class="sr-only">(success)</span>
+              </div><!-- class="form-group has-feedback" -->
+              </div>
+            </div><!-- class="row" -->
 <p>
             <%- include('../form_okcancel', { visible:true }) %>
 </p>
+            </fieldset>
           </form>
         </div>
       </div>
