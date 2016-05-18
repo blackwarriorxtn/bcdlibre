@@ -11,9 +11,7 @@ $( document ).ready(function() {
   });
   $("#_CANCEL").on('click', function(event) {
     // Mark form as cancelled - thus the form will be submitted without checking field values
-    $(event.target).closest(".form-horizontal").addClass("form-cancel");
-    $(event.target).closest(".form-inline").addClass("form-cancel");
-    $(event.target).closest(".form-view").addClass("form-cancel");
+    $(event.target).closest(".form-horizontal,.form-inline,.form-vertical").addClass("form-cancel");
   });
 
   // When use type on ESC key, cancel form (click on CANCEL button, if any)
