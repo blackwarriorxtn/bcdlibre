@@ -69,7 +69,7 @@ function check_isbn(event, strValue)
 
 // Bind events and callbacks
 $( document ).ready(function() {
-  // Bind ISBN search - on keyup event code 13 (ENTER) - MAYBE switch to onfocusout?
+  // Bind ISBN search - on focusout
   $('#isbn13').on('focusout',function(event){
     // On n'appelle le Web Service que si le titre et l'auteur n'ont pas déjà été remplis (donc s'ils sont vides)
     if ($('#title').val() == "" && $('#author').val() == "")
@@ -98,6 +98,8 @@ function form_unlock_gui(strCSSSelector)
 {
   $(strCSSSelector).prop("disabled", false).removeClass("disabled");
   $(strCSSSelector).find(".glyphicon.form-control-feedback").removeClass("glyphicon-cloud-download");
+  // reSet focus
+  form_control_autofocus("#_FORM_NEW");
 }
 
 </script>
