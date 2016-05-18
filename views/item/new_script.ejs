@@ -9,6 +9,8 @@ function check_isbn(event, strValue)
   var jqxhr = $.ajax(strURL)
   .done(function(data, textStatus, jqXHR) {
     form_unlock_gui("#_FORM_NEW_FIELDS");
+    // set focus on first field after "ISBN13": title
+    $("#title").focus();
     // TODO Handle multiple results - let the user pick one in a list
     if (data && data.status && data.status == "OK")
     {
@@ -61,6 +63,8 @@ function check_isbn(event, strValue)
   })
   .fail(function(jqXHR, textStatus, errorThrown) {
     form_unlock_gui("#_FORM_NEW_FIELDS");
+    // set focus on first field after "ISBN13": title
+    $("#title").focus();
     // Error
     form_control_set_error($("#isbn13"), true /* blnError */);
     $("#isbn13").parent().find(".glyphicon.form-control-feedback").addClass("glyphicon-remove").removeClass("glyphicon-ok glyphicon-warning-sign");
