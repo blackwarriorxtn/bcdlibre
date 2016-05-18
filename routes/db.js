@@ -60,6 +60,8 @@ var runsql = function (strSQL, fnCallback, objSQLConnection)
 var check_field_value = function(strValue, objFieldDescription, objSQLConnection, req)
 {
   var strSQLValue = null;
+  var objValue = strValue;
+  var blnEscapeString = true;
   var blnMustDisconnect = false;
   if (objSQLConnection == null)
   {
@@ -91,7 +93,7 @@ var check_field_value = function(strValue, objFieldDescription, objSQLConnection
           var objNumbers = strValue.match(/^[-+]?\d+$/);
           if (objNumbers == null)
           {
-            strValue = null;
+            objValue = null;
           }
           else
           {
@@ -100,17 +102,20 @@ var check_field_value = function(strValue, objFieldDescription, objSQLConnection
               var intValue = new Number(objNumbers[0]);
               if (isNaN(intValue))
               {
-                strValue = null;
+                objValue = null;
               }
               else
               {
+                // DEBUG
+                console.log("Conversion: value=%d",intValue);
                 // Store integer value
-                strValue = intValue;
+                blnEscapeString = false;
+                objValue = intValue;
               }
             }
             else
             {
-              strValue = null;
+              objValue = null;
             }
           }
         } // if (strValue != null)
@@ -119,11 +124,12 @@ var check_field_value = function(strValue, objFieldDescription, objSQLConnection
       case "String":
       default:
       // No conversion
+      objValue = strValue;
       break;
     }
   }
 
-  // TODO Check maximum length
+  // TODO Check maximum length objValue
 
   // Check custom validation function
   if (objFieldDescription.validation == null)
@@ -132,8 +138,8 @@ var check_field_value = function(strValue, objFieldDescription, objSQLConnection
   }
   else
   {
-    var strSQLValid = objFieldDescription.validation(strValue, objFieldDescription, objSQLConnection);
-    if (strSQLValid == null)
+    var objValue = objFieldDescription.validation(objValue, objFieldDescription, objSQLConnection);
+    if (objValue == null)
     {
       // Invalid value according to custom function - cleanup then error
       if (blnMustDisconnect)
@@ -142,28 +148,33 @@ var check_field_value = function(strValue, objFieldDescription, objSQLConnection
       }
       throw new Error(req.i18n.__("Invalid value : field \"%s\" can't store value %s", objFieldDescription.name, (strValue == null ? "null" : "\""+strValue+"\"")));
     }
-    else
-    {
-      // Store valid/normalized value
-      strValue = strSQLValid;
-    }
+    // else store valid/normalized value
   }
 
   // Check if field is required (value must not be NULL or empty string!)
   if (objFieldDescription.required)
   {
-    if (strValue == null || strValue == "")
+    if (objValue == null || objValue == "")
     {
       throw new Error(req.i18n.__("Invalid value : REQUIRED field \"%s\" can't store value %s", objFieldDescription.name, (strValue == null ? "null" : "\""+strValue+"\"")));
     }
   }
 
   // Use the SQL connection to escape value with appropriate charset/encoding
-  strSQLValue = objSQLConnection.escape(strValue);
+  if (blnEscapeString)
+  {
+    strSQLValue = objSQLConnection.escape(objValue);
+  }
+  else
+  {
+    strSQLValue = new String(objValue);
+  }
   if (blnMustDisconnect)
   {
     objSQLConnection.end();
   }
+  // DEBUG
+  console.log("Conversion: strSQLValue=%s",strSQLValue);
   return(strSQLValue);
 }
 
