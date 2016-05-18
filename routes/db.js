@@ -524,13 +524,13 @@ var list_record = function(req, res, next, objFormParameters, objSQLOptions, fnC
   }
 }
 
-var handle_error = function(err, res, template_name, options)
+var handle_error = function(err, res, req, template_name, options)
 {
   // handle duplicate key errors (e.g. login must be unique but it is provided by user, just like ISBN)
   if (err && err.message.indexOf("ER_DUP_ENTRY") != -1)
   {
     // e.g. ISBN13 duplicate: Error: ER_DUP_ENTRY: Duplicate entry '9782841772292' for key 'id_isbn13'
-    res.render(template_name, { title: options.title, subtitle: options.subtitle, menus:options.menus, form:options.form, message:{text:options.message.text,type:"danger"}, action:options.action });
+    res.render(template_name, { req:req, title: options.title, subtitle: options.subtitle, menus:options.menus, form:options.form, message:{text:options.message.text,type:"danger"}, action:options.action });
   }
   else
   {

@@ -68,7 +68,7 @@ router.get('/list', function(req, res, next) {
 router.get('/new', function(req, res, next) {
 
   var objMyContext = new module_context(req, res, next);
-  res.render('user/new', {title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, message:{text:req.i18n.__("Veuillez remplir le formulaire"),type:"info"}, action:"new"});
+  res.render('user/new', {req:req, title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, message:{text:req.i18n.__("Veuillez remplir le formulaire"),type:"info"}, action:"new"});
 
 });
 
@@ -113,7 +113,7 @@ router.post('/update', function(req, res, next) {
       }
       if (err)
       {
-        db.handle_error(err, res, "user/update", { title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, message:req.i18n.__("Impossible de modifier ce lecteur (%s)",err) });
+        db.handle_error(err, res, req, "user/update", { title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, message:req.i18n.__("Impossible de modifier ce lecteur (%s)",err) });
       }
       else
       {
@@ -148,7 +148,7 @@ router.post('/delete', function(req, res, next) {
       }
       if (err)
       {
-        db.handle_error(err, res, "user/delete", { title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, message:req.i18n.__("Impossible d'effacer ce lecteur (%s)",err) });
+        db.handle_error(err, res, req, "user/delete", { title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, message:req.i18n.__("Impossible d'effacer ce lecteur (%s)",err) });
       }
       else
       {

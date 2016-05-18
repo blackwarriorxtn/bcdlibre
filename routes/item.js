@@ -80,7 +80,7 @@ function module_context(req, res, next)
       {name:"isbn13",label:req.i18n.__("Numéro ISBN"),type:"String",required:false,validation:null,maximum_length:13},
       {name:"title",label:req.i18n.__("Titre"),type:"String",required:true,validation:null,maximum_length:255},
       {name:"author",label:req.i18n.__("Auteur"),type:"String",required:true,validation:null,maximum_length:255},
-      {name:"series_title",label:req.i18n.__("Série"),type:"String",required:false,validation:null,maximum_length:255},
+      {name:"series_title",label:req.i18n.__("Série"),type:"String",required:false,validation:null,maximum_length:255,autoreplay:true},
       {name:"description",label:req.i18n.__("Description (Synopsis)"),type:"String",required:false,validation:null,maximum_length:65535},
     ]
   };
@@ -154,7 +154,7 @@ router.post('/new', function(req, res, next) {
         {
           objSQLConnection.end();
         }
-        db.handle_error(err, res, "item/new", { title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, message:{text:"Ce livre est déjà dans l'inventaire ("+err+")",type:"error"}, action:"new" });
+        db.handle_error(err, res, req, "item/new", { req:req, title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, message:{text:"Ce livre est déjà dans l'inventaire ("+err+")",type:"error"}, action:"new" });
       }
       else
       {
@@ -204,7 +204,7 @@ router.post('/update', function(req, res, next) {
       }
       if (err)
       {
-        db.handle_error(err, res, "item/update", { title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, message:"Impossible de modifier ce livre ("+err+")" });
+        db.handle_error(err, res, req, "item/update", { title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, message:"Impossible de modifier ce livre ("+err+")" });
       }
       else
       {
@@ -245,7 +245,7 @@ router.post('/delete', function(req, res, next) {
       }
       if (err)
       {
-        db.handle_error(err, res, "item/delete", { title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, message:"Impossible d'effacer ce livre ("+err+")" });
+        db.handle_error(err, res, req, "item/delete", { title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, message:"Impossible d'effacer ce livre ("+err+")" });
       }
       else
       {

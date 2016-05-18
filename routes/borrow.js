@@ -103,7 +103,7 @@ router.post('/new', function(req, res, next) {
     db.insert_record(req, res, next, objMyContext.objFormParameters, function(err, result, fields) {
       if (err)
       {
-        db.handle_error(err, res, "borrow/new", { title: req.app.locals.title, subtitle: objMyContext.objMenu.text, menus:[objMyContext.objMainMenu,objMyContext.objMenu], form:objMyContext.objFormParameters, message:"Impossible d'emprunter ce livre ("+err+")" });
+        db.handle_error(err, res, req, "borrow/new", { title: req.app.locals.title, subtitle: objMyContext.objMenu.text, menus:[objMyContext.objMainMenu,objMyContext.objMenu], form:objMyContext.objFormParameters, message:"Impossible d'emprunter ce livre ("+err+")" });
       }
       else
       {
@@ -149,7 +149,7 @@ router.post('/delete', function(req, res, next) {
     db.delete_record(req, res, next, objMyContext.objFormParameters, function(err, result, fields) {
       if (err)
       {
-        db.handle_error(err, res, "borrow/delete", { title: req.app.locals.title, subtitle: objMyContext.objMenu.text, menus:[objMyContext.objMainMenu,objMyContext.objMenu], form:objMyContext.objFormParameters, message:"Impossible de rendre ce livre ("+err+")" });
+        db.handle_error(err, res, req, "borrow/delete", { title: req.app.locals.title, subtitle: objMyContext.objMenu.text, menus:[objMyContext.objMainMenu,objMyContext.objMenu], form:objMyContext.objFormParameters, message:"Impossible de rendre ce livre ("+err+")" });
       }
       else
       {
