@@ -15,7 +15,7 @@ $(document).ready(function(){
     source: new Bloodhound({
       datumTokenizer: Bloodhound.tokenizers.whitespace('text'),
       queryTokenizer: Bloodhound.tokenizers.whitespace,
-      // url points to a json web service that contains an array of users
+      // url points to a json web service that contains an array of item matching %QUERYSTRING
       remote: {
         url: 'webservice/items?action=borrow&text=%QUERYSTRING',
         wildcard: '%QUERYSTRING'
@@ -52,7 +52,9 @@ $(document).ready(function(){
   // Callbacks for auto-completion
   $('#item_search').bind('typeahead:select', function(event, suggestion) {
     console.log('Selection: ',suggestion);
+    // Store selection id in hidden field
     $("#item_id").val(suggestion.id);
+    // Set success on form control
     $(event.target).closest(".form-group").removeClass("has-error has-warning").addClass("has-success");
     // Set focus on next field (user)
     $("#user_search").focus();
@@ -62,7 +64,9 @@ $(document).ready(function(){
   });
   $('#user_search').bind('typeahead:select', function(event, suggestion) {
     console.log('Selection: ',suggestion);
+    // Store selection id in hidden field
     $("#user_id").val(suggestion.id);
+    // Set success on form control
     $(event.target).closest(".form-group").removeClass("has-error has-warning").addClass("has-success");
   });
 

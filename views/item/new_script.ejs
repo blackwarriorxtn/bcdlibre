@@ -62,7 +62,7 @@ function check_isbn(event, strValue)
   .fail(function(jqXHR, textStatus, errorThrown) {
     form_unlock_gui("#_FORM_NEW_FIELDS");
     // Error
-    $("#isbn13").parent().addClass("has-error").removeClass("has-success has-warning");
+    form_control_set_error($("#isbn13"), true /* blnError */);
     $("#isbn13").parent().find(".glyphicon.form-control-feedback").addClass("glyphicon-remove").removeClass("glyphicon-ok glyphicon-warning-sign");
   })
 } // function check_isbn(event)

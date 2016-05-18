@@ -2,15 +2,9 @@
 // Bind form-related events and callbacks
 $( document ).ready(function() {
   // Initial setup for required fields
-  $(".form-control-required").each(function(index) {
-    var strValue = $(this).val().replace(/^ +/g, "").replace(/ +$/g, "");
-    if (strValue == "")
-    {
-      $(this).parent().addClass("has-error");
-    }
-  });
+  form_check_required(null);
   // Check required fields when losing focus
-  $(".form-control-required").on('focusout', function(event) {
+  $(".form-control-required:not(.tt-hint)").on('focusout', function(event) {
 
     form_control_check_required($(event.target));
 
@@ -63,7 +57,7 @@ $( document ).ready(function() {
       // Set focus on first field in error
       if (objErrors)
       {
-        $(objErrors.first()).find(".form-control").focus();
+        $(objErrors.first()).find(".form-control:not(.tt-hint)").focus();
       }
     }
   });
@@ -118,7 +112,7 @@ function form_control_autofocus(strCSSParent)
   if (objFocus && objFocus.length == 0)
   {
     // No typeahead field: try to find a standard field (one with CSS class .form-control)
-    objFocus = $(strCSSParent).find(".form-control:enabled:visible:first");
+    objFocus = $(strCSSParent).find(".form-control:not(.tt-hint):enabled:visible:first");
   }
   objFocus.focus();
 }
@@ -126,11 +120,11 @@ function form_check_required(objFormControls)
 {
   if (objFormControls == null)
   {
-    objFormControls = $(".form-control-required");
+    objFormControls = $(".form-control-required:not(.tt-hint)");
   }
   else
   {
-    objFormControls = objFormControls.find(".form-control-required");
+    objFormControls = objFormControls.find(".form-control-required:not(.tt-hint)");
   }
   objFormControls.each(function(index) {
     // Validate required field: MUST NOT be empty on focus out (otherwise we set the error class)
@@ -139,9 +133,28 @@ function form_check_required(objFormControls)
 }
 function form_control_check_required(objFormControl)
 {
-  // Validate required field: MUST NOT be empty on focus out (otherwise we set the error class)
-  var strValue = objFormControl.val().replace(/^ +/g, "").replace(/ +$/g, "");
-  if (strValue == "")
+  var strDataFormControlAutocomplete = objFormControl.data("form-control-autocomplete");
+  var strValue = "";
+  if (strDataFormControlAutocomplete)
+  {
+    // Validation based on hidden text field - filled by autocomplete callback
+    strValue = $("#"+strDataFormControlAutocomplete).val();
+  }
+  else
+  {
+    // Standard validation of required field: MUST NOT be empty (otherwise we set the error class)
+    strValue = objFormControl.val();
+  }
+
+  // Cleanup value from trailing spaces
+  strValue = strValue.replace(/^ +/g, "").replace(/ +$/g, "");
+  // Set control state/class based on value (must not be empty)
+  form_control_set_error(objFormControl, (strValue == "") /* blnError */);
+}
+
+function form_control_set_error(objFormControl, blnError)
+{
+  if (blnError)
   {
     objFormControl.parent().addClass("has-error").removeClass("has-success has-warning");
   }
