@@ -63,5 +63,6 @@
 	"Aucun livre dans l'inventaire.": "Aucun livre dans l'inventaire.",
 	"Aucun emprunt en cours.": "Aucun emprunt en cours.",
 	"Veuillez saisir le livre et le lecteur": "Veuillez saisir le livre et le lecteur",
-	"Série": "Série"
+	"Série": "Série",
+	"Invalid value : REQUIRED field \"%s\" can't store value %s": "Valeur incorrect : le champ OBLIGATOIRE \"%s\" ne peut contenir la valeur %s"
 }

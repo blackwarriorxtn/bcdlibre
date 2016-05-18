@@ -63,5 +63,6 @@
 	"Aucun livre dans l'inventaire.": "No book found.",
 	"Aucun emprunt en cours.": "No borrowing found.",
 	"Veuillez saisir le livre et le lecteur": "Please enter book and borrower information",
-	"Série": "Serie"
+	"Série": "Serie",
+	"Invalid value : REQUIRED field \"%s\" can't store value %s": "Invalid value : REQUIRED field \"%s\" can't store value %s"
 }
