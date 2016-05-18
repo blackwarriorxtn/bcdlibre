@@ -4,7 +4,6 @@
 
   <!-- Use a disabled form to display field values (no placeholder) -->
   <form id="_FORM_VIEW" class="form-horizontal" action="undefined" method="post">
-    <fieldset id="_FORM_VIEW_FIELDS">
       <div class="form-group">
         <input id="_ADD" name="_ADD" class="btn btn-default" type="button" value="<%=__('Ajouter')%>">
         <%
@@ -31,7 +30,7 @@
               if (!blnFieldset)
               {
                 blnFieldset = true;
-                %><fieldset disabled><%
+                %><fieldset id="_FORM_VIEW_FIELDS" disabled><%
               } // if (!blnFieldset)
           %>
             <div class="form-group">
