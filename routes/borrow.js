@@ -16,7 +16,7 @@ function module_context(req, res, next)
       {name:"begin_date",label:req.i18n.__("Début"),type:"DateTime",required:true,validation:function (strValue){return(new Date().toSQL())}},
       {name:"end_date",label:req.i18n.__("Fin"),type:"DateTime",required:false,validation:null},
       {name:"item_id",label:req.i18n.__("Livre"),type:"Integer",required:true,validation:null},
-      {name:"user_id",label:req.i18n.__("Lecteur"),type:"Integer",required:false,validation:null},
+      {name:"user_id",label:req.i18n.__("Lecteur"),type:"Integer",required:true,validation:null},
     ]
   };
   // *** PARAMETERS (MENU)

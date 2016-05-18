@@ -57,7 +57,7 @@ var runsql = function (strSQL, fnCallback, objSQLConnection)
   }
 }
 
-var check_field_value = function(strValue, objFieldDescription, objSQLConnection)
+var check_field_value = function(strValue, objFieldDescription, objSQLConnection, req)
 {
   var strSQLValue = null;
   var blnMustDisconnect = false;
@@ -70,8 +70,62 @@ var check_field_value = function(strValue, objFieldDescription, objSQLConnection
 
   console.log("check_field_value(strValue=\"%s\", objFieldDescription: %j ...)", strValue, objFieldDescription);
 
-  // TODO Check if field is required (value must not be NULL or empty string!)
+  // TODO Convert value according to type
+  if (objFieldDescription.type != null)
+  {
+    switch (objFieldDescription.type.valueOf())
+    {
+      case "Date":
+      // TODO Conversion
+      break;
+
+      case "DateTime":
+      // TODO Conversion
+      break;
+
+      case "Integer":
+        // Conversion : string to integer
+        if (strValue != null)
+        {
+          // Use regexp to check content
+          var objNumbers = strValue.match(/^[-+]?\d+$/);
+          if (objNumbers == null)
+          {
+            strValue = null;
+          }
+          else
+          {
+            if (objNumbers[0] == strValue.valueOf())
+            {
+              var intValue = new Number(objNumbers[0]);
+              if (isNaN(intValue))
+              {
+                strValue = null;
+              }
+              else
+              {
+                // Store integer value
+                strValue = intValue;
+              }
+            }
+            else
+            {
+              strValue = null;
+            }
+          }
+        } // if (strValue != null)
+      break;
+
+      case "String":
+      default:
+      // No conversion
+      break;
+    }
+  }
+
   // TODO Check maximum length
+
+  // Check custom validation function
   if (objFieldDescription.validation == null)
   {
     // No validation - value is always accepted
@@ -86,12 +140,21 @@ var check_field_value = function(strValue, objFieldDescription, objSQLConnection
       {
         objSQLConnection.end();
       }
-      throw new Error(__("Invalid value : field \"%s\" can't store value %s", objFieldDescription.name, (strValue == null ? "null" : "\""+strValue+"\"")));
+      throw new Error(req.i18n.__("Invalid value : field \"%s\" can't store value %s", objFieldDescription.name, (strValue == null ? "null" : "\""+strValue+"\"")));
     }
     else
     {
       // Store valid/normalized value
       strValue = strSQLValid;
+    }
+  }
+
+  // Check if field is required (value must not be NULL or empty string!)
+  if (objFieldDescription.required)
+  {
+    if (strValue == null || strValue == "")
+    {
+      throw new Error(req.i18n.__("Invalid value : REQUIRED field \"%s\" can't store value %s", objFieldDescription.name, (strValue == null ? "null" : "\""+strValue+"\"")));
     }
   }
 
@@ -135,7 +198,7 @@ var insert_record = function(req, res, next, objFormParameters, fnCallback)
       if (form_ignore_fields.indexOf(strFieldName) == -1 && objFormParameters.autoincrement_column != strFieldName)
       {
         var strFieldValue = req.body[strFieldName];
-        var strSQLValue = check_field_value(strFieldValue,objField,objSQLConnection);
+        var strSQLValue = check_field_value(strFieldValue,objField,objSQLConnection, req);
         arrSQLNames.push(objSQLConnection.escapeId(strFieldName)); // TODO handle name translation from HTML FORM to SQL TABLE COLUMN
         arrSQLValues.push(strSQLValue);
       } // if (form_ignore_fields.indexOf(strFieldName) == -1 && objFormParameters.autoincrement_column != strFieldName)
@@ -214,7 +277,7 @@ var update_record = function(req, res, next, objFormParameters, fnCallback)
       } // if (objField == null)
       else
       {
-        strSQLValue = check_field_value(req.body[strSentName],objField,objSQLConnection);
+        strSQLValue = check_field_value(req.body[strSentName],objField,objSQLConnection, req);
       } // else if (objField == null)
 
       if (objFormParameters.autoincrement_column == strSentName)
@@ -319,7 +382,7 @@ var delete_record = function(req, res, next, objFormParameters, fnCallback)
       } // if (objField == null)
       else
       {
-        strSQLValue = check_field_value(req.body[strSentName],objField,objSQLConnection);
+        strSQLValue = check_field_value(req.body[strSentName],objField,objSQLConnection, req);
       } // else if (objField == null)
 
       if (objFormParameters.autoincrement_column == strSentName)
@@ -506,7 +569,7 @@ var search_record = function(req, res, next, objFormParameters, objSQLOptions, f
       } // if (objField == null)
       else
       {
-        strSQLValue = check_field_value(req.body[strSentName],objField,objSQLConnection);
+        strSQLValue = check_field_value(req.body[strSentName],objField,objSQLConnection, req);
       } // else if (objField == null)
 
       // Build where clause with primary key names and values
