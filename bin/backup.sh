@@ -11,7 +11,13 @@ handle_error()
 
 DB_NAME=bibliopuce
 DATE_NOW=`date +'%Y%m%d.%H%M%S.%N'`
-BACKUP_FILE_SQL=`dirname $0`/../../$DATE_NOW.$DB_NAME.backup.sql
+# Create directory tree $DB_NAME-backup/$MY_YEAR/$MY_MONTH/$MY_DAY
+BACKUP_PATH=`dirname $0`/../../$DB_NAME-backup/$MY_YEAR/$MY_MONTH/$MY_DAY
+if test ! -d $BACKUP_PATH
+then
+  mkdir -p "$BACKUP_PATH" || handle_error "Can't create backup path $BACKUP_PATH"
+fi
+BACKUP_FILE_SQL=$BACKUP_PATH/$DATE_NOW.$DB_NAME.backup.sql
 BACKUP_FILE_ZIP=$BACKUP_FILE_SQL.gz
 # If there's an environment variable MYSQL_ROOT_PASSWORD, use it as the root password (otherwise ask for password interactively)
 PASSWORD_OPTION=--password
