@@ -3,7 +3,10 @@ ECHO [%DATE% %TIME%] %~n0: Begin...
 
 SET DB_NAME=bibliopuce
 CALL %~dp0date.bat
-SET BACKUP_FILE_SQL=%~dp0..\..\%MY_YEAR%%MY_MONTH%%MY_DAY%.%MY_HOUR%%MY_MINUTE%%MY_SECOND%.%MY_MILLISECOND%.%DB_NAME%.backup.sql
+REM Create directory tree %DB_NAME%-backup\%MY_YEAR%\%MY_MONTH%\%MY_DAY%
+SET BACKUP_PATH=%~dp0..\..\%DB_NAME%-backup\%MY_YEAR%\%MY_MONTH%\%MY_DAY%
+IF NOT EXIST %BACKUP_PATH% MKDIR %BACKUP_PATH% || GOTO ERROR
+SET BACKUP_FILE_SQL=%BACKUP_PATH%\%MY_YEAR%%MY_MONTH%%MY_DAY%.%MY_HOUR%%MY_MINUTE%%MY_SECOND%.%MY_MILLISECOND%.%DB_NAME%.backup.sql
 SET BACKUP_FILE_ZIP=%BACKUP_FILE_SQL%
 REM If there's an environment variable MYSQL_ROOT_PASSWORD, use it as the root password (otherwise ask for password interactively)
 SET PASSWORD_OPTION=--password
