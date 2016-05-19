@@ -590,7 +590,7 @@ var search_record = function(req, res, next, objFormParameters, objSQLOptions, f
 
   } // for (var objField in req.body)
 
-  var strSQL = "SELECT * FROM "+objSQLConnection.escapeId(objFormParameters.table_name)
+  var strSQL = "SELECT "+(objFormParameters.list_fields ? objFormParameters.list_fields : "*" )+" FROM "+objSQLConnection.escapeId(objFormParameters.table_name)
              + "\nWHERE "+arrSQLWhere.join("\n AND ")+"\n;"
              ;
   // DEBUG

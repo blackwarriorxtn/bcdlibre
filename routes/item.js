@@ -11,6 +11,45 @@ var strAWSSecret = config.webservices.aws.awsSecret;
 var strAWSAssocId = config.webservices.aws.assocId;
 
 
+// ******************************************************************************** item
+function module_context(req, res, next)
+{
+  // *** PARAMETERS (SQL)
+  this.objFormParameters = {
+    table_name: "item_detail",
+    primary_key: ["id"],
+    autoincrement_column: "id",
+    fields:[
+      {name:"id",label:"#",type:"String",required:false,validation:null},
+      {name:"isbn13",label:req.i18n.__("Numéro ISBN"),type:"String",required:false,validation:null,maximum_length:13},
+      {name:"title",label:req.i18n.__("Titre"),type:"String",required:true,validation:null,maximum_length:255},
+      {name:"author",label:req.i18n.__("Auteur"),type:"String",required:true,validation:null,maximum_length:255},
+      {name:"series_title",label:req.i18n.__("Série"),type:"String",required:false,validation:null,maximum_length:255,autoreplay:true},
+      {name:"description",label:req.i18n.__("Description (Synopsis)"),type:"String",required:false,validation:null,maximum_length:65535},
+    ]
+  };
+  // To search we only have ONE field named "search" and a special SQL table with full text indexes
+  this.objSearchParameters = {
+    table_name: this.objFormParameters.table_name+"_search",
+    primary_key: this.objFormParameters.primary_key,
+    autoincrement_column: this.objFormParameters.autoincrement_column,
+    list_fields:"item_detail_id AS id, title, author, description, isbn13, series_title",
+    fields:[
+      {
+        name:"search",label:req.i18n.__("Titre, Auteur, Description"),type:"String",required:true,validation:null,maximum_length:255,
+        match_fields:[
+          "title",
+          "author",
+          "description"
+        ]
+      },
+    ]
+  };
+  // *** PARAMETERS (MENU)
+  this.objMenu = [{text:req.i18n.__("Gérer"),link:"/manage/"},{text:req.i18n.__("Livres"),link:"/item/"}];
+  this.objMainMenu = {text:req.i18n.__("Menu principal"),link:"/"};
+}
+
 function aws_post_processing(strISBN, objResultItem, objWebServiceResult)
 {
   // DEBUG
@@ -65,44 +104,6 @@ function aws_post_processing(strISBN, objResultItem, objWebServiceResult)
   objWebServiceResult.isbn = strISBN;
   // TODO handle publisher? language? hyperlink to more information on amazon?
   objWebServiceResult.status = "OK";
-}
-
-// ******************************************************************************** item
-function module_context(req, res, next)
-{
-  // *** PARAMETERS (SQL)
-  this.objFormParameters = {
-    table_name: "item_detail",
-    primary_key: ["id"],
-    autoincrement_column: "id",
-    fields:[
-      {name:"id",label:"#",type:"String",required:false,validation:null},
-      {name:"isbn13",label:req.i18n.__("Numéro ISBN"),type:"String",required:false,validation:null,maximum_length:13},
-      {name:"title",label:req.i18n.__("Titre"),type:"String",required:true,validation:null,maximum_length:255},
-      {name:"author",label:req.i18n.__("Auteur"),type:"String",required:true,validation:null,maximum_length:255},
-      {name:"series_title",label:req.i18n.__("Série"),type:"String",required:false,validation:null,maximum_length:255,autoreplay:true},
-      {name:"description",label:req.i18n.__("Description (Synopsis)"),type:"String",required:false,validation:null,maximum_length:65535},
-    ]
-  };
-  // To search we only have ONE field named "search" and a special SQL table with full text indexes
-  this.objSearchParameters = {
-    table_name: this.objFormParameters.table_name+"_search",
-    primary_key: this.objFormParameters.primary_key,
-    autoincrement_column: this.objFormParameters.autoincrement_column,
-    fields:[
-      {
-        name:"search",label:req.i18n.__("Titre, Auteur, Description"),type:"String",required:true,validation:null,maximum_length:255,
-        match_fields:[
-          "title",
-          "author",
-          "description"
-        ]
-      },
-    ]
-  };
-  // *** PARAMETERS (MENU)
-  this.objMenu = [{text:req.i18n.__("Gérer"),link:"/manage/"},{text:req.i18n.__("Livres"),link:"/item/"}];
-  this.objMainMenu = {text:req.i18n.__("Menu principal"),link:"/"};
 }
 
 // GET menu
