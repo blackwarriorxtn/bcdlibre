@@ -88,6 +88,10 @@ function aws_post_processing(strISBN, objResultItem, objWebServiceResult)
     }
     // Remove some annoyance like "French Edition" or "De 5 à 7 ans" (UTF8), trailing spaces...
     strNewValue = strNewValue.replace(/ *\(French Edition\)/, "").replace(/ *- De [0-9]+ ..? [0-9]+ ans/, "").replace(/^ +/, "").replace(/ +$/, "");
+
+    // Remove bad UTF-8 encoding for SOME books (!)
+    strNewValue = strNewValue.replace(/Ã®/g, "î").replace(/Ã©/g, "é");
+
     // DEBUG
     console.log("Amazon Web Service Title (processed) = %s",strNewValue);
     // WARNING: don't overwrite result from another Web Service, unless this result is longuer (ok, it's a silly way to finding the most appropriate answer)
