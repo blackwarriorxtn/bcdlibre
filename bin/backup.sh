@@ -11,8 +11,9 @@ handle_error()
 
 DB_NAME=bibliopuce
 DATE_NOW=`date +'%Y%m%d.%H%M%S.%N'`
-# Create directory tree $DB_NAME-backup/$MY_YEAR/$MY_MONTH/$MY_DAY
-BACKUP_PATH=`dirname $0`/../../$DB_NAME-backup/$MY_YEAR/$MY_MONTH/$MY_DAY
+YYYYMMDD=`date +'%Y/%m/%d'`
+# Create directory tree $DB_NAME-backup/YYYY/MM/DD/
+BACKUP_PATH=`dirname $0`/../../$DB_NAME-backup/$YYYYMMDD
 if test ! -d $BACKUP_PATH
 then
   mkdir -p "$BACKUP_PATH" || handle_error "Can't create backup path $BACKUP_PATH"
