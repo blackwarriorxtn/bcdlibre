@@ -185,21 +185,7 @@ router.get('/webservice/items', function(req, res, next) {
   var strSQLWhere = null;
   if (req.query.text)
   {
-    var strValue = req.query.text;
-    // Remove spaces at beginning/end
-    strValue = strValue.replace(/^ +/g, "").replace(/ +$/g, "");
-    // Hack: some barcode readers mistype numbers/letters on (french) keyboard : fix it
-    strValue = strValue.replace(/&/g, "1")
-                       .replace(/é/g, "2")
-                       .replace(/"/g, "3")
-                       .replace(/'/g, "4")
-                       .replace(/\(/g, "5")
-                       .replace(/-/g, "6")
-                       .replace(/è/g, "7")
-                       .replace(/_/g, "8")
-                       .replace(/ç/g, "9")
-                       .replace(/à/g, "0");
-
+    var strValue = db.format_isbn(req.query.text);
     var strSQLText = objSQLConnection.escape(strValue);
     strSQLWhere = " MATCH(item_detail_search.title,item_detail_search.author,item_detail_search.isbn13) AGAINST ("+strSQLText+" IN BOOLEAN MODE)\n";
   }
@@ -392,7 +378,8 @@ router.get('/webservice/borrows', function(req, res, next) {
   var strSQLWhere = null;
   if (req.query.text)
   {
-    var strSQLText = objSQLConnection.escape(req.query.text);
+    var strValue = db.format_isbn(req.query.text);
+    var strSQLText = objSQLConnection.escape(strValue);
     // Match against items AND users
     strSQLWhere = " MATCH (item_detail_search.title,item_detail_search.author,item_detail_search.isbn13, user_search.name,user_search.login,user_search.comment) AGAINST ("+strSQLText+" IN BOOLEAN MODE)\n";
   }
