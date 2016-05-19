@@ -58,9 +58,9 @@ $(document).ready(function(){
     $(event.target).closest(".form-group").removeClass("has-error has-warning").addClass("has-success");
     // Set focus on next field (user)
     $("#user_search").focus();
-  }).bind('typeahead:render', function(e) {
+  }).bind('typeahead:render', function(event) {
     // Automatically select first option returned by autocomplete
-    $('#_FORM_NEW').parent().find('.tt-selectable:first').addClass('tt-cursor');
+    $(event.target).parent().find('.tt-selectable:first').addClass('tt-cursor');
   });
   $('#user_search').bind('typeahead:select', function(event, suggestion) {
     console.log('Selection: ',suggestion);
@@ -68,6 +68,9 @@ $(document).ready(function(){
     $("#user_id").val(suggestion.id);
     // Set success on form control
     $(event.target).closest(".form-group").removeClass("has-error has-warning").addClass("has-success");
+  }).bind('typeahead:render', function(event) {
+    // Automatically select first option returned by autocomplete
+    $(event.target).parent().find('.tt-selectable:first').addClass('tt-cursor');
   });
 
 });

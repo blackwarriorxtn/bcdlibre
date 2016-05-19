@@ -40,3 +40,12 @@ tr[data-href]
 {
   cursor: pointer;
 }
+
+/* Form : OK cancel block */
+div.okcancel
+{
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 0px;
+  margin-right: 10px;
+}
