@@ -116,7 +116,9 @@ router.post('/update', function(req, res, next) {
       }
       if (err)
       {
-        db.handle_error(err, res, req, "user/update", { title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, message:req.i18n.__("Impossible de modifier ce lecteur (%s)",err) });
+        var strMessageText = req.i18n.__("Impossible de modifier ce lecteur (%s)",err);
+        console.log(strMessageText);
+        db.handle_error(err, res, req, "user/update", { title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, message:strMessageText });
       }
       else
       {
