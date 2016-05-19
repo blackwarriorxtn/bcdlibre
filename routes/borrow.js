@@ -302,9 +302,9 @@ router.get('/webservice/users', function(req, res, next) {
   if (req.query && req.query.action == "borrow")
   {
     // Custom SQL, list of users matching a string allowed to borrow (ALL users - no maximum is enforced)
-    db.runsql('SELECT user.id AS `id`, CONCAT_WS(\', \', CONCAT(\'#\',user.id), user.name, user.login, user.comment) AS `text`  \n\
+    db.runsql('SELECT user.id AS `id`, CONCAT_WS(\', \', CONCAT(\'#\',user.id), user.name, user.login) AS `text`  \n\
   FROM user \n\
-  JOIN user_search ON user_search.user_id = user_search.id \n\
+  JOIN user_search ON user_search.user_id = user.id \n\
   '+(strSQLWhere == null ? "" : "WHERE "+strSQLWhere)+'\
   ; \n\
   ', function(err, rows, fields) {
@@ -326,9 +326,9 @@ router.get('/webservice/users', function(req, res, next) {
   else if (req.query && req.query.action == "return")
   {
     // Custom SQL, list of users having already borrowed (LEFT OUTER JOIN borrow ... WHERE borrow.id IS NOT NULL)
-    db.runsql('SELECT user.id AS `id`, CONCAT_WS(\', \', CONCAT(\'#\',user.id), user.name, user.login, user.comment) AS `text`  \n\
+    db.runsql('SELECT user.id AS `id`, CONCAT_WS(\', \', CONCAT(\'#\',user.id), user.name, user.login) AS `text`  \n\
   FROM user \n\
-  JOIN user_search ON user_search.user_id = user_search.id \n\
+  JOIN user_search ON user_search.user_id = user.id \n\
   LEFT OUTER JOIN borrow ON borrow.user_id = user.id \n\
   WHERE borrow.id IS NOT NULL \n\
   '+(strSQLWhere == null ? "" : "AND "+strSQLWhere)+'\
@@ -353,9 +353,9 @@ router.get('/webservice/users', function(req, res, next) {
   else
   {
     // Custom SQL, list of ALL users
-    db.runsql('SELECT user.id AS `id`, CONCAT_WS(\', \', CONCAT(\'#\',user.id), user.name, user.login, user.comment) AS `text`  \n\
+    db.runsql('SELECT user.id AS `id`, CONCAT_WS(\', \', CONCAT(\'#\',user.id), user.name, user.login) AS `text`  \n\
   FROM user \n\
-  JOIN user_search ON user_search.user_id = user_search.id \n\
+  JOIN user_search ON user_search.user_id = user.id \n\
   '+(strSQLWhere == null ? "" : "WHERE "+strSQLWhere)+'\
   ; \n\
   ', function(err, rows, fields) {
@@ -399,7 +399,7 @@ router.get('/webservice/borrows', function(req, res, next) {
   // Custom SQL, list of borrows matching a string
   db.runsql('\
   SELECT borrow.id  AS `id`, \n\
-    CONCAT_WS(\', \', item_detail.title, item_detail.author, item_detail.isbn13, user.login, user.name, user.comment) AS `text`, \n\
+    CONCAT_WS(\', \', item_detail.title, item_detail.author, item_detail.isbn13, user.login, user.name) AS `text`, \n\
     borrow.user_id AS `borrower_id`,  \n\
     user.login AS `borrower_login`  \n\
   FROM borrow \n\
