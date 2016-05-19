@@ -15,18 +15,18 @@
             <thead>
               <tr>
                 <th>#</th>
-                <th><%=__("Compte")%></th>
                 <th><%=__("Nom")%></th>
-                <th><%=__("Téléphone")%></th>
+                <th><%=__("Prénom")%></th>
+                <th><%=__("Catégorie")%></th>
               </tr>
             </thead>
             <tbody>
               <% for(var i=0; i< records.length; i++) { %>
                 <tr data-href="view?id=<%- records[i].id %>">
                   <td><a href="view?id=<%- records[i].id %>"><%= records[i].id %></a></td>
-                  <td><%= records[i].login %></td>
-                  <td><%= records[i].name %></td>
-                  <td><%= records[i].phone %></td>
+                  <td><%= records[i].last_name %></td>
+                  <td><%= records[i].first_name %></td>
+                  <td><%= records[i].category %></td>
                 </tr>
               <% } // for %>
             </tbody>

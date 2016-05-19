@@ -3,10 +3,10 @@
 USE bibliopuce
 ;
 
-INSERT IGNORE INTO user(name,login)
+INSERT IGNORE INTO user(first_name,last_name,category)
 VALUES
-('Emmanuel KARTMANN', 'emmanuelka'),
-('Marie-Noëlle KARTMANN', 'marienoelleka')
+('Emmanuel','KARTMANN', 'Parent d''élève'),
+('Marie-Noëlle','KARTMANN', 'Parent d''élève')
 ;
 
 INSERT IGNORE INTO item_detail(isbn13, title, author, description)

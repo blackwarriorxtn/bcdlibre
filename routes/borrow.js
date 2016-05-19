@@ -45,7 +45,7 @@ router.get('/list', function(req, res, next) {
 
   var objMyContext = new module_context(req, res, next);
   // Custom SQL
-  db.runsql('SELECT borrow.id, borrow.begin_date, user.name, item_detail.title \n\
+  db.runsql('SELECT borrow.id, borrow.begin_date, user.last_name, user.first_name, item_detail.title \n\
   FROM borrow \n\
   JOIN user ON user.id = borrow.user_id \n\
   JOIN item ON item.id = borrow.item_id \n\
@@ -223,7 +223,7 @@ router.get('/webservice/items', function(req, res, next) {
   SELECT item.id AS `id`, \n\
     CONCAT_WS(\', \', item_detail.title, item_detail.author, item_detail.isbn13) AS `text`, \n\
     borrow.user_id AS `borrower_id`,  \n\
-    user.login AS `borrower_login`  \n\
+    user.category AS `borrower_category`  \n\
   FROM item \n\
   JOIN item_detail ON item.item_detail_id = item_detail.id \n\
   JOIN item_detail_search ON item_detail_search.item_detail_id = item_detail.id \n\
@@ -283,12 +283,12 @@ router.get('/webservice/users', function(req, res, next) {
   if (req.query.text)
   {
     var strSQLText = objSQLConnection.escape(req.query.text);
-    strSQLWhere = " MATCH (user_search.name,user_search.login,user_search.comment) AGAINST ("+strSQLText+" IN BOOLEAN MODE)\n";
+    strSQLWhere = " MATCH (user_search.last_name, user_search.first_name, user_search.category,user_search.comment) AGAINST ("+strSQLText+" IN BOOLEAN MODE)\n";
   }
   if (req.query && req.query.action == "borrow")
   {
     // Custom SQL, list of users matching a string allowed to borrow (ALL users - no maximum is enforced)
-    db.runsql('SELECT user.id AS `id`, CONCAT_WS(\', \', CONCAT(\'#\',user.id), user.name, user.login) AS `text`  \n\
+    db.runsql('SELECT user.id AS `id`, CONCAT_WS(\', \', CONCAT(\'#\',user.id), user.last_name, user.first_name, user.category) AS `text`  \n\
   FROM user \n\
   JOIN user_search ON user_search.user_id = user.id \n\
   '+(strSQLWhere == null ? "" : "WHERE "+strSQLWhere)+'\
@@ -312,7 +312,7 @@ router.get('/webservice/users', function(req, res, next) {
   else if (req.query && req.query.action == "return")
   {
     // Custom SQL, list of users having already borrowed (LEFT OUTER JOIN borrow ... WHERE borrow.id IS NOT NULL)
-    db.runsql('SELECT user.id AS `id`, CONCAT_WS(\', \', CONCAT(\'#\',user.id), user.name, user.login) AS `text`  \n\
+    db.runsql('SELECT user.id AS `id`, CONCAT_WS(\', \', CONCAT(\'#\',user.id), user.last_name, user.first_name, user.category) AS `text`  \n\
   FROM user \n\
   JOIN user_search ON user_search.user_id = user.id \n\
   LEFT OUTER JOIN borrow ON borrow.user_id = user.id \n\
@@ -339,7 +339,7 @@ router.get('/webservice/users', function(req, res, next) {
   else
   {
     // Custom SQL, list of ALL users
-    db.runsql('SELECT user.id AS `id`, CONCAT_WS(\', \', CONCAT(\'#\',user.id), user.name, user.login) AS `text`  \n\
+    db.runsql('SELECT user.id AS `id`, CONCAT_WS(\', \', CONCAT(\'#\',user.id), user.last_name, user.first_name, user.category) AS `text`  \n\
   FROM user \n\
   JOIN user_search ON user_search.user_id = user.id \n\
   '+(strSQLWhere == null ? "" : "WHERE "+strSQLWhere)+'\
@@ -381,14 +381,14 @@ router.get('/webservice/borrows', function(req, res, next) {
     var strValue = db.format_isbn(req.query.text);
     var strSQLText = objSQLConnection.escape(strValue);
     // Match against items AND users
-    strSQLWhere = " MATCH (item_detail_search.title,item_detail_search.author,item_detail_search.isbn13, user_search.name,user_search.login,user_search.comment) AGAINST ("+strSQLText+" IN BOOLEAN MODE)\n";
+    strSQLWhere = " MATCH (item_detail_search.title,item_detail_search.author,item_detail_search.isbn13, user_search.last_name, user_search.first_name,user_search.category,user_search.comment) AGAINST ("+strSQLText+" IN BOOLEAN MODE)\n";
   }
   // Custom SQL, list of borrows matching a string
   db.runsql('\
   SELECT borrow.id  AS `id`, \n\
-    CONCAT_WS(\', \', item_detail.title, item_detail.author, item_detail.isbn13, user.login, user.name) AS `text`, \n\
+    CONCAT_WS(\', \', item_detail.title, item_detail.author, item_detail.isbn13, user.category, user.last_name, user.first_name) AS `text`, \n\
     borrow.user_id AS `borrower_id`,  \n\
-    user.login AS `borrower_login`  \n\
+    user.category AS `borrower_category`  \n\
   FROM borrow \n\
   JOIN item ON borrow.item_id = item.id \n\
   JOIN item_detail ON item.item_detail_id = item_detail.id \n\

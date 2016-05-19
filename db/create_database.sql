@@ -8,15 +8,15 @@ CREATE DATABASE IF NOT EXISTS bibliopuce DEFAULT CHARACTER SET = utf8
 USE bibliopuce
 ;
 
-GRANT 
+GRANT
   ALL PRIVILEGES
-ON 
-  bibliopuce.* 
-TO 
+ON
+  bibliopuce.*
+TO
   'bibliopuce'@'localhost' IDENTIFIED BY 'FPxWFYVux7BhEuU9',
   'bibliopuce'@'127.0.0.1' IDENTIFIED BY 'FPxWFYVux7BhEuU9',
   'bibliopuce'@'::1'       IDENTIFIED BY 'FPxWFYVux7BhEuU9'
- WITH  
+ WITH
    GRANT OPTION
 ;
 FLUSH PRIVILEGES
@@ -31,7 +31,7 @@ CREATE TABLE item_detail(
   author VARCHAR(255) NOT NULL COMMENT 'Item Author',
   description TEXT NULL COMMENT 'Item Description (synopsis)',
   isbn13 VARCHAR(13) NULL COMMENT 'International Standard Book Number (ISBN13)',
-  series_title VARCHAR(255) NULL COMMENT 'Item Series Title', 
+  series_title VARCHAR(255) NULL COMMENT 'Item Series Title',
 
   PRIMARY KEY(id),
   UNIQUE KEY id_isbn13(isbn13)
@@ -65,7 +65,7 @@ CREATE TABLE item_detail_search(
   author VARCHAR(255) NOT NULL COMMENT 'Item Author',
   description TEXT NULL COMMENT 'Item Description (synopsis)',
   isbn13 VARCHAR(13) NULL COMMENT 'International Standard Book Number (ISBN13)',
-  series_title VARCHAR(255) NULL COMMENT 'Item Series Title', 
+  series_title VARCHAR(255) NULL COMMENT 'Item Series Title',
 
   PRIMARY KEY(id),
   KEY item_detail_search_title(title),
@@ -74,7 +74,7 @@ CREATE TABLE item_detail_search(
   KEY item_detail_search_description(description(64)),
   KEY item_detail_search_series_title(series_title),
   FULLTEXT KEY item_ft_title(title),
-  FULLTEXT KEY item_ft_author(author), 
+  FULLTEXT KEY item_ft_author(author),
   FULLTEXT KEY item_ft_description(description),
   FULLTEXT KEY item_ft_isbn13(isbn13),
   FULLTEXT KEY item_ft_series_title(series_title)
@@ -89,27 +89,27 @@ DELIMITER ;;
 SET SESSION SQL_MODE="";;
 /* INSERT : After INSERT INTO table, INSERT INTO search table */
 DROP TRIGGER IF EXISTS `item_detail_after_insert`;;
-CREATE DEFINER=CURRENT_USER TRIGGER `item_detail_after_insert` AFTER INSERT ON `item_detail` 
+CREATE DEFINER=CURRENT_USER TRIGGER `item_detail_after_insert` AFTER INSERT ON `item_detail`
 FOR EACH ROW BEGIN
   INSERT INTO item_detail_search(item_detail_id, title, author, description, isbn13, series_title) VALUES(NEW.id, NEW.title, NEW.author, NEW.description, NEW.isbn13, NEW.series_title);
 END ;;
 /* UPDATE : After UPDATE table, UPDATE search table */
 DROP TRIGGER IF EXISTS `item_detail_after_update`;;
-CREATE DEFINER=CURRENT_USER TRIGGER `item_detail_after_update` AFTER UPDATE ON `item_detail` 
+CREATE DEFINER=CURRENT_USER TRIGGER `item_detail_after_update` AFTER UPDATE ON `item_detail`
 FOR EACH ROW BEGIN
-  UPDATE item_detail_search SET 
-    item_detail_search.title = NEW.title, 
-    item_detail_search.author = NEW.author,  
+  UPDATE item_detail_search SET
+    item_detail_search.title = NEW.title,
+    item_detail_search.author = NEW.author,
     item_detail_search.description = NEW.description,
-    item_detail_search.isbn13 = NEW.isbn13, 
+    item_detail_search.isbn13 = NEW.isbn13,
     item_detail_search.series_title = NEW.series_title
   WHERE item_detail_search.item_detail_id = NEW.id;
 END ;;
 /* DELETE : After DELETE table, DELETE search table */
 DROP TRIGGER IF EXISTS `item_detail_after_delete`;;
-CREATE DEFINER=CURRENT_USER TRIGGER `item_detail_after_delete` AFTER DELETE ON `item_detail` 
+CREATE DEFINER=CURRENT_USER TRIGGER `item_detail_after_delete` AFTER DELETE ON `item_detail`
 FOR EACH ROW BEGIN
-  DELETE FROM item_detail_search 
+  DELETE FROM item_detail_search
   WHERE item_detail_search.item_detail_id = OLD.id;
 END ;;
 DELIMITER ;
@@ -122,14 +122,16 @@ DROP TABLE IF EXISTS user
 CREATE TABLE user(
   id INTEGER NOT NULL AUTO_INCREMENT,
 
-  name VARCHAR(255) NOT NULL COMMENT 'User name', 
-  login VARCHAR(64) NOT NULL COMMENT 'User login', 
-  phone VARCHAR(64) NULL COMMENT 'Phone number', 
-  comment TEXT NULL COMMENT 'User Comment', 
+  last_name VARCHAR(255) NOT NULL COMMENT 'User last name',
+  first_name VARCHAR(255) NULL COMMENT 'User First name',
+  category VARCHAR(255) NOT NULL COMMENT 'User category (classroom, level...)',
+  phone VARCHAR(64) NULL COMMENT 'Phone number',
+  comment TEXT NULL COMMENT 'User Comment',
 
   PRIMARY KEY(id),
-  UNIQUE KEY user_login(login),
-  KEY user_name(name),
+  KEY user_category(category),
+  KEY user_last_first_name(last_name,first_name),
+  KEY user_first_last_name(first_name,last_name),
   KEY user_phone(phone)
 
 ) ENGINE=INNODB COMMENT 'User description'
@@ -141,16 +143,20 @@ CREATE TABLE user_search(
   id INTEGER NOT NULL AUTO_INCREMENT,
 
   user_id INTEGER NOT NULL COMMENT 'Link to the user table',
-  name VARCHAR(255) NOT NULL COMMENT 'User name',
-  login VARCHAR(64) NOT NULL COMMENT 'User login',
-  comment TEXT NULL COMMENT 'User Comment', 
+  last_name VARCHAR(255) NOT NULL COMMENT 'User last name',
+  first_name VARCHAR(255) NULL COMMENT 'User First name',
+  category VARCHAR(64) NULL COMMENT 'User category',
+  comment TEXT NULL COMMENT 'User Comment',
 
   PRIMARY KEY(id),
-  KEY user_search_name(name),
-  KEY user_search_login(login),
+  KEY user_search_last_first_name(last_name(128),first_name(128)),
+  KEY user_search_first_last_name(first_name(128),last_name(128)),
+  KEY user_search_category(category),
   KEY user_search_comment(comment(64)),
-  FULLTEXT KEY user_ft_name(name),
-  FULLTEXT KEY user_ft_login(login),
+  FULLTEXT KEY user_ft_last_name(last_name),
+  FULLTEXT KEY user_ft_first_name(first_name),
+  FULLTEXT KEY user_ft_first_last_name(first_name,last_name),
+  FULLTEXT KEY user_ft_category(category),
   FULLTEXT KEY user_ft_comment(comment)
 
 )  ENGINE=MyISAM COMMENT 'Search engine for users (MyISAM Format for FULL TEXT SEARCHES)'
@@ -164,25 +170,26 @@ DELIMITER ;;
 SET SESSION SQL_MODE="";;
 /* INSERT : After INSERT INTO table, INSERT INTO search table */
 DROP TRIGGER IF EXISTS `user_after_insert`;;
-CREATE DEFINER=CURRENT_USER TRIGGER `user_after_insert` AFTER INSERT ON `user` 
+CREATE DEFINER=CURRENT_USER TRIGGER `user_after_insert` AFTER INSERT ON `user`
 FOR EACH ROW BEGIN
-  INSERT INTO user_search(user_id, name, login, comment) VALUES(NEW.id, NEW.name, NEW.login, NEW.comment);
+  INSERT INTO user_search(user_id, last_name, first_name, category, comment) VALUES(NEW.id, NEW.last_name, NEW.first_name, NEW.category, NEW.comment);
 END ;;
 /* UPDATE : After UPDATE table, UPDATE search table */
 DROP TRIGGER IF EXISTS `user_after_update`;;
-CREATE DEFINER=CURRENT_USER TRIGGER `user_after_update` AFTER UPDATE ON `user` 
+CREATE DEFINER=CURRENT_USER TRIGGER `user_after_update` AFTER UPDATE ON `user`
 FOR EACH ROW BEGIN
-  UPDATE user_search SET 
-    user_search.name = NEW.name, 
-    user_search.login = NEW.login, 
+  UPDATE user_search SET
+    user_search.last_name = NEW.last_name,
+    user_search.first_name = NEW.first_name,
+    user_search.category = NEW.category,
     user_search.comment = NEW.comment
   WHERE user_search.user_id = NEW.id;
 END ;;
 /* DELETE : After DELETE table, DELETE search table */
 DROP TRIGGER IF EXISTS `user_after_delete`;;
-CREATE DEFINER=CURRENT_USER TRIGGER `user_after_delete` AFTER DELETE ON `user` 
+CREATE DEFINER=CURRENT_USER TRIGGER `user_after_delete` AFTER DELETE ON `user`
 FOR EACH ROW BEGIN
-  DELETE FROM user_search 
+  DELETE FROM user_search
   WHERE user_search.user_id = OLD.id;
 END ;;
 DELIMITER ;

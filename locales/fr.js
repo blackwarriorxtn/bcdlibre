@@ -26,7 +26,7 @@
 	"Lister": "Lister",
 	"Liste des emprunts (livres sortis)": "Liste des emprunts (livres sortis)",
 	"Retour": "Retour",
-	"Livre et emprunteur (ISBN, Titre, Nom, Compte)": "Livre et emprunteur (ISBN, Titre, Nom, Compte)",
+	"Livre et emprunteur (ISBN, Titre, Nom, Classe)": "Livre et emprunteur (ISBN, Titre, Nom, Classe)",
 	"Numéro ISBN": "Numéro ISBN",
 	"Titre": "Titre",
 	"Auteur": "Auteur",
@@ -48,10 +48,9 @@
 	"Supprimer": "Supprimer",
 	"Nouveau": "Nouveau",
 	"Nom": "Nom",
-	"Compte": "Compte",
 	"Téléphone": "Téléphone",
 	"Commentaire": "Commentaire",
-	"Nom, Compte, Commentaires": "Nom, Compte, Commentaires",
+	"Nom, Compte, Commentaires": "Nom, Classe, Commentaires",
 	"Ajouter un lecteur (emprunteur)": "Ajouter un lecteur (emprunteur)",
 	"Liste des lecteurs (emprunteurs)": "Liste des lecteurs (emprunteurs)",
 	"Rechercher un lecteur (emprunteur)": "Rechercher un lecteur (emprunteur)",
@@ -65,5 +64,9 @@
 	"Veuillez saisir le livre et le lecteur": "Veuillez saisir le livre et le lecteur",
 	"Série": "Collection",
 	"Invalid value : REQUIRED field \"%s\" can't store value %s": "Valeur incorrect : le champ OBLIGATOIRE \"%s\" ne peut contenir la valeur %s",
-	"Gérer les emprunts": "Gérer les emprunts"
+	"Gérer les emprunts": "Gérer les emprunts",
+	"Prénom": "Prénom",
+	"Catégorie": "Classe",
+	"Compte": "Compte",
+	"Livre et emprunteur (ISBN, Titre, Nom, Compte)": "Livre et emprunteur (ISBN, Titre, Nom, Compte)"
 }

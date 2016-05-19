@@ -13,8 +13,9 @@ function module_context(req, res, next)
     autoincrement_column: "id",
     fields:[
       {name:"id",label:"#",type:"String",required:false,validation:null},
-      {name:"name",label:req.i18n.__("Nom"),type:"String",required:true,validation:null},
-      {name:"login",label:req.i18n.__("Compte"),type:"String",required:true,validation:null},
+      {name:"last_name",label:req.i18n.__("Nom"),type:"String",required:true,validation:null},
+      {name:"first_name",label:req.i18n.__("Prénom"),type:"String",required:false,validation:null},
+      {name:"category",label:req.i18n.__("Catégorie"),type:"String",required:false,validation:null},
       {name:"phone",label:req.i18n.__("Téléphone"),type:"String",required:false,validation:null},
       {name:"comment",label:req.i18n.__("Commentaire"),type:"String",required:false,validation:null},
     ]
@@ -24,13 +25,14 @@ function module_context(req, res, next)
     table_name: this.objFormParameters.table_name+"_search",
     primary_key: this.objFormParameters.primary_key,
     autoincrement_column: this.objFormParameters.autoincrement_column,
-    list_fields:"user_id AS id, name, login, comment",
+    list_fields:"user_id AS id, last_name, first_name, category, comment",
     fields:[
       {
         name:"search",label:req.i18n.__("Nom, Compte, Commentaires"),type:"String",required:true,validation:null,maximum_length:255,
         match_fields:[
-          "name",
-          "login",
+          "last_name",
+          "first_name",
+          "category",
           "comment"
         ]
       },
