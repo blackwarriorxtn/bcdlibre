@@ -21,7 +21,8 @@ function module_context(req, res, next)
     autoincrement_column: "id",
     fields:[
       {name:"id",label:"#",type:"String",required:false,validation:null},
-      {name:"isbn13",label:req.i18n.__("Numéro ISBN"),type:"String",required:false,validation:null,maximum_length:13},
+      /* NOTE: we use a maximum length of 16 to let user copy/paste full ISBN with dashes or spaces, then normalize it to 13 characters */
+      {name:"isbn13",label:req.i18n.__("Numéro ISBN"),type:"String",required:false,validation:null,maximum_length:16},
       {name:"title",label:req.i18n.__("Titre"),type:"String",required:true,validation:null,maximum_length:255},
       {name:"author",label:req.i18n.__("Auteur"),type:"String",required:true,validation:null,maximum_length:255},
       {name:"series_title",label:req.i18n.__("Série"),type:"String",required:false,validation:null,maximum_length:255,autoreplay:true},
