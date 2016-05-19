@@ -15,6 +15,9 @@ ALTER TABLE user
 CHANGE COLUMN login category VARCHAR(255) NOT NULL COMMENT 'User category (classroom, level...)',
 ADD INDEX user_category(category)
 ;
+ALTER TABLE user
+DROP INDEX user_login
+;
 ALTER TABLE user_search
 CHANGE COLUMN login category VARCHAR(255) NULL COMMENT 'User category (classroom, level...)',
 ADD INDEX user_category(category),
