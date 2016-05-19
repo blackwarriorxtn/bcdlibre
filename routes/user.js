@@ -24,6 +24,7 @@ function module_context(req, res, next)
     table_name: this.objFormParameters.table_name+"_search",
     primary_key: this.objFormParameters.primary_key,
     autoincrement_column: this.objFormParameters.autoincrement_column,
+    list_fields:"user_id AS id, name, login, comment",
     fields:[
       {
         name:"search",label:req.i18n.__("Nom, Compte, Commentaires"),type:"String",required:true,validation:null,maximum_length:255,
