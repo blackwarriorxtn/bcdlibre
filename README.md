@@ -40,4 +40,4 @@ Please read [setup/install.md](setup/install.md)
 
 ### Main menu
 
-![Main menu (french)](doc/screenshots/main_menu_fr.jpg?raw=true "Main menu (french version)")
+![Main menu (french)](doc/screenshots/main_menu_fr.png?raw=true "Main menu (french version)")
