@@ -139,7 +139,7 @@ router.get('/list', function(req, res, next) {
 router.get('/new', function(req, res, next) {
 
   var objMyContext = new module_context(req, res, next);
-  res.render('item/new', {req:req, title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, message:{text:"Veuillez remplir le formulaire",type:"info"}, action:"new"});
+  res.render('item/new', {req:req, title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, message:{text:req.i18n.__("Veuillez remplir le formulaire"),type:"info"}, action:"new"});
 
 });
 // POST new (form validation then insert new record in database)
@@ -554,7 +554,7 @@ router.get('/aws', function(req, objLocalWebServiceResult, next) {
 router.get('/search', function(req, res, next) {
 
   var objMyContext = new module_context(req, res, next);
-  res.render('item/new', {req:req, title: req.app.locals.title, subtitle: req.i18n.__("Recherche"), menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objSearchParameters, message:{text:"Veuillez remplir le formulaire",type:"info"}, action:"search"});
+  res.render('item/new', {req:req, title: req.app.locals.title, subtitle: req.i18n.__("Recherche"), menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objSearchParameters, message:{text:req.i18n.__("Veuillez remplir le formulaire"),type:"info"}, action:"search"});
 
 });
 // POST search (form validation then search records in database)
