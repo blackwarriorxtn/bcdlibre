@@ -29,7 +29,7 @@ Logiciel de gestion d'une petite bibliothèque (gestion d'emprunt de livres)
 
 * When adding a book to your library, you can type in the ISBN or use a barcode reader:
 ![Add book](doc/screenshot/add_book_en_01.png?raw=true "Add book with autocompletion based on Web Services requests (english version)")
-* multiple Web Services are called and information is fill in automatically:
+* multiple Web Services are called and information is filled in automatically:
 ![Add book](doc/screenshot/add_book_en_02.png?raw=true "Add book with autocompletion based on Web Services requests (english version)")
 
 ## Install Bibliopuce
