@@ -35,3 +35,9 @@ Please read [setup/install.md](setup/install.md)
     su - bibliopuce
     cd bibliopuce
     npm start
+
+## Screenshots
+
+### Main menu
+
+![Main menu (french)](doc/screenshots/main_menu_fr.jpg?raw=true "Main menu (french version)")
