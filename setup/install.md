@@ -27,6 +27,7 @@ Please note that nodejs installation is automated with the setup.sh script (see 
 #### Install prerequisites
 
     apt-get install sudo
+    apt-get install git
     apt-get install mysql-server
 
 #### Login as root - create dedicated user
