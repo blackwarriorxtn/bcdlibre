@@ -50,6 +50,8 @@ Please note that nodejs installation is automated with the setup.sh script (see 
 ### On Linux
 
 To start the software automatically when login in as bibliopuce, add the following to the .profile file:
+
     ...
+    # Autostart at login
     cd $HOME/bibliopuce
     npm start 1>$HOME/bibliopuce.log 2>$HOME/bibliopuce.err &
