@@ -16,6 +16,7 @@
               <tr>
                 <th>#</th>
                 <th><%=__("ISBN")%></th>
+                <th><%=__("Classification")%></th>
                 <th><%=__("Titre")%></th>
                 <th><%=__("Auteur")%></th>
                 <th><%=__("Description")%></th>
@@ -26,6 +27,7 @@
                 <tr data-href="view?id=<%- records[i].id %>">
                   <td><a href="view?id=<%- records[i].id %>">#<%= records[i].id %></a></td>
                   <td><%= records[i].isbn13 %></td>
+                  <td><%= records[i].classification %></td>
                   <td><%= records[i].title %></td>
                   <td><%= records[i].author %></td>
                   <td><%= records[i].description %></td>
