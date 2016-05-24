@@ -103,3 +103,16 @@ CREATE TABLE log(
 ALTER TABLE item_detail_search
 ADD FULLTEXT KEY ids_all(title, author, description, classification)
 ;
+TRUNCATE item_classification
+;
+INSERT INTO item_classification(label)
+VALUES
+('ROMAN'),
+('ALBUM'),
+('ALBUM - Animaux'),
+('ALBUM - Découverte'),
+('ALBUM - Première Lecture'),
+('BD'),
+('DOCUMENTAIRE'),
+('POESIE ET CONTES')
+;
