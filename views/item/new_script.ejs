@@ -73,6 +73,7 @@ function check_isbn(event, strValue)
 
 // Bind events and callbacks
 $( document ).ready(function() {
+
   // Bind ISBN search - on focusout
   $('#isbn13').on('focusout',function(event){
     // On n'appelle le Web Service que si le titre et l'auteur n'ont pas déjà été remplis (donc s'ils sont vides)
@@ -90,8 +91,8 @@ $( document ).ready(function() {
         check_isbn(event, strValue);
       }
     }
-
   });
+
 });
 
 // Lock GUI

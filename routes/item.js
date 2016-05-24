@@ -25,6 +25,7 @@ function module_context(req, res, next)
       {name:"isbn13",label:req.i18n.__("Numéro ISBN"),type:"String",required:false,validation:null,maximum_length:16},
       {name:"title",label:req.i18n.__("Titre"),type:"String",required:true,validation:null,maximum_length:255},
       {name:"author",label:req.i18n.__("Auteur"),type:"String",required:true,validation:null,maximum_length:255},
+      {name:"classification",label:req.i18n.__("Classification"),type:"String",required:false,validation:null,maximum_length:255},
       {name:"series_title",label:req.i18n.__("Série"),type:"String",required:false,validation:null,maximum_length:255,autoreplay:true},
       {name:"description",label:req.i18n.__("Description (Synopsis)"),type:"String",required:false,validation:null,maximum_length:65535},
     ]
@@ -86,16 +87,19 @@ function aws_post_processing(strISBN, objResultItem, objWebServiceResult)
         objWebServiceResult.series_title = arrMatchSeries[2].replace(/^ +/, "").replace(/ +$/, "");
       }
     }
+    // Remove bad UTF-8 encoding for SOME books (!)
+    if (strNewValue.match(/Ã/))
+    {
+      strNewValue = strNewValue.replace(/Ã®/g, "î").replace(/Ã©/g, "é").replace(/Ã¨/g, "è").replace(/Ã /g, "à").replace(/Ã¹/g, "ù");
+    }
+
     // Remove some annoyance like "French Edition" or "De 5 à 7 ans" (UTF8), trailing spaces...
     strNewValue = strNewValue.replace(/ *\(French Edition\)/, "").replace(/ *- De [0-9]+ ..? [0-9]+ ans/, "").replace(/^ +/, "").replace(/ +$/, "");
 
-    // Remove bad UTF-8 encoding for SOME books (!)
-    strNewValue = strNewValue.replace(/Ã®/g, "î").replace(/Ã©/g, "é");
-
     // DEBUG
     console.log("Amazon Web Service Title (processed) = %s",strNewValue);
-    // WARNING: don't overwrite result from another Web Service, unless this result is longuer (ok, it's a silly way to finding the most appropriate answer)
-    if (objWebServiceResult.title == null || objWebServiceResult.title.length < strNewValue.length)
+    // WARNING: don't overwrite result from another Web Service, unless this result is longuer (ok, it's a silly way to finding the most appropriate answer) and well-encoded (not UTF8 garbage from AWS)
+    if (objWebServiceResult.title == null || (objWebServiceResult.title.length < strNewValue.length && strNewValue.match(/Ã/) == null ))
     {
       objWebServiceResult.title = strNewValue;
     }
@@ -165,7 +169,7 @@ router.post('/new', function(req, res, next) {
       else
       {
         // Always add at least ONE exemplary of the book (item => item_detail)
-        db.runsql("INSERT INTO item(item_detail_id) VALUES(LAST_INSERT_ID());" /* strSQL */, function(err, rows, fields) {
+        db.runsql("INSERT INTO item(item_detail_id) VALUES(LAST_INSERT_ID());" /* strSQL */, function(err, arrRows, fields) {
           if (objSQLConnection)
           {
             objSQLConnection.end();
@@ -331,6 +335,14 @@ router.get('/webservice', function(req, objLocalWebServiceResult, next) {
       function(err, res, body) {
         // DEBUG
         console.log("Body = %j",body);
+        var objSQLConnection = db.new_connection();
+        db.runsql("\
+    INSERT INTO log(`date_time`, `type`, `label`, `request`, `result`) \n\
+    VALUES (\n\
+      NOW(), 'WEBSERVICE', "+objSQLConnection.escape("ISBN Web Service")+", "+objSQLConnection.escape(url)+",COMPRESS("+objSQLConnection.escape(JSON.stringify(body))+") \n\
+    )\n\
+    ;\n\
+    " /* strSQL */, null /* fnCallback */, objSQLConnection);
         callback(err, body);
       }
     );
@@ -582,5 +594,85 @@ router.post('/search', function(req, res, next) {
 
 });
 
+
+// ************************************************************************************* WEB SERVICES
+// Web Service returning items classification
+router.get('/webservice/items', function(req, res, next) {
+
+  var objMyContext = new module_context(req, res, next);
+  var objSQLConnection = db.new_connection();
+
+  console.log("/webservice/items:req.query=%j", req.query);
+  var strSQLWhere1 = null;
+  var strSQLWhere2 = null;
+  if (req.query.text)
+  {
+    var strValue = req.query.text;
+    var strSQLText = objSQLConnection.escape(strValue);
+    var strSQLTextLike = objSQLConnection.escape(strValue+"%");
+    strSQLWhere1 = " MATCH(item_classification.label) AGAINST ("+strSQLText+" IN BOOLEAN MODE)\n";
+    strSQLWhere2 = " item_classification.label LIKE "+strSQLTextLike+"\n";
+  }
+  if (req.query && req.query.action == "classification")
+  {
+    // Custom SQL, list of items not already borrowed (LEFT OUTER JOIN borrow ... WHERE borrow.id IS NULL)
+    var arrSQL = ["\
+DROP TEMPORARY TABLE IF EXISTS tmp_classification\n\
+; \n","\
+CREATE TEMPORARY TABLE tmp_classification(id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY, `text` TEXT NOT NULL)\n\
+; \n","\
+INSERT IGNORE INTO tmp_classification(id,`text`) \n\
+SELECT item_classification.id AS `id`, CONCAT_WS(\', \', item_classification.label) AS `text`  \n\
+  FROM item_classification\
+  "+(strSQLWhere1 == null ? "" : "\nWHERE "+strSQLWhere1)+"\
+; \n\
+"
+    ];
+    if (strSQLWhere2 != null)
+    {
+      arrSQL.push("\
+INSERT IGNORE INTO tmp_classification(id,`text`) \n\
+SELECT item_classification.id AS `id`, CONCAT_WS(\', \', item_classification.label) AS `text`  \n\
+FROM item_classification\
+"+(strSQLWhere2 == null ? "" : "\nWHERE "+strSQLWhere2)+"\
+; \n\
+");
+    } // if (strSQLWhere2 != null)
+    arrSQL.push("\
+SELECT * FROM tmp_classification \n\
+; \n");
+    arrSQL.push("\
+DROP TEMPORARY TABLE IF EXISTS tmp_classification \n\
+; \n");
+
+    db.runsql(arrSQL, function(err, arrRows, fields, objSQLConnection) {
+      if (err)
+      {
+        // Cleanup
+        if (objSQLConnection)
+        {
+          objSQLConnection.end();
+        }
+        throw err;
+      }
+      // Fetch rows returning a value only
+      var rows = db.rows(arrRows);
+      // Return result as JSON
+      console.log("/webservice/items/classification:rows=%j", rows);
+      res.json(rows);
+    }, objSQLConnection);
+  } // if (req.body.action == "borrow")
+  else
+  {
+    throw new Error(req.i18n.__("ERROR: Action \"%s\" is not supported!",req.query.action));
+  } // else if (req.query && req.query.action == "classification")
+
+  // Cleanup
+  if (objSQLConnection)
+  {
+    objSQLConnection.end();
+  }
+
+});
 
 module.exports = router;

@@ -31,13 +31,14 @@ var new_connection = function ()
       host     : strMySQLHost,
       user     : strMySQLUser,
       database : strMySQLDatabase,
-      password : strMySQLPassword
+      password : strMySQLPassword,
+      multipleStatements: true
     });
   objSQLConnection.connect();
   return(objSQLConnection);
 }
 
-var runsql = function (strSQL, fnCallback, objSQLConnection)
+var runsql = function (objSQL, fnCallback, objSQLConnection)
 {
   var blnMustDisconnect = false;
   if (objSQLConnection == null)
@@ -46,9 +47,17 @@ var runsql = function (strSQL, fnCallback, objSQLConnection)
     blnMustDisconnect = true;
   }
 
+  var strSQL = null;
+  if (Array.isArray(objSQL))
+  {
+    strSQL = objSQL.join("\n");
+  }
+  else
+  {
+    strSQL = objSQL;
+  }
   // DEBUG
-  console.log("SQL:\"%s\"", strSQL);
-
+  console.log("SQL:\n%s\n", strSQL);
   objSQLConnection.query(strSQL, fnCallback);
 
   if (blnMustDisconnect)
@@ -223,12 +232,12 @@ var insert_record = function(req, res, next, objFormParameters, fnCallback)
   console.log(strSQL);
 
   // Execute INSERT query, reusing the same connection
-  runsql(strSQL, function(err, rows, fields) {
+  runsql(strSQL, function(err, arrRows, fields) {
     if (fnCallback)
     {
       // Custom function defined: call it with the same connection (to successfully use LAST_INSERT_ID() function)
       // ATTENTION: this function MUST close the SQL connection after usage!
-      fnCallback(err, rows, fields, objSQLConnection);
+      fnCallback(err, arrRows, fields, objSQLConnection);
     }
     else
     {
@@ -329,12 +338,12 @@ var update_record = function(req, res, next, objFormParameters, fnCallback)
   console.log(strSQL);
 
   // Execute query, reusing the same connection
-  runsql(strSQL, function(err, rows, fields) {
+  runsql(strSQL, function(err, arrRows, fields) {
     if (fnCallback)
     {
       // Custom function defined: call it with the same connection (to successfully use LAST_INSERT_ID() function)
       // ATTENTION: this function MUST close the SQL connection after usage!
-      fnCallback(err, rows, fields, objSQLConnection);
+      fnCallback(err, arrRows, fields, objSQLConnection);
     }
     else
     {
@@ -422,12 +431,12 @@ var delete_record = function(req, res, next, objFormParameters, fnCallback)
   console.log(strSQL);
 
   // Execute query, reusing the same connection
-  runsql(strSQL, function(err, rows, fields) {
+  runsql(strSQL, function(err, arrRows, fields) {
     if (fnCallback)
     {
       // Custom function defined: call it with the same connection (to successfully use LAST_INSERT_ID() function)
       // ATTENTION: this function MUST close the SQL connection after usage!
-      fnCallback(err, rows, fields, objSQLConnection);
+      fnCallback(err, arrRows, fields, objSQLConnection);
     }
     else
     {
@@ -481,9 +490,9 @@ var view_record = function(req, res, next, objFormParameters, fnCallback)
   // DEBUG
   console.log(strSQL);
 
-  runsql(strSQL, function(err, rows, fields) {
+  runsql(strSQL, function(err, arrRows, fields) {
     // MUST HAVE a custom function defined
-    fnCallback(err, rows, fields);
+    fnCallback(err, arrRows, fields);
   }, objSQLConnection);
 
   if (objSQLConnection)
@@ -514,8 +523,8 @@ var list_record = function(req, res, next, objFormParameters, objSQLOptions, fnC
   // DEBUG
   console.log(strSQL);
 
-  runsql(strSQL, function(err, rows, fields) {
-    fnCallback(err, rows, fields);
+  runsql(strSQL, function(err, arrRows, fields) {
+    fnCallback(err, arrRows, fields);
   });
 
   if (objSQLConnection)
@@ -596,8 +605,8 @@ var search_record = function(req, res, next, objFormParameters, objSQLOptions, f
   // DEBUG
   console.log(strSQL);
 
-  runsql(strSQL, function(err, rows, fields) {
-    fnCallback(err, rows, fields);
+  runsql(strSQL, function(err, arrRows, fields) {
+    fnCallback(err, arrRows, fields);
   });
 
   if (objSQLConnection)
@@ -634,6 +643,48 @@ var format_isbn = function(strRawValue)
   return(strValue);
 }
 
+// Return only rows with a value ("fieldCount" != ​0)
+function sql_get_rows(arrRows, objOptions)
+{
+  var rows = null;
+
+  var blnReturnLast = true;
+  if (objOptions && objOptions.only_last == false)
+  {
+    blnReturnLast = false;
+  }
+
+  if (arrRows != null)
+  {
+    for (var intRecords = 0; intRecords < arrRows.length; intRecords++)
+    {
+      if (arrRows[intRecords].fieldCount == 0)
+      {
+        // Don't include
+      }
+      else
+      {
+        if (blnReturnLast)
+        {
+          // Return only the last non-empty record
+          rows = arrRows[intRecords];
+        }
+        else
+        {
+          // Return array of all records
+          if (rows == null)
+          {
+            rows = new Array();
+          }
+          rows.push(arrRows[intRecords]);
+        } // if (blnReturnLast)
+      }
+    } // for (var intRecords = 0; intRecords < arrRows.length; intRecords++)
+
+  } // if (arrRows != null)
+  return(rows);
+}
+
 module.exports.new_connection = new_connection;
 module.exports.runsql = runsql;
 module.exports.check_field_value = check_field_value;
@@ -646,3 +697,4 @@ module.exports.list_record = list_record;
 module.exports.search_record = search_record;
 module.exports.handle_error = handle_error;
 module.exports.format_isbn = format_isbn;
+module.exports.rows = sql_get_rows;

@@ -1,0 +1,39 @@
+<script type="text/javascript">
+// Bind events and callbacks
+$( document ).ready(function() {
+
+  // Enable auto-complete feature (typeahead) for field "classification"
+  $('#classification').typeahead({
+    hint: true,
+    highlight: true,
+    minLength: 1
+  },
+  {
+    name: 'classification',
+    source: new Bloodhound({
+      datumTokenizer: Bloodhound.tokenizers.whitespace('text'),
+      queryTokenizer: Bloodhound.tokenizers.whitespace,
+      // url points to a json web service that contains an array of item matching %QUERYSTRING
+      remote: {
+        url: 'webservice/items?action=classification&text=%QUERYSTRING',
+        wildcard: '%QUERYSTRING'
+      },
+      identify: function(obj) { return obj.id; }
+    }),
+    display: function (suggestion) {
+      return(suggestion.text);
+    }
+  });
+  // Callbacks for auto-completion
+  $('#classification').bind('typeahead:select', function(event, suggestion) {
+    // Set success on form control
+    $(event.target).closest(".form-group").removeClass("has-error has-warning").addClass("has-success");
+    // Set focus on next field (series_title)
+    $("#series_title").focus();
+  }).bind('typeahead:render', function(event) {
+    // Automatically select first option returned by autocomplete
+    $(event.target).parent().find('.tt-selectable:first').addClass('tt-cursor');
+  });
+
+});
+</script>

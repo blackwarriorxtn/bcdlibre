@@ -52,8 +52,9 @@ router.get('/list', function(req, res, next) {
   LEFT OUTER JOIN item_detail ON item.item_detail_id = item_detail.id \n\
   GROUP BY borrow.id \n\
   ; \n\
-', function(err, rows, fields) {
+', function(err, arrRows, fields) {
     if (err) throw err;
+    var rows = arrRows;
     // Display records with "list" template
     res.render('borrow/list', { title: req.app.locals.title, subtitle: req.i18n.__("Liste"), menus:[{text:req.i18n.__("Menu principal"),link:"/"},{text:objMyContext.objMenu.text,link:"/borrow/"}], records:rows });
   });
@@ -201,7 +202,7 @@ router.get('/webservice/items', function(req, res, next) {
   '+(strSQLWhere == null ? "" : "AND "+strSQLWhere)+'\
   GROUP BY item.id \n\
   ; \n\
-  ', function(err, rows, fields, objSQLConnection) {
+  ', function(err, arrRows, fields, objSQLConnection) {
       if (err)
       {
         // Cleanup
@@ -211,6 +212,7 @@ router.get('/webservice/items', function(req, res, next) {
         }
         throw err;
       }
+      var rows = arrRows;
       // Return result as JSON
       console.log("/webservice/items:rows=%j", rows);
       res.json(rows);
@@ -233,8 +235,9 @@ router.get('/webservice/items', function(req, res, next) {
   '+(strSQLWhere == null ? "" : "AND "+strSQLWhere)+'\
   GROUP BY item.id \n\
   ; \n\
-  ', function(err, rows, fields) {
+  ', function(err, arrRows, fields) {
       if (err) throw err;
+      var rows = arrRows;
       // Return result as JSON
       console.log("/webservice/items:rows=%j", rows);
       res.json(rows);
@@ -249,7 +252,7 @@ router.get('/webservice/items', function(req, res, next) {
   JOIN item_detail_search ON item_detail_search.item_detail_id = item_detail.id \n\
   '+(strSQLWhere == null ? "" : "WHERE "+strSQLWhere)+'\
   ; \n\
-  ', function(err, rows, fields) {
+  ', function(err, arrRows, fields) {
       if (err)
       {
         // Cleanup
@@ -259,6 +262,7 @@ router.get('/webservice/items', function(req, res, next) {
         }
         throw err;
       }
+      var rows = arrRows;
       // Return result as JSON
       console.log("/webservice/items:rows=%j", rows);
       res.json(rows);
@@ -293,7 +297,7 @@ router.get('/webservice/users', function(req, res, next) {
   JOIN user_search ON user_search.user_id = user.id \n\
   '+(strSQLWhere == null ? "" : "WHERE "+strSQLWhere)+'\
   ; \n\
-  ', function(err, rows, fields) {
+  ', function(err, arrRows, fields) {
       if (err)
       {
         // Cleanup
@@ -303,6 +307,7 @@ router.get('/webservice/users', function(req, res, next) {
         }
         throw err;
       }
+      var rows = arrRows;
       // Return result as JSON
       console.log("/webservice/users:rows=%j", rows);
       res.json(rows);
@@ -320,7 +325,7 @@ router.get('/webservice/users', function(req, res, next) {
   '+(strSQLWhere == null ? "" : "AND "+strSQLWhere)+'\
   GROUP BY user.id \n\
   ; \n\
-  ', function(err, rows, fields) {
+  ', function(err, arrRows, fields) {
       if (err)
       {
         // Cleanup
@@ -330,6 +335,7 @@ router.get('/webservice/users', function(req, res, next) {
         }
         throw err;
       }
+      var rows = arrRows;
       // Return result as JSON
       console.log("/webservice/users:rows=%j", rows);
       res.json(rows);
@@ -344,7 +350,7 @@ router.get('/webservice/users', function(req, res, next) {
   JOIN user_search ON user_search.user_id = user.id \n\
   '+(strSQLWhere == null ? "" : "WHERE "+strSQLWhere)+'\
   ; \n\
-  ', function(err, rows, fields) {
+  ', function(err, arrRows, fields) {
       if (err)
       {
         // Cleanup
@@ -354,6 +360,7 @@ router.get('/webservice/users', function(req, res, next) {
         }
         throw err;
       }
+      var rows = arrRows;
       // Return result as JSON
       console.log("/webservice/users:rows=%j", rows);
       res.json(rows);
@@ -398,7 +405,7 @@ router.get('/webservice/borrows', function(req, res, next) {
 '+(strSQLWhere == null ? "" : "AND "+strSQLWhere)+'\
 GROUP BY item.id, user.id \n\
 ; \n\
-', function(err, rows, fields) {
+', function(err, arrRows, fields) {
     if (err)
     {
       // Cleanup
@@ -408,6 +415,7 @@ GROUP BY item.id, user.id \n\
       }
       throw err;
     }
+    var rows = arrRows;
     // Return result as JSON
     console.log("/webservice/borrows:rows=%j", rows);
     res.json(rows);

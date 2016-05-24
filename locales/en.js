@@ -66,5 +66,6 @@
 	"Invalid value : REQUIRED field \"%s\" can't store value %s": "Invalid value : REQUIRED field \"%s\" can't store value %s",
 	"Gérer les emprunts": "Borrowing Management",
 	"Prénom": "First Name",
-	"Catégorie": "Classroom"
+	"Catégorie": "Classroom",
+	"Classification": "Classification"
 }
