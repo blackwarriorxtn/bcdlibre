@@ -116,3 +116,15 @@ VALUES
 ('DOCUMENTAIRE'),
 ('POESIE ET CONTES')
 ;
+
+
+
+
+
+
+
+
+
+ALTER TABLE user_search
+ADD FULLTEXT KEY us_all(last_name, first_name, category, comment)
+;

@@ -283,21 +283,63 @@ router.get('/webservice/users', function(req, res, next) {
   var objMyContext = new module_context(req, res, next);
   var objSQLConnection = db.new_connection();
   console.log("/webservice/users:req.query=%j", req.query);
-  var strSQLWhere = null;
+  var strSQLWhere1 = null;
+  var strSQLWhere2 = null;
+  var strSQLWhere3 = null;
   if (req.query.text)
   {
-    var strSQLText = objSQLConnection.escape(req.query.text);
-    strSQLWhere = " MATCH (user_search.last_name, user_search.first_name, user_search.category,user_search.comment) AGAINST ("+strSQLText+" IN BOOLEAN MODE)\n";
+    var strValue = req.query.text;
+    var strSQLText = objSQLConnection.escape(strValue);
+    var strSQLTextStartWith = objSQLConnection.escape(strValue+"%");
+    strSQLWhere1 = " MATCH (user_search.last_name, user_search.first_name, user_search.category,user_search.comment) AGAINST ("+strSQLText+" IN BOOLEAN MODE)\n";
+    strSQLWhere2 = " last_name LIKE "+strSQLTextStartWith+"\n";
+    strSQLWhere3 = " first_name LIKE "+strSQLTextStartWith+"\n";
   }
   if (req.query && req.query.action == "borrow")
   {
     // Custom SQL, list of users matching a string allowed to borrow (ALL users - no maximum is enforced)
-    db.runsql('SELECT user.id AS `id`, CONCAT_WS(\', \', CONCAT(\'#\',user.id), user.last_name, user.first_name, user.category) AS `text`  \n\
-  FROM user \n\
-  JOIN user_search ON user_search.user_id = user.id \n\
-  '+(strSQLWhere == null ? "" : "WHERE "+strSQLWhere)+'\
-  ; \n\
-  ', function(err, arrRows, fields) {
+
+    var arrSQL = ["\
+DROP TEMPORARY TABLE IF EXISTS tmp_search\n\
+; \n","\
+CREATE TEMPORARY TABLE tmp_search(id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY)\n\
+; \n","\
+INSERT IGNORE INTO tmp_search(id) \n\
+SELECT user_search.user_id AS `id` \n\
+FROM user_search\
+  "+(strSQLWhere1 == null ? "" : "\nWHERE "+strSQLWhere1)+"\
+; \n\
+"
+    ];
+    if (strSQLWhere2 != null)
+    {
+      arrSQL.push("\
+INSERT IGNORE INTO tmp_search(id) \n\
+SELECT user_search.user_id \n\
+FROM user_search \n\
+WHERE "+strSQLWhere2+"\
+; \n\
+");
+    } // if (strSQLWhere2 != null)
+    if (strSQLWhere3 != null)
+    {
+      arrSQL.push("\
+INSERT IGNORE INTO tmp_search(id) \n\
+SELECT user_search.user_id \n\
+FROM user_search \n\
+WHERE "+strSQLWhere3+"\
+; \n\
+");
+    } // if (strSQLWhere3 != null)
+    arrSQL.push("\
+SELECT tmp_search.id, CONCAT_WS(\', \', CONCAT(\'#\',user.id), user.last_name, user.first_name, user.category) AS `text` FROM tmp_search \n\
+JOIN user ON user.id = tmp_search.id \n\
+; \n");
+    arrSQL.push("\
+DROP TEMPORARY TABLE IF EXISTS tmp_search \n\
+; \n");
+
+    db.runsql(arrSQL, function(err, arrRows, fields, objSQLConnection) {
       if (err)
       {
         // Cleanup
@@ -307,12 +349,12 @@ router.get('/webservice/users', function(req, res, next) {
         }
         throw err;
       }
-      var rows = arrRows;
+      var rows = db.rows(arrRows);
       // Return result as JSON
       console.log("/webservice/users:rows=%j", rows);
       res.json(rows);
     },
-  objSQLConnection);
+    objSQLConnection);
   } // if (req.body.action == "borrow")
   else if (req.query && req.query.action == "return")
   {
