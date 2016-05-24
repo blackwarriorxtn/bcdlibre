@@ -606,13 +606,16 @@ router.get('/webservice/items', function(req, res, next) {
   console.log("/webservice/items:req.query=%j", req.query);
   var strSQLWhere1 = null;
   var strSQLWhere2 = null;
+  var strSQLWhere3 = null;
   if (req.query.text)
   {
     var strValue = req.query.text;
     var strSQLText = objSQLConnection.escape(strValue);
-    var strSQLTextLike = objSQLConnection.escape(strValue+"%");
+    var strSQLTextStartWith = objSQLConnection.escape(strValue+"%");
+    var strSQLTextContain = objSQLConnection.escape("%"+strValue+"%");
     strSQLWhere1 = " MATCH(item_classification.label) AGAINST ("+strSQLText+" IN BOOLEAN MODE)\n";
-    strSQLWhere2 = " item_classification.label LIKE "+strSQLTextLike+"\n";
+    strSQLWhere2 = " item_classification.label LIKE "+strSQLTextStartWith+"\n";
+    strSQLWhere3 = " item_classification.label LIKE "+strSQLTextContain+"\n";
   }
   if (req.query && req.query.action == "classification")
   {
@@ -634,8 +637,18 @@ SELECT item_classification.id AS `id`, CONCAT_WS(\', \', item_classification.lab
       arrSQL.push("\
 INSERT IGNORE INTO tmp_classification(id,`text`) \n\
 SELECT item_classification.id AS `id`, CONCAT_WS(\', \', item_classification.label) AS `text`  \n\
-FROM item_classification\
-"+(strSQLWhere2 == null ? "" : "\nWHERE "+strSQLWhere2)+"\
+FROM item_classification \n\
+WHERE "+strSQLWhere2+"\
+; \n\
+");
+    } // if (strSQLWhere2 != null)
+    if (strSQLWhere3 != null)
+    {
+      arrSQL.push("\
+INSERT IGNORE INTO tmp_classification(id,`text`) \n\
+SELECT item_classification.id AS `id`, CONCAT_WS(\', \', item_classification.label) AS `text`  \n\
+FROM item_classification \n\
+WHERE "+strSQLWhere3+"\
 ; \n\
 ");
     } // if (strSQLWhere2 != null)
