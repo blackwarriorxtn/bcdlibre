@@ -17,7 +17,7 @@ cd `dirname $0`/..
 git pull || handle_error "Can't run 'git pull'"
 
 echo "[`date +'%Y-%m-%d %H:%M:%S'`] Upgrade software..."
-bash bin/upgrade_internal.sh
+bash bin/upgrade_internal.sh || handle_error "Can't upgrade software!"
 
 echo "[`date +'%Y-%m-%d %H:%M:%S'`] Start service"
 bash bin/start.sh

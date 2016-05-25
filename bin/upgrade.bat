@@ -3,14 +3,14 @@ ECHO [%DATE% %TIME%] %~n0: Begin...
 
 cd /D %~dp0..\ || GOTO ERROR
 
-ECHO [%DATE% %TIME%] Upgrade source code...
-git pull || GOTO ERROR
-
 ECHO [%DATE% %TIME%] Stop service
 cd /D %~dp0..\ || GOTO ERROR
 %COMSPEC% /C bin\stop.bat
 
-REM TODO : upgrade database structure, if needed : execute db/alter/*.sql (only once - store alter exection in MySQL db)
+ECHO [%DATE% %TIME%] Upgrade source code...
+git pull || GOTO ERROR
+
+%COMSPEC% /C bin\upgrade_internal.bat || GOTO ERROR
 
 ECHO [%DATE% %TIME%] Start service
 cd /D %~dp0..\ || GOTO ERROR
