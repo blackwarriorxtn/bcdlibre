@@ -13,6 +13,6 @@ handle_error()
 }
 
 cd `dirname $0`/.. || handle_error "Can't change to runtime directory"
-npm start 1>>$MY_LOG 2>>$MY_ERR & || handle_error "Can't start npm"
+npm start 1>>$MY_LOG 2>>$MY_ERR || handle_error "Can't start npm" &
 
 echo "[`date +'%Y-%m-%d %H:%M:%S'`] End."
