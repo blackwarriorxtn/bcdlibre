@@ -38,13 +38,7 @@ sudo apt-get install curl || handle_error "Can't instal curl!"
 curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash - || handle_error "Can't install nodejs!"
 sudo apt-get install -y nodejs || handle_error "Can't install nodejs!"
 
-echo "[`date +'%Y-%m-%d %H:%M:%S'`] Installing node modules..."
-
-for module in express mysql ejs serve-favicon morgan cookie-parser body-parser debug async request apac i18n-2 forever
-do
-  echo "[`date +'%Y-%m-%d %H:%M:%S'`] Installing module $module..."
-  npm install $module || handle_error "Can't instal $module!"
-done
+bash `dirname $0`/setup_node_modules.sh || handle_error "Can't install node modules!"
 
 # Configure mysql
 if [ -f /etc/mysql/my.cnf ] ; then

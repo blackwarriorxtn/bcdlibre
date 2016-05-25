@@ -20,23 +20,9 @@ SET /P MYSQL_CREATE_SAMPLE=Create sample data [%DEFAULT_MYSQL_CREATE_SAMPLE%] ?
 IF "%MYSQL_CREATE_SAMPLE%" == "" SET MYSQL_CREATE_SAMPLE=%DEFAULT_MYSQL_CREATE_SAMPLE%
 IF "%MYSQL_CREATE_SAMPLE%" == "Y" SET MYSQL_CREATE_SAMPLE=y
 
-ECHO [%DATE% %TIME%] Install node modules...
-%COMSPEC% /C npm install express || GOTO ERROR
-%COMSPEC% /C npm install mysql || GOTO ERROR
-%COMSPEC% /C npm install ejs || GOTO ERROR
-%COMSPEC% /C npm install serve-favicon || GOTO ERROR
-%COMSPEC% /C npm install morgan || GOTO ERROR
-%COMSPEC% /C npm install cookie-parser || GOTO ERROR
-%COMSPEC% /C npm install body-parser || GOTO ERROR
-%COMSPEC% /C npm install debug || GOTO ERROR
-%COMSPEC% /C npm install async || GOTO ERROR
-%COMSPEC% /C npm install request || GOTO ERROR
-%COMSPEC% /C npm install i18n-2 || GOTO ERROR
-%COMSPEC% /C npm install forever || GOTO ERROR
-REM (MAYBE)%COMSPEC% /C npm install apac@latest || GOTO ERROR
+%COMSPEC% /C %~dp0setup_node_modules.bat || GOTO ERROR
 
 ECHO [%DATE% %TIME%] Create MySQL database...
-REM TODO reuse password from configuration
 mysql --default-character-set=utf8 --user=root --password=%MYSQL_ROOT_PASSWORD% < db/create_database.sql || GOTO ERROR
 IF NOT "%MYSQL_CREATE_SAMPLE%" == "y" GOTO POST_CREATE_SAMPLE
 :CREATE_SAMPLE
