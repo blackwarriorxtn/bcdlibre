@@ -11,8 +11,3 @@ CREATE TABLE IF NOT EXISTS my_alter(
 
 ) ENGINE=MyISAM COMMENT='Track database structure changes (alter)'
 ;
-
-
-INSERT INTO my_alter(commit_id,alter_file) VALUES('4276b6b0c5d4c07607b734da769dddb16971f292','20160525.EDOTPC.EDOT.151924.41.sql')
-;
-
