@@ -81,7 +81,8 @@ CREATE TABLE item_detail_search(
   FULLTEXT KEY item_ft_description(description),
   FULLTEXT KEY item_ft_isbn13(isbn13),
   FULLTEXT KEY item_ft_series_title(series_title),
-  FULLTEXT KEY item_ft_classification(classification)
+  FULLTEXT KEY item_ft_classification(classification),
+  FULLTEXT KEY ids_all(title, author, description, classification)
 
 )  ENGINE=MyISAM COMMENT 'Search engine for items (MyISAM Format for FULL TEXT SEARCHES)'
 ;
@@ -131,7 +132,7 @@ CREATE TABLE item_classification(
   PRIMARY KEY(id),
   UNIQUE KEY item_classification_label(label(300)),
   FULLTEXT KEY item_classification_ft_label(label)
-  
+
 ) ENGINE=MyISAM COMMENT 'Item Classification (autocompletion for free text, can include Dewey Decimal Classification)'
 ;
 
@@ -189,7 +190,8 @@ CREATE TABLE user_search(
   FULLTEXT KEY user_ft_first_name(first_name),
   FULLTEXT KEY user_ft_first_last_name(first_name,last_name),
   FULLTEXT KEY user_ft_category(category),
-  FULLTEXT KEY user_ft_comment(comment)
+  FULLTEXT KEY user_ft_comment(comment),
+  FULLTEXT KEY us_all(last_name, first_name, category, comment)
 
 )  ENGINE=MyISAM COMMENT 'Search engine for users (MyISAM Format for FULL TEXT SEARCHES)'
 ;
@@ -262,7 +264,7 @@ DROP TABLE IF EXISTS log
 ;
 CREATE TABLE log(
   id INTEGER NOT NULL AUTO_INCREMENT,
-  date_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Date/Time of operation', 
+  date_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Date/Time of operation',
   type ENUM('START','STOP','SETUP','WEBSERVICE') NOT NULL DEFAULT 'START' COMMENT 'Type of operation',
   label TEXT NOT NULL COMMENT 'Associated label',
   request TEXT NOT NULL COMMENT 'Associated request (URL/Location/Path)',
@@ -270,6 +272,6 @@ CREATE TABLE log(
 
   PRIMARY KEY(id),
   KEY log_dt_type_request(date_time,type,request(64))
-  
+
 ) ENGINE=MyISAM COMMENT 'Web Log'
 ;
