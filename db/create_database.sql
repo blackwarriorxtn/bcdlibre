@@ -141,8 +141,8 @@ VALUES
 ('ROMAN'),
 ('ALBUM'),
 ('ALBUM - Animaux'),
-('ALBUM - Découverte'),
-('ALBUM - Première Lecture'),
+('ALBUM - DÃ©couverte'),
+('ALBUM - PremiÃ¨re Lecture'),
 ('BD'),
 ('DOCUMENTAIRE'),
 ('POESIE ET CONTES')
