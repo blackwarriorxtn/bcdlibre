@@ -43,6 +43,8 @@ var runsql = function (objSQL, fnCallback, objSQLConnection)
   var blnMustDisconnect = false;
   if (objSQLConnection == null)
   {
+    // DEBUG
+    console.log("Opening new connection...");
     objSQLConnection= new_connection();
     blnMustDisconnect = true;
   }
