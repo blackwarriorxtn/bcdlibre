@@ -1,9 +1,9 @@
 @ECHO OFF
-CD %~dp0
+CD %~dp0..
 REM TODO DELETE (debug)
 set DEBUG=bibliopuce:*
-START npm start || GOTO ERROR
-REM wait for 5 seconds then call web app on localhost
+%COMSPEC% /C node_modules\.bin\forever.cmd start bin\www || GOTO ERROR
+
 node --eval "console.log('Please wait...'); setTimeout(function* () { console.log('Go!'); process.exit(0);}, 5000);" && START EXPLORER http://localhost:3000
 
 :END
