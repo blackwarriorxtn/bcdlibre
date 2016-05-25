@@ -43,10 +43,10 @@ Please read [setup/install.md](setup/install.md)
 ### On Windows
 
     cd bibliopuce
-    start.bat
+    bin\start.bat
 
 ### On Linux
 
     su - bibliopuce
     cd bibliopuce
-    npm start
+    bin/start.sh
