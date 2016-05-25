@@ -18,6 +18,7 @@ cd /D %~dp0..\ || GOTO ERROR
 
 :END
 ECHO [%DATE% %TIME%] %~n0: End.
+PAUSE
 EXIT /b 0
 
 :ERROR

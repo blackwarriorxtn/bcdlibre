@@ -23,3 +23,6 @@ echo "[`date +'%Y-%m-%d %H:%M:%S'`] Start service"
 bash bin/start.sh
 
 echo "[`date +'%Y-%m-%d %H:%M:%S'`] End."
+
+echo "Press ENTER to exit."
+read any
