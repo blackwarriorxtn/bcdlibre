@@ -344,11 +344,15 @@ router.get('/webservice', function(req, objLocalWebServiceResult, next) {
     )\n\
     ;\n\
     " /* strSQL */, null /* fnCallback */, objSQLConnection);
-        callback(err, body);
+        callback(err, body, objSQLConnection);
       }
     );
-  }, function (err, res) {
+  }, function (err, res, objSQLConnection) {
 
+    if (objSQLConnection)
+    {
+      objSQLConnection.end();
+    }
     // Handle errors gracefully
     if (err)
     {
