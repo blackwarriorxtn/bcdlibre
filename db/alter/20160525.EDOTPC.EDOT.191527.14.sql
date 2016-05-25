@@ -1,3 +1,3 @@
 /* Test alter module */
-DESC item_detail
+SELECT * FROM item_detail LIMIT 1
 ;

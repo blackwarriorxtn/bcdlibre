@@ -1,3 +1,3 @@
 /* Test alter module */
-DESC user_search
+SELECT * FROM user_search LIMIT 1
 ;

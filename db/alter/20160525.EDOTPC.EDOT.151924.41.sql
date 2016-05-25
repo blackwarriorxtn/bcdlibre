@@ -1,3 +1,3 @@
 /* Test alter module */
-DESC log
+SELECT * FROM log LIMIT 1
 ;
