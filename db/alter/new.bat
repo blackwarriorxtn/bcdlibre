@@ -1,6 +1,6 @@
 @ECHO OFF
 
-CALL ~dp0..\..\bin\date.bat
+CALL %~dp0..\..\bin\date.bat
 SET SQL_FILE=%~dp0%MY_YEAR%%MY_MONTH%%MY_DAY%.%COMPUTERNAME%.%USERNAME%.%MY_HOUR%%MY_MINUTE%%MY_SECOND%.%MY_MILLISECOND%.sql
 ECHO %SQL_FILE%
 
