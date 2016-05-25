@@ -6,7 +6,6 @@ Type=Application
 Terminal=true
 Icon[fr_FR]=gnome-panel-launcher
 Name[fr_FR]=upgrade
-Exec=/home/bibliopuce/bibliopuce/bin/upgrade.sh
+Exec=bash /home/bibliopuce/bibliopuce/bin/upgrade.sh
 Name=Bibliopuce - Mise a jour du logiciel
 Icon=gnome-panel-launcher
-

@@ -6,6 +6,6 @@ Type=Application
 Terminal=true
 Icon[fr_FR]=gnome-panel-launcher
 Name[fr_FR]=upgrade
-Exec=/home/bibliopuce/bibliopuce/bin/start.sh
+Exec=bash /home/bibliopuce/bibliopuce/bin/start.sh
 Name=Bibliopuce - Arrêt du logiciel
 Icon=gnome-panel-launcher
