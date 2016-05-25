@@ -169,6 +169,13 @@ var check_field_value = function(strValue, objFieldDescription, objSQLConnection
     }
   }
 
+  // Check if field is defined to store NULL in case its value is empty
+  if (objFieldDescription.null_if_empty && objValue == "")
+  {
+    console.log("Storing NULL value (null_if_empty)");
+    objValue = null;
+  }
+
   // Use the SQL connection to escape value with appropriate charset/encoding
   if (blnEscapeString)
   {
