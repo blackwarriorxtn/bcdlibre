@@ -10,17 +10,17 @@ handle_error()
 }
 
 echo "[`date +'%Y-%m-%d %H:%M:%S'`] Stop service"
-bash bin/stop.sh
+bash `dirname $0`/stop.sh
 
 echo "[`date +'%Y-%m-%d %H:%M:%S'`] Upgrade source code..."
 cd `dirname $0`/..
 git pull || handle_error "Can't run 'git pull'"
 
 echo "[`date +'%Y-%m-%d %H:%M:%S'`] Upgrade software..."
-bash bin/upgrade_internal.sh || handle_error "Can't upgrade software!"
+bash `dirname $0`/upgrade_internal.sh || handle_error "Can't upgrade software!"
 
 echo "[`date +'%Y-%m-%d %H:%M:%S'`] Start service"
-bash bin/start.sh
+bash `dirname $0`/start.sh
 
 echo "[`date +'%Y-%m-%d %H:%M:%S'`] End."
 
