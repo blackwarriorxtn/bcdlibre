@@ -1,0 +1,3 @@
+
+DESC item_detail
+;
