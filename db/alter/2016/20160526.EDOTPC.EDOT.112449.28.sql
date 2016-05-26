@@ -1,4 +1,4 @@
-
+/* Test auto-alter-on-update */
 DROP TABLE IF EXISTS test
 ;
 CREATE TABLE test(
