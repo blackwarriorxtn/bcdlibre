@@ -6,8 +6,7 @@ var db = require('./db'); // database utilities
 /* ******************************************************************************** GET home page. */
 router.get('/', function(req, res, next) {
 
-  // DEBUG
-  console.log("req.query=%j", req.query);
+  debug("req.query=%j", req.query);
   // Check requested language
   if (req && req.query && req.query.lang)
   {
@@ -20,8 +19,7 @@ router.get('/', function(req, res, next) {
 /* ******************************************************************************** SET language */
 router.get('/set', function(req, res, next) {
 
-  // DEBUG
-  console.log("req.query=%j", req.query);
+  debug("req.query=%j", req.query);
   // Check requested language
   if (req && req.query && req.query.lang)
   {

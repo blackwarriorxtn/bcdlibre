@@ -5,6 +5,7 @@ var db = require('./db'); // database utilities
 var request = require('request');
 var async = require('async');
 var config = require('../setup/config.js');
+var debug = require('debug')('bibliopuce:routes_item');
 
 var strAWSId = config.webservices.aws.awsId;
 var strAWSSecret = config.webservices.aws.awsSecret;
@@ -55,12 +56,11 @@ function module_context(req, res, next)
 
 function aws_post_processing(strISBN, objResultItem, objWebServiceResult)
 {
-  // DEBUG
-  console.log("Amazon Web Service result: %j", objResultItem);
+  debug("Amazon Web Service result: %j", objResultItem);
   if (objResultItem.Author)
   {
     var strNewValue = objResultItem.Author;
-    // DEBUG console.log("Amazon Web Service Authors = %s",strNewValue);
+    debug("Amazon Web Service Authors = %s",strNewValue);
     // WARNING: don't overwrite result from another Web Service, unless this result is longuer (ok, it's a silly way to finding the most appropriate answer)
     if (objWebServiceResult.authors == null || objWebServiceResult.authors.length < strNewValue.length)
     {
@@ -69,8 +69,7 @@ function aws_post_processing(strISBN, objResultItem, objWebServiceResult)
   }
   if (objResultItem.Title)
   {
-    // DEBUG
-    console.log("Amazon Web Service Title (raw) = %j",objResultItem.Title);
+    debug("Amazon Web Service Title (raw) = %j",objResultItem.Title);
     var strNewValue = objResultItem.Title;
     // Amazon post-processing: guess series, if any
     var arrMatchSeries = strNewValue.match(/^(.*)\(La série de livres ([^)]+)\)(.*)$/);
@@ -80,8 +79,7 @@ function aws_post_processing(strISBN, objResultItem, objWebServiceResult)
     }
     if (arrMatchSeries)
     {
-      // DEBUG
-      console.log("Amazon Web Service Title / Serie = %s / %s",arrMatchSeries[1], arrMatchSeries[2]);
+      debug("Amazon Web Service Title / Serie = %s / %s",arrMatchSeries[1], arrMatchSeries[2]);
       strNewValue = (arrMatchSeries[1] == null ? "" : arrMatchSeries[1].replace(/^ +/, " ").replace(/ +$/, "")) + (arrMatchSeries[3] == null ? "" : arrMatchSeries[3].replace(/^ +/, " ").replace(/ +$/, ""));
       if (arrMatchSeries[2] != null && arrMatchSeries[2] != "")
       {
@@ -97,8 +95,7 @@ function aws_post_processing(strISBN, objResultItem, objWebServiceResult)
     // Remove some annoyance like "French Edition" or "De 5 à 7 ans" (UTF8), trailing spaces...
     strNewValue = strNewValue.replace(/ *\(French Edition\)/, "").replace(/ *- De [0-9]+ ..? [0-9]+ ans/, "").replace(/^ +/, "").replace(/ +$/, "");
 
-    // DEBUG
-    console.log("Amazon Web Service Title (processed) = %s",strNewValue);
+    debug("Amazon Web Service Title (processed) = %s",strNewValue);
     // WARNING: don't overwrite result from another Web Service, unless this result is longuer (ok, it's a silly way to finding the most appropriate answer) and well-encoded (not UTF8 garbage from AWS)
     if (objWebServiceResult.title == null || (objWebServiceResult.title.length < strNewValue.length && strNewValue.match(/Ã/) == null ))
     {
@@ -309,8 +306,7 @@ router.get('/webservice', function(req, objLocalWebServiceResult, next) {
     return objLocalWebServiceResult.sendStatus(400);
   }
 
-  // DEBUG
-  console.log("req.query.isbn=%s\n",req.query.isbn);
+  debug("req.query.isbn=%s\n",req.query.isbn);
 
   var strISBN = req.query.isbn;
   // ISBN must not be empty
@@ -326,7 +322,6 @@ router.get('/webservice', function(req, objLocalWebServiceResult, next) {
     "http://localhost:3000/item/aws?isbn="+encodeURIComponent(strISBN)
   ];
   async.map(urls, function (url, callback) {
-    // DEBUG
     console.log("Calling Web Service "+url);
     const options = {
       url :  url,
@@ -334,8 +329,7 @@ router.get('/webservice', function(req, objLocalWebServiceResult, next) {
     };
     request(options,
       function(err, res, body) {
-        // DEBUG
-        console.log("Body = %j",body);
+        debug("Body = %j",body);
         var objSQLConnection = db.new_connection();
         db.runsql("\
     INSERT INTO log(`date_time`, `type`, `label`, `request`, `result`) \n\
@@ -361,16 +355,14 @@ router.get('/webservice', function(req, objLocalWebServiceResult, next) {
       objLocalWebServiceResult.json(objWebServiceResult);
     }
 
-    // DEBUG
-    console.log("res=%j\n",res);
+    debug("res=%j\n",res);
 
     if (res && res.length > 0)
     {
       // Response is ok : build a custom object for replying (with only the first item)
       for (var intResult in res)
       {
-        // DEBUG
-        console.log("res[intResult]=%j\n",res[intResult]);
+        debug("res[intResult]=%j\n",res[intResult]);
 
         if (res[intResult].stat)
         {
@@ -455,16 +447,14 @@ router.get('/webservice', function(req, objLocalWebServiceResult, next) {
             var objResults = res[intResult].ItemLookupResponse.Items.Item;
             if (objResults.length == null || objResults.length == 0)
             {
+              debug("one result: objResults= %j", objResults);
               // One result only - Item is an object
-              // DEBUG
-              console.log("one result: objResults= %j", objResults);
               aws_post_processing(strISBN, objResults.ItemAttributes, objWebServiceResult);
             }
             else
             {
+              debug("multiple results: objResults= %j", objResults);
               // Multiples results - Item is an Array of objects
-              // DEBUG
-              console.log("multiple results: objResults= %j", objResults);
               for (var intItem = 0; intItem < objResults.length; intItem++)
               {
                 var objResultItem = objResults[intItem].ItemAttributes;
@@ -494,8 +484,7 @@ router.get('/webservice', function(req, objLocalWebServiceResult, next) {
         objWebServiceResult.message = "Unknown error: can't find book with isbn \""+strISBN+"\"";
       }
 
-      // DEBUG
-      console.log("objWebServiceResult=%j", objWebServiceResult);
+      debug("objWebServiceResult=%j", objWebServiceResult);
 
       // Return final result
       objLocalWebServiceResult.json(objWebServiceResult);
@@ -508,7 +497,7 @@ router.get('/webservice', function(req, objLocalWebServiceResult, next) {
 // GET info from Amazon Web Service (fetch isbn information with Amazon ID/Password)
 router.get('/aws', function(req, objLocalWebServiceResult, next) {
 
-  console.log("webservice/aws");
+  debug("webservice/aws");
   var objMyContext = new module_context(req, objLocalWebServiceResult, next);
   var objWebServiceResult = {status:"KO"};
 
@@ -519,8 +508,7 @@ router.get('/aws', function(req, objLocalWebServiceResult, next) {
     return objLocalWebServiceResult.sendStatus(400);
   }
 
-  // DEBUG
-  console.log("req.query.isbn=%s\n",req.query.isbn);
+  debug("req.query.isbn=%s\n",req.query.isbn);
 
   var strISBN = req.query.isbn;
   // ISBN must not be empty
@@ -555,7 +543,7 @@ router.get('/aws', function(req, objLocalWebServiceResult, next) {
       }
       else
       {
-        console.log("Results: %j\n", results);
+        debug("Results: %j\n", results);
         objLocalWebServiceResult.status = "OK";
         objLocalWebServiceResult.message = "OK";
         objLocalWebServiceResult.json(results);
@@ -607,7 +595,7 @@ router.get('/webservice/items', function(req, res, next) {
   var objMyContext = new module_context(req, res, next);
   var objSQLConnection = db.new_connection();
 
-  console.log("/webservice/items:req.query=%j", req.query);
+  debug("/webservice/items:req.query=%j", req.query);
   var strSQLWhere1 = null;
   var strSQLWhere2 = null;
   var strSQLWhere3 = null;
@@ -676,7 +664,7 @@ DROP TEMPORARY TABLE IF EXISTS tmp_classification \n\
       // Fetch rows returning a value only
       var rows = db.rows(arrRows);
       // Return result as JSON
-      console.log("/webservice/items/classification:rows=%j", rows);
+      debug("/webservice/items/classification:rows=%j", rows);
       res.json(rows);
     }, objSQLConnection);
   } // if (req.body.action == "borrow")

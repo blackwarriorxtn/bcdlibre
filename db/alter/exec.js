@@ -4,10 +4,11 @@ var child_process = require("child_process");
 var db = require('../../routes/db'); // database utilities
 var async = require("async");
 var objSQLConnection = db.new_connection();
+var debug = require('debug')('bibliopuce:db_alter_exec');
 
 var arrSQLFiles = new Array();
 var arrFiles = fs.readdirSync("." /* path */);
-console.log("arrFiles=%j", arrFiles);
+debug("arrFiles=%j", arrFiles);
 for (var intFile = 0; intFile < arrFiles.length; intFile++)
 {
   if (arrFiles[intFile].match(/\.sql$/))
@@ -15,15 +16,15 @@ for (var intFile = 0; intFile < arrFiles.length; intFile++)
     arrSQLFiles.push(arrFiles[intFile]);
   }
 }
-console.log("arrSQLFiles=%j", arrSQLFiles);
+debug("arrSQLFiles=%j", arrSQLFiles);
 
 async.map(arrSQLFiles, function(strFile, callback) {
-  console.log("strFile=%s", strFile);
+  debug("strFile=%s", strFile);
   var strInfo = null;
   var strGitCommand = "git log -n 1 --format=\""+strFile+"/%H/%ct\" -- "+strFile;
-  console.log("strGitCommand=%s", strGitCommand);
+  debug("strGitCommand=%s", strGitCommand);
   strInfo = require("child_process").execSync(strGitCommand);
-  console.log("strInfo=%s", strInfo);
+  debug("strInfo=%s", strInfo);
   callback(null, strInfo);
 }, function(err, arrInfo) {
   // arrInfo is an array of git commit info for each SQL file
@@ -33,7 +34,7 @@ async.map(arrSQLFiles, function(strFile, callback) {
   }
   else
   {
-    console.log("arrInfo=%j", arrInfo);
+    debug("arrInfo=%j", arrInfo);
     var arrSQL = new Array();
     arrSQL.push("DROP TEMPORARY TABLE IF EXISTS tmp_alter\n;\n");
     arrSQL.push("\
@@ -48,7 +49,7 @@ KEY(commit_timestamp)\n\
     for (var intInfo = 0; intInfo < arrInfo.length; intInfo++)
     {
       var strInfo = arrInfo[intInfo];
-      console.log("strInfo=%s", strInfo);
+      debug("strInfo=%s", strInfo);
       var arrFileInfo = new String(strInfo).split("/");
       var strFile = arrFileInfo[0];
       var strCommitId = arrFileInfo[1];
@@ -56,7 +57,7 @@ KEY(commit_timestamp)\n\
       var intCommitTimestamp = parseInt(strCommitTimestamp, 10);
       if (strCommitId == "" || strCommitId == null)
       {
-        console.log("No commit - no execute.");
+        console.log("File %s not committed - not executed.", strFile);
       }
       else
       {
@@ -81,8 +82,7 @@ ORDER BY tmp_alter.commit_timestamp \n\
         throw err;
       }
       var rows = db.rows(arrRows);
-      // DEBUG
-      console.log("rows=%j",rows);
+      debug("rows=%j",rows);
 
       if (rows.length)
       {
@@ -98,15 +98,13 @@ ORDER BY tmp_alter.commit_timestamp \n\
   VALUES("+objNewSQLConnection.escape(task.commit_id)+","+objNewSQLConnection.escape(task.alter_file)+","+objNewSQLConnection.escape(task.commit_timestamp)+")\n;\n";
             objNewSQLConnection.end();
             db.runsql(strSQL, function (objError) {
-              // DEBUG
-              console.log("Request Done");
+              debug("Request Done");
               if (objError)
               {
                 throw objError;
               }
-              // DEBUG
-              console.log("Request OK");
-              console.log("Still running = %d",q.running());
+              console.log("Success.");
+              debug("Still running = %d",q.running());
               if (q.running() == 0)
               {
                 process.exit(0);
@@ -119,13 +117,13 @@ ORDER BY tmp_alter.commit_timestamp \n\
         // Add all sql request to execute to the queue
         for (var intRow = 0; intRow < rows.length; intRow++)
         {
-          console.log("task %d: %j", intRow, rows[intRow]);
+          debug("task %d: %j", intRow, rows[intRow]);
           q.push(rows[intRow], intRow);
         }
 
         // assign a callback
         q.drain = function() {
-            console.log('all items have been processed');
+            debug('all items have been processed');
         }
 
       } // if (rows.length)

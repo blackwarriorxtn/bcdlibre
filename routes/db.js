@@ -1,5 +1,6 @@
 var mysql = require('mysql');
 var config = require('../setup/config.js');
+var debug = require('debug')('bibliopuce:routes_db');
 
 var strMySQLHost = config.database.host_name;
 var strMySQLDatabase = config.database.database_name;
@@ -43,8 +44,7 @@ var runsql = function (objSQL, fnCallback, objSQLConnection)
   var blnMustDisconnect = false;
   if (objSQLConnection == null)
   {
-    // DEBUG
-    console.log("Opening new connection...");
+    debug("Opening new connection...");
     objSQLConnection= new_connection();
     blnMustDisconnect = true;
   }
@@ -58,8 +58,7 @@ var runsql = function (objSQL, fnCallback, objSQLConnection)
   {
     strSQL = objSQL;
   }
-  // DEBUG
-  console.log("SQL:\n%s\n", strSQL);
+  debug("SQL:\n%s\n", strSQL);
   objSQLConnection.query(strSQL, fnCallback);
 
   if (blnMustDisconnect)
@@ -81,7 +80,7 @@ var check_field_value = function(strValue, objFieldDescription, objSQLConnection
   }
 
 
-  console.log("check_field_value(strValue=\"%s\", objFieldDescription: %j ...)", strValue, objFieldDescription);
+  debug("check_field_value(strValue=\"%s\", objFieldDescription: %j ...)", strValue, objFieldDescription);
 
   // TODO Convert value according to type
   if (objFieldDescription.type != null)
@@ -117,8 +116,7 @@ var check_field_value = function(strValue, objFieldDescription, objSQLConnection
               }
               else
               {
-                // DEBUG
-                console.log("Conversion: value=%d",intValue);
+                debug("Conversion: value=%d",intValue);
                 // Store integer value
                 blnEscapeString = false;
                 objValue = intValue;
@@ -174,7 +172,7 @@ var check_field_value = function(strValue, objFieldDescription, objSQLConnection
   // Check if field is defined to store NULL in case its value is empty
   if (objFieldDescription.null_if_empty && objValue == "")
   {
-    console.log("Storing NULL value (null_if_empty)");
+    debug("Storing NULL value (null_if_empty)");
     objValue = null;
   }
 
@@ -191,8 +189,7 @@ var check_field_value = function(strValue, objFieldDescription, objSQLConnection
   {
     objSQLConnection.end();
   }
-  // DEBUG
-  console.log("Conversion: strSQLValue=%s",strSQLValue);
+  debug("Conversion: strSQLValue=%s",strSQLValue);
   return(strSQLValue);
 }
 
@@ -237,8 +234,7 @@ var insert_record = function(req, res, next, objFormParameters, fnCallback)
   var strSQL = "INSERT INTO "+objSQLConnection.escapeId(objFormParameters.table_name)+"("+arrSQLNames.join(",")+")\n"
              + "VALUES("+arrSQLValues.join(",")+")\n;"
              ;
-  // DEBUG
-  console.log(strSQL);
+  debug(strSQL);
 
   // Execute INSERT query, reusing the same connection
   runsql(strSQL, function(err, arrRows, fields) {
@@ -280,7 +276,7 @@ var update_record = function(req, res, next, objFormParameters, fnCallback)
         var strFieldName = objFormParameters.fields[intField].name;
         if (strFieldName)
         {
-          // DEBUG console.log("strFieldName=\""+strFieldName+"\"\n");
+          debug("strFieldName=\""+strFieldName+"\"\n");
           if (strSentName == strFieldName.valueOf())
           {
 
@@ -343,8 +339,7 @@ var update_record = function(req, res, next, objFormParameters, fnCallback)
   var strSQL = "UPDATE "+objSQLConnection.escapeId(objFormParameters.table_name)+"\n SET "+arrSQLNamesEqualValues.join(",")+" \n"
              + "WHERE "+arrSQLWhere.join(" AND ")+"\n;"
              ;
-  // DEBUG
-  console.log(strSQL);
+  debug(strSQL);
 
   // Execute query, reusing the same connection
   runsql(strSQL, function(err, arrRows, fields) {
@@ -385,7 +380,7 @@ var delete_record = function(req, res, next, objFormParameters, fnCallback)
         var strFieldName = objFormParameters.fields[intField].name;
         if (strFieldName)
         {
-          // DEBUG console.log("strFieldName=\""+strFieldName+"\"\n");
+          debug("strFieldName=\""+strFieldName+"\"\n");
           if (strSentName == strFieldName.valueOf())
           {
 
@@ -436,8 +431,7 @@ var delete_record = function(req, res, next, objFormParameters, fnCallback)
   var strSQL = "DELETE FROM "+objSQLConnection.escapeId(objFormParameters.table_name)+"\n"
              + "WHERE "+arrSQLWhere.join(" AND ")+"\n;"
              ;
-  // DEBUG
-  console.log(strSQL);
+  debug(strSQL);
 
   // Execute query, reusing the same connection
   runsql(strSQL, function(err, arrRows, fields) {
@@ -466,18 +460,16 @@ var view_record = function(req, res, next, objFormParameters, fnCallback)
 
   var objSQLConnection = new_connection();
 
-  // DEBUG
-  console.log("primary_key=%j\n",objFormParameters.primary_key);
-  console.log("req.body=%j\n",req.body);
-  console.log("req.query=%j\n",req.query);
+  debug("primary_key=%j\n",objFormParameters.primary_key);
+  debug("req.body=%j\n",req.body);
+  debug("req.query=%j\n",req.query);
 
   // Get primary key of form
   var arrSQLPKNamesEqualValues = new Array();
   for (var intPK = 0; intPK < objFormParameters.primary_key.length; intPK++)
   {
     var strPKName = objFormParameters.primary_key[intPK];
-    // DEBUG
-    console.log("strPKName=%s\n",strPKName);
+    debug("strPKName=%s\n",strPKName);
     if (strPKName)
     {
       // Check that this field has been sent in request
@@ -496,8 +488,7 @@ var view_record = function(req, res, next, objFormParameters, fnCallback)
   var strSQL = "SELECT * FROM "+objSQLConnection.escapeId(objFormParameters.table_name)
              + "\nWHERE "+arrSQLPKNamesEqualValues.join("\n AND ")+"\n;"
              ;
-  // DEBUG
-  console.log(strSQL);
+  debug(strSQL);
 
   runsql(strSQL, function(err, arrRows, fields) {
     // MUST HAVE a custom function defined
@@ -514,7 +505,7 @@ var list_record = function(req, res, next, objFormParameters, objSQLOptions, fnC
 {
   var objSQLConnection = new_connection();
 
-  // DEBUG console.log("primary_key=%j\n",objFormParameters.primary_key);
+  debug("primary_key=%j\n",objFormParameters.primary_key);
 
   // Get options
   var arrOrderByFields = new Array();
@@ -529,8 +520,7 @@ var list_record = function(req, res, next, objFormParameters, objSQLOptions, fnC
              + (arrOrderByFields.length ? " \nORDER BY "+ arrOrderByFields.join(", ") : "")
              + (objSQLOptions && objSQLOptions.limit ? " \nLIMIT " + objSQLConnection.escape(objSQLOptions.limit) : "")
              +"\n;";
-  // DEBUG
-  console.log(strSQL);
+  debug(strSQL);
 
   runsql(strSQL, function(err, arrRows, fields) {
     fnCallback(err, arrRows, fields);
@@ -576,7 +566,7 @@ var search_record = function(req, res, next, objFormParameters, objSQLOptions, f
         var strFieldName = objFormParameters.fields[intField].name;
         if (strFieldName)
         {
-          // DEBUG console.log("strFieldName=\""+strFieldName+"\"\n");
+          debug("strFieldName=\""+strFieldName+"\"\n");
           if (strSentName == strFieldName.valueOf())
           {
 
@@ -611,8 +601,7 @@ var search_record = function(req, res, next, objFormParameters, objSQLOptions, f
   var strSQL = "SELECT "+(objFormParameters.list_fields ? objFormParameters.list_fields : "*" )+" FROM "+objSQLConnection.escapeId(objFormParameters.table_name)
              + "\nWHERE "+arrSQLWhere.join("\n AND ")+"\n;"
              ;
-  // DEBUG
-  console.log(strSQL);
+  debug(strSQL);
 
   runsql(strSQL, function(err, arrRows, fields) {
     fnCallback(err, arrRows, fields);

@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var mysql      = require('mysql');
 var db = require('./db'); // database utilities
+var debug = require('debug')('bibliopuce:routes_user');
 
 // ******************************************************************************** user
 function module_context(req, res, next)
