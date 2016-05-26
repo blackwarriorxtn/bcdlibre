@@ -11,9 +11,19 @@ var arrFiles = fs.readdirSync("." /* path */);
 debug("arrFiles=%j", arrFiles);
 for (var intFile = 0; intFile < arrFiles.length; intFile++)
 {
-  if (arrFiles[intFile].match(/\.sql$/))
+  debug("arrFiles[intFile]=%j", arrFiles[intFile]);
+  var objStat = fs.statSync(arrFiles[intFile]);
+  if (objStat.isDirectory())
   {
-    arrSQLFiles.push(arrFiles[intFile]);
+    // Browser directory
+    var arrSubFiles = fs.readdirSync(arrFiles[intFile] /* path */);
+    for (var intSubFile = 0; intSubFile < arrSubFiles.length; intSubFile++)
+    {
+      if (arrSubFiles[intFile].match(/\.sql$/))
+      {
+        arrSQLFiles.push(arrFiles[intFile]+"/"+arrSubFiles[intFile]);
+      }
+    } // for (var intSubFile = 0; intSubFile < arrSubFiles.length; intSubFile++)
   }
 }
 debug("arrSQLFiles=%j", arrSQLFiles);
