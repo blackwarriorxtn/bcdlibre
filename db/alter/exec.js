@@ -21,7 +21,7 @@ for (var intFile = 0; intFile < arrFiles.length; intFile++)
     {
       if (arrSubFiles[intFile].match(/\.sql$/))
       {
-        arrSQLFiles.push(arrFiles[intFile]+"/"+arrSubFiles[intFile]);
+        arrSQLFiles.push(arrFiles[intFile]+"/"+arrSubFiles[intSubFile]);
       }
     } // for (var intSubFile = 0; intSubFile < arrSubFiles.length; intSubFile++)
   }
@@ -31,7 +31,7 @@ debug("arrSQLFiles=%j", arrSQLFiles);
 async.map(arrSQLFiles, function(strFile, callback) {
   debug("strFile=%s", strFile);
   var strInfo = null;
-  var strGitCommand = "git log -n 1 --format=\""+strFile+"/%H/%ct\" -- "+strFile;
+  var strGitCommand = "git log -n 1 --format=\""+strFile+"¤%H¤%ct\" -- "+strFile;
   debug("strGitCommand=%s", strGitCommand);
   strInfo = require("child_process").execSync(strGitCommand);
   debug("strInfo=%s", strInfo);
@@ -60,7 +60,7 @@ KEY(commit_timestamp)\n\
     {
       var strInfo = arrInfo[intInfo];
       debug("strInfo=%s", strInfo);
-      var arrFileInfo = new String(strInfo).split("/");
+      var arrFileInfo = new String(strInfo).split("¤");
       var strFile = arrFileInfo[0];
       var strCommitId = arrFileInfo[1];
       var strCommitTimestamp = arrFileInfo[2];
