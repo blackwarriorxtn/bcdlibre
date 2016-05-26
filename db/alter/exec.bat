@@ -1,7 +1,7 @@
 @ECHO OFF
 
-ECHO [%DATE% %TIME%] %~n0: Begin...
+ECHO [%DATE% %TIME%] Upgrading database (if needed)...
 
 CD %~dp0
 node exec.js
-ECHO [%DATE% %TIME%] %~n0: End.
+ECHO [%DATE% %TIME%] Upgrading database : End.
