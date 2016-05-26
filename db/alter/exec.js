@@ -129,6 +129,7 @@ ORDER BY tmp_alter.commit_timestamp \n\
       } // if (rows.length)
       else
       {
+        console.log("No database upgrade required.");
         process.exit(0);
       } // else if (rows.length)
 
