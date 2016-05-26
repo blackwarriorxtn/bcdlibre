@@ -67,7 +67,5 @@
 	"Gérer les emprunts": "Gérer les emprunts",
 	"Prénom": "Prénom",
 	"Catégorie": "Classe",
-	"Compte": "Compte",
-	"Livre et emprunteur (ISBN, Titre, Nom, Compte)": "Livre et emprunteur (ISBN, Titre, Nom, Compte)",
 	"Classification": "Classification"
 }
