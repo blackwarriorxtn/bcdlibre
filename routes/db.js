@@ -200,16 +200,12 @@ var form_ignore_fields = [
 
 var insert_record = function(req, res, next, objFormParameters, fnCallback)
 {
+  debug("insert_record");
+
   // Must be something in the body
   if (!req.body) return res.sendStatus(400);
 
   var objSQLConnection = new_connection();
-/* DEBUG
-  res.setHeader('Content-Type', 'text/plain');
-  res.write('you posted:\n');
-  res.end(JSON.stringify(req.body, null, 2));
-*/
-/* DEBUG */
 
   var arrSQLNames = new Array();
   var arrSQLValues = new Array();
@@ -258,8 +254,12 @@ var insert_record = function(req, res, next, objFormParameters, fnCallback)
 
 var update_record = function(req, res, next, objFormParameters, fnCallback)
 {
+  debug("update_record");
+
   // Must be something in the body
   if (!req.body) return res.sendStatus(400);
+
+  debug("req.body = %j", req.body);
 
   var objSQLConnection = new_connection();
 
@@ -363,6 +363,8 @@ var update_record = function(req, res, next, objFormParameters, fnCallback)
 
 var delete_record = function(req, res, next, objFormParameters, fnCallback)
 {
+  debug("delete_record");
+
   // Must be something in the body
   if (!req.body) return res.sendStatus(400);
 
@@ -455,6 +457,8 @@ var delete_record = function(req, res, next, objFormParameters, fnCallback)
 
 var view_record = function(req, res, next, objFormParameters, fnCallback)
 {
+  debug("view_record");
+
   // Must be something in the query (GET)
   if (!req.query) return res.sendStatus(400);
 
@@ -503,6 +507,8 @@ var view_record = function(req, res, next, objFormParameters, fnCallback)
 
 var list_record = function(req, res, next, objFormParameters, objSQLOptions, fnCallback)
 {
+  debug("list_record");
+
   var objSQLConnection = new_connection();
 
   debug("primary_key=%j\n",objFormParameters.primary_key);
@@ -548,6 +554,8 @@ var handle_error = function(err, res, req, template_name, options)
 
 var search_record = function(req, res, next, objFormParameters, objSQLOptions, fnCallback)
 {
+  debug("search_record");
+
   // Must be something in the body
   if (!req.body) return res.sendStatus(400);
 
