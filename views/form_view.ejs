@@ -39,7 +39,7 @@
                 <%
               if (form.fields[i].maximum_length > 255)
               {
-                %><textarea class="form-control" rows="5"><%= record[form.fields[i].name] %></textarea><%
+                %><textarea class="form-control" name="<%= form.fields[i].name %>" id="<%= form.fields[i].name %>" rows="5"><%= record[form.fields[i].name] %></textarea><%
               } // if (form.fields[i].maximum_length > 255)
               else
               {
