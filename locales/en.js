@@ -26,7 +26,7 @@
 	"Lister": "List",
 	"Liste des emprunts (livres sortis)": "List borrowings (books out)",
 	"Retour": "Return",
-	"Livre et emprunteur (ISBN, Titre, Nom, Compte)": "Book and reader (ISBN, Title, Name, Classroom)",
+	"Livre et emprunteur (ISBN, Titre, Nom, Classe)": "Book and reader (ISBN, Title, Name, Classroom)",
 	"Numéro ISBN": "ISBN Number",
 	"Titre": "Title",
 	"Auteur": "Author",
