@@ -65,6 +65,11 @@ VALUES('9780596527334','CSS','Eric Meyer','Demonstrates the control and flexibil
 
 
 SELECT * FROM item_detail
+
+
+Add a copy of book id 1
+INSERT INTO item(item_detail_id) VALUES(1)
+
 */
 
 
