@@ -50,6 +50,7 @@ $(document).ready(function(){
     name: 'borrows',
     source: borrows,
     display: 'text',
+    /* Ugly hack to workaround typeahead's bug https://github.com/twitter/typeahead.js/issues/1218 */
     limit: 20
   });
 

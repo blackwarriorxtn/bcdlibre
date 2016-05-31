@@ -38,6 +38,7 @@ $( document ).ready(function() {
       identify: function(obj) { return obj.id; }
     }),
     display: 'text',
+    /* Ugly hack to workaround typeahead's bug https://github.com/twitter/typeahead.js/issues/1218 */
     limit: 20
   });
   // Callbacks for auto-completion
