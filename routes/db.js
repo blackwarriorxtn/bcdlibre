@@ -470,6 +470,7 @@ var view_record = function(req, res, next, objFormParameters, fnCallback)
 
   // Get primary key of form
   var arrSQLPKNamesEqualValues = new Array();
+  var strSQLPKValue = null;
   for (var intPK = 0; intPK < objFormParameters.primary_key.length; intPK++)
   {
     var strPKName = objFormParameters.primary_key[intPK];
@@ -479,7 +480,9 @@ var view_record = function(req, res, next, objFormParameters, fnCallback)
       // Check that this field has been sent in request
       if (req.query[strPKName])
       {
-        var strSQLNameEqualValue = objSQLConnection.escapeId(strPKName) + " = " + objSQLConnection.escape(req.query[strPKName]);
+        var objField = objFormParameters.fields[0]; // TODO Find field with name = strPKName
+        strSQLPKValue = check_field_value(req.query[strPKName],objField,objSQLConnection, req);
+        var strSQLNameEqualValue = objSQLConnection.escapeId(strPKName) + " = " + strSQLPKValue;
         arrSQLPKNamesEqualValues.push(strSQLNameEqualValue);
       }
       else
@@ -489,12 +492,18 @@ var view_record = function(req, res, next, objFormParameters, fnCallback)
     } // if (strPKName)
   } // for (var intPK = 0; intPK < objFormParameters.primary_key.length; intPK++)
 
+  var strSQLWhere = arrSQLPKNamesEqualValues.join("\n AND ");
   var strSQL = "SELECT * FROM "+objSQLConnection.escapeId(objFormParameters.table_name)
-             + "\nWHERE "+arrSQLPKNamesEqualValues.join("\n AND ")+"\n;"
+             + "\nWHERE "+strSQLWhere+"\n;"
              ;
+  if (objFormParameters.sql_counter)
+  {
+    strSQL += objFormParameters.sql_counter.replace(/\?/, strSQLPKValue);
+  }
   debug(strSQL);
 
   runsql(strSQL, function(err, arrRows, fields) {
+    debug("arrRows = %j",arrRows);
     // MUST HAVE a custom function defined
     fnCallback(err, arrRows, fields);
   }, objSQLConnection);

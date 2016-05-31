@@ -3,26 +3,7 @@
 <div class="panel-body">
 
   <!-- Use a disabled form to display field values (no placeholder) -->
-  <form id="_FORM_VIEW" class="form-horizontal" action="undefined" method="post">
-      <div class="form-group">
-        <div class="col-xs-4 col-md-4">
-          <% if (form_id) {%>
-            <span class="h3"><%=__("Fiche")%> #<%=form_id%></span>
-          <%} // (form_id)%>
-        </div><!-- class="col-xs-4 col-md-4" -->
-        <div class="col-xs-4 col-md-4">
-          <% if (form_info) {%>
-            <span class="label label-info"><%=form_info%></span>
-          <%} // if (form_info)%>
-        </div><!-- class="col-xs-4 col-md-4" -->
-        <div class="col-xs-4 col-md-4 text-center">
-          <input id="_ADD" name="_ADD" class="btn btn-default" type="button" value="<%=__('Ajouter')%>" title="<%=__('Ajouter une nouvelle fiche')%>">
-          <% if (record) {%>
-            <input id="_MODIFY" name="_MODIFY" class="btn btn-default" type="button" value="<%=__('Modifier')%>" title="<%=__('Modifier la fiche #%s',form_id)%>">
-            <input id="_DELETE" name="_DELETE" class="btn btn-default" type="button" value="<%=__('Supprimer')%>" title="<%=__('Supprimer la fiche #%s',form_id)%>">
-          <%} // if (record)%>
-        </div><!-- class="col-xs-4 col-md-4" -->
-      </div><!-- class="form-group" -->
+  <form id="_FORM_VIEW" class="form-horizontal" action="<%=action%>" method="post">
       <%
         if (record)
         {
@@ -70,7 +51,7 @@
           } // if (blnFieldset)
         } // if (record)
         %>
-      <%- include('form_okcancel', { visible:false }) %>
+      <%- include('form_okcancel', { visible:true }) %>
     </fieldset>
   </form>
 </div><!-- class="panel-body" -->

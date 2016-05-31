@@ -67,5 +67,9 @@
 	"Gérer les emprunts": "Gérer les emprunts",
 	"Prénom": "Prénom",
 	"Catégorie": "Classe",
-	"Classification": "Classification"
+	"Classification": "Classification",
+	"Ajouter une nouvelle fiche": "Ajouter une nouvelle fiche",
+	"Modifier la fiche #%s": "Modifier la fiche #%s",
+	"Supprimer la fiche #%s": "Supprimer la fiche #%s",
+	"Exemplaires : %d": "Exemplaires : %d"
 }

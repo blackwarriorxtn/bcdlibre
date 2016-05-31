@@ -19,7 +19,8 @@ function module_context(req, res, next)
       {name:"category",label:req.i18n.__("Catégorie"),type:"String",required:false,validation:null},
       {name:"phone",label:req.i18n.__("Téléphone"),type:"String",required:false,validation:null},
       {name:"comment",label:req.i18n.__("Commentaire"),type:"String",required:false,validation:null},
-    ]
+    ],
+    sql_counter:null
   };
   // To search we only have ONE field named "search" and a special SQL table with full text indexes
   this.objSearchParameters = {
@@ -179,7 +180,15 @@ router.get('/view', function(req, res, next) {
   db.view_record(req, res, next, objMyContext.objFormParameters, function(err, result, fields) {
     if (err) throw err;
     // Display first record with "view" template
-    res.render('user/view', { title: req.app.locals.title, subtitle: req.i18n.__("Fiche"), menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, record:result[0], message:null });
+    res.render('user/view', {
+      title: req.app.locals.title,
+      subtitle: req.i18n.__("Fiche"),
+      menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu),
+      form:objMyContext.objFormParameters,
+      record:result[0],
+      message:null,
+      form_id:result[0].id,
+      form_info:result[0].count });
   });
 
 });

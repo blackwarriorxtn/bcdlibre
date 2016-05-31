@@ -20,9 +20,8 @@ $( document ).ready(function() {
       },
       identify: function(obj) { return obj.id; }
     }),
-    display: function (suggestion) {
-      return(suggestion.text);
-    }
+    display: 'text',
+    limit: 20
   });
   // Callbacks for auto-completion
   $('#classification').bind('typeahead:select', function(event, suggestion) {

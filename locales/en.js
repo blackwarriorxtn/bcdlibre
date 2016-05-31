@@ -67,5 +67,9 @@
 	"Gérer les emprunts": "Borrowing Management",
 	"Prénom": "First Name",
 	"Catégorie": "Classroom",
-	"Classification": "Classification"
+	"Classification": "Classification",
+	"Ajouter une nouvelle fiche": "Add a new record",
+	"Modifier la fiche #%s": "Modify record #%s",
+	"Supprimer la fiche #%s": "Delete record #%s",
+	"Exemplaires : %d": "Copies : %d"
 }

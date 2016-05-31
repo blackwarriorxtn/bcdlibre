@@ -21,7 +21,7 @@ function module_context(req, res, next)
     primary_key: ["id"],
     autoincrement_column: "id",
     fields:[
-      {name:"id",label:"#",type:"String",required:false,validation:null},
+      {name:"id",label:"#",type:"Integer",required:false,validation:null},
       /* NOTE: we use a maximum length of 16 to let user copy/paste full ISBN with dashes or spaces, then normalize it to 13 characters */
       {name:"isbn13",label:req.i18n.__("Numéro ISBN"),type:"String",required:false,validation:null,maximum_length:16,null_if_empty:true},
       {name:"classification",label:req.i18n.__("Classification"),type:"String",required:false,validation:null,maximum_length:255,autoreplay:true},
@@ -29,7 +29,8 @@ function module_context(req, res, next)
       {name:"author",label:req.i18n.__("Auteur"),type:"String",required:true,validation:null,maximum_length:255},
       {name:"series_title",label:req.i18n.__("Série"),type:"String",required:false,validation:null,maximum_length:255,autoreplay:true},
       {name:"description",label:req.i18n.__("Description (Synopsis)"),type:"String",required:false,validation:null,maximum_length:65535},
-    ]
+    ],
+    sql_counter:"SELECT COUNT(1) AS counter FROM item WHERE item_detail_id = ?"
   };
   // To search we only have ONE field named "search" and a special SQL table with full text indexes
   this.objSearchParameters = {
@@ -148,6 +149,7 @@ router.get('/new', function(req, res, next) {
 router.post('/new', function(req, res, next) {
 
   var objMyContext = new module_context(req, res, next);
+  var objSQLConnection = db.new_connection();
   if (req.body["_CANCEL"] != null)
   {
     // Cancel insert : Redirect to menu
@@ -155,31 +157,56 @@ router.post('/new', function(req, res, next) {
   } // if (req.body["_CANCEL"] != null)
   else if (req.body["_OK"] != null)
   {
-    db.insert_record(req, res, next, objMyContext.objFormParameters, function(err, result, fields, objSQLConnection) {
+    // TODO Check that this book is not already in inventory - if it is, propose to add a new copy
+
+    debug("req.body = %j", req.body);
+
+    var strISBN = req.body["isbn13"];
+    db.runsql("SELECT * FROM item_detail WHERE isbn13 = "+objSQLConnection.escape(strISBN)+";", function(err, arrRows, fields) {
       if (err)
       {
-        if (objSQLConnection)
-        {
-          objSQLConnection.end();
-        }
-        db.handle_error(err, res, req, "item/new", { req:req, title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, message:{text:"Ce livre est déjà dans l'inventaire ("+err+")",type:"error"}, action:"new" });
+        throw err;
       }
       else
       {
-        // Always add at least ONE exemplary of the book (item => item_detail)
-        db.runsql("INSERT INTO item(item_detail_id) VALUES(LAST_INSERT_ID());" /* strSQL */, function(err, arrRows, fields) {
-          if (objSQLConnection)
-          {
-            objSQLConnection.end();
-          }
-          if (err) throw err;
-          // Display add form again
-          var objMyContext = new module_context(req, res, next);
-          res.render('item/new', {req:req, title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, message:{text:"Fiche ajoutée avec succès. Veuillez remplir la fiche suivante",type:"info"}, action:"new"});
-        }, objSQLConnection);
+        if (arrRows && arrRows.length > 0)
+        {
+          // Book already exists with same ISBN: propose to add a copy
+          var row = db.rows(arrRows);
+          res.render('item/new_copy', {req:req, title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, message:{text:"Ce livre est déjà dans l'inventaire. Voulez-vous ajouter un exemplaire?",type:"info"}, action:"new_copy",record:row});
+        }
+        else
+        {
+          // Not found - book does not exists yet, add it with one copy
+          db.insert_record(req, res, next, objMyContext.objFormParameters, function(err, result, fields, objSQLConnection) {
+            if (err)
+            {
+              if (objSQLConnection)
+              {
+                objSQLConnection.end();
+              }
+              db.handle_error(err, res, req, "item/new", { req:req, title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, message:{text:"Ce livre est déjà dans l'inventaire ("+err+")",type:"error"}, action:"new" });
+            }
+            else
+            {
+              // Always add at least ONE copy of the book (item => item_detail)
+              db.runsql("INSERT INTO item(item_detail_id) VALUES(LAST_INSERT_ID());" /* strSQL */, function(err, arrRows, fields) {
+                if (objSQLConnection)
+                {
+                  objSQLConnection.end();
+                }
+                if (err) throw err;
+                // Display add form again
+                res.render('item/new', {req:req, title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, message:{text:"Fiche ajoutée avec succès. Veuillez remplir la fiche suivante",type:"info"}, action:"new"});
+              }, objSQLConnection);
 
+            }
+          });
+        }
       }
-    });
+
+    }, objSQLConnection);
+
   } // else if (req.body["_CANCEL"] != null)
   else
   {
@@ -189,6 +216,38 @@ router.post('/new', function(req, res, next) {
 
 });
 
+// POST new_copy (form validation then insert new copy in database - item)
+router.post('/new_copy', function(req, res, next) {
+
+  var objMyContext = new module_context(req, res, next);
+  if (req.body["_CANCEL"] != null)
+  {
+    // Cancel insert : Redirect to menu
+    res.redirect('./');
+  } // if (req.body["_CANCEL"] != null)
+  else if (req.body["_OK"] != null)
+  {
+    // Always add at least ONE copy of the book (item => item_detail)
+    var strItemDetailId = req.body["id"];
+    var intItemDetailId = parseInt(strItemDetailId,10);
+    db.runsql("INSERT INTO item(item_detail_id) VALUES("+intItemDetailId.toString(10)+");" /* strSQL */, function(err, arrRows, fields, objSQLConnection) {
+      if (objSQLConnection)
+      {
+        objSQLConnection.end();
+      }
+      if (err) throw err;
+      // Display add form again
+      res.render('item/new', {req:req, title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, message:{text:"Exemplaire ajouté avec succès. Veuillez remplir la fiche suivante",type:"info"}, action:"new"});
+    });
+
+  } // else if (req.body["_CANCEL"] != null)
+  else
+  {
+    // Neither _OK nor _CANCEL: error!
+    throw new Error("ERROR: Invalid form state (must be _OK or _CANCEL)");
+  }
+
+});
 
 
 
@@ -280,10 +339,26 @@ router.post('/delete', function(req, res, next) {
 router.get('/view', function(req, res, next) {
 
   var objMyContext = new module_context(req, res, next);
-  db.view_record(req, res, next, objMyContext.objFormParameters, function(err, result, fields) {
+  db.view_record(req, res, next, objMyContext.objFormParameters, function(err, arrRows, fields) {
     if (err) throw err;
+    debug("arrRows = %j", arrRows);
+    var results = db.rows(arrRows, {only_last:false});
+    debug("results = %j", results);
+    var result = results[0][0];
+    debug("result = %j", result);
+    var counter = results[1][0];
+    debug("counter = %j", counter);
+    var strFormInfo = req.i18n.__("Exemplaires : %d", counter.counter);
     // Display first record with "view" template
-    res.render('item/view', { title: req.app.locals.title, subtitle: req.i18n.__("Fiche"), menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, record:result[0], message:null });
+    res.render('item/view', {
+      title: req.app.locals.title,
+      subtitle: req.i18n.__("Fiche"),
+      menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu),
+      form:objMyContext.objFormParameters,
+      record:result,
+      message:null,
+      form_id:result.id,
+      form_info:strFormInfo });
   });
 
 });

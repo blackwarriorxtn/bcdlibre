@@ -32,9 +32,8 @@ $(document).ready(function(){
   {
     name: 'borrows',
     source: borrows,
-    display: function (suggestion) {
-      return(suggestion.text);
-    }
+    display: 'text',
+    limit: 20
   });
 
   // Callbacks for auto-completion

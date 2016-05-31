@@ -18,7 +18,8 @@ function module_context(req, res, next)
       {name:"end_date",label:req.i18n.__("Fin"),type:"DateTime",required:false,validation:null},
       {name:"item_id",label:req.i18n.__("Livre"),type:"Integer",required:true,validation:null},
       {name:"user_id",label:req.i18n.__("Lecteur"),type:"Integer",required:true,validation:null},
-    ]
+    ],
+    sql_counter:null
   };
   // *** PARAMETERS (MENU)
   this.objMenu = {text:req.i18n.__("Emprunts"),link:"/borrow/"};
@@ -74,7 +75,15 @@ router.get('/view', function(req, res, next) {
   db.view_record(req, res, next, objMyContext.objFormParameters, function(err, result, fields) {
     if (err) throw err;
     // Display first record with "view" template
-    res.render('borrow/view', { title: req.app.locals.title, subtitle: req.i18n.__("Fiche"), menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, record:result[0], message:null });
+    res.render('borrow/view', {
+      title: req.app.locals.title,
+      subtitle: req.i18n.__("Fiche"),
+      menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu),
+      form:objMyContext.objFormParameters,
+      record:result[0],
+      message:null,
+      form_id:result[0].id,
+      form_info:result[0].count });
   });
 
 });
@@ -194,7 +203,7 @@ router.get('/webservice/items', function(req, res, next) {
   if (req.query && req.query.action == "borrow")
   {
     // Custom SQL, list of items not already borrowed (LEFT OUTER JOIN borrow ... WHERE borrow.id IS NULL)
-    db.runsql('SELECT item.id AS `id`, CONCAT_WS(\', \', item_detail.title, item_detail.author, item_detail.isbn13) AS `text`  \n\
+    db.runsql('SELECT item.id AS `id`, CONCAT_WS(\', \', CONCAT("#",item.id), item_detail.title, item_detail.author, item_detail.isbn13) AS `text`  \n\
   FROM item \n\
   JOIN item_detail ON item.item_detail_id = item_detail.id \n\
   JOIN item_detail_search ON item_detail_search.item_detail_id = item_detail.id \n\
