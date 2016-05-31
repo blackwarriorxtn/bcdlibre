@@ -5,13 +5,20 @@
   <!-- Use a disabled form to display field values (no placeholder) -->
   <form id="_FORM_VIEW" class="form-horizontal" action="undefined" method="post">
       <div class="form-group">
-        <input id="_ADD" name="_ADD" class="btn btn-default" type="button" value="<%=__('Ajouter')%>">
-        <%
-          if (record)
-          {%>
-        <input id="_MODIFY" name="_MODIFY" class="btn btn-default" type="button" value="<%=__('Modifier')%>">
-        <input id="_DELETE" name="_DELETE" class="btn btn-default" type="button" value="<%=__('Supprimer')%>">
-        <%} // if (record)%>
+        <% if (form_id) {%>
+          <ul class="nav nav-tabs">
+            <li role="presentation" class="active text-nowrap"><a href="#"><%=__("Fiche")%> #<%=form_id%></a></li>
+            <li>
+              <div class="">
+              <input id="_ADD" name="_ADD" class="btn btn-default" type="button" value="<%=__('Ajouter')%>">
+              <% if (record) {%>
+                <input id="_MODIFY" name="_MODIFY" class="btn btn-default" type="button" value="<%=__('Modifier')%>">
+                <input id="_DELETE" name="_DELETE" class="btn btn-default" type="button" value="<%=__('Supprimer')%>">
+              <%} // if (record)%>
+              </div>
+            </li>
+          </ul>
+        <%} // (form_id)%>
       </div><!-- class="form-group" -->
       <%
         if (record)
