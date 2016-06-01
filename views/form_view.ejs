@@ -100,13 +100,12 @@
           } // for
 
         } // if (record)
+        if (blnFieldset)
+        {
+          blnFieldset = false;
+          %></fieldset><%
+        } // if (blnFieldset)
         %>
-      <%- include('form_okcancel', { visible:false }) %><%
-      if (blnFieldset)
-      {
-        blnFieldset = false;
-        %></fieldset><%
-      } // if (blnFieldset)
-      %>
+      <%- include('form_okcancel', { visible:false }) %>
   </form>
 </div><!-- class="panel-body" -->
