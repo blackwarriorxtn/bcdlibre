@@ -204,7 +204,8 @@ router.get('/view', function(req, res, next) {
       record:result[0],
       message:null,
       form_id:result[0].id,
-      form_info:result[0].count });
+      form_info:null,
+      form_custom_html:null });
   });
 
 });

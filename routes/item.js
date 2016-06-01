@@ -256,7 +256,71 @@ router.post('/new_copy', function(req, res, next) {
       res.render('item/new', {req:req, title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, message:{text:"Exemplaire ajouté avec succès. Veuillez remplir la fiche suivante",type:"info"}, action:"new"});
     });
 
-  } // else if (req.body["_CANCEL"] != null)
+  } // else if (req.body["_OK"] != null)
+  else if (req.body["_COPY_ADD"] != null || req.body["_COPY_DEL"] != null)
+  {
+    // Add or remove a copy of the book (item => item_detail)
+    var blnDel = (req.body["_COPY_DEL"] != null);
+    var strItemDetailId = req.body["id"];
+    var intItemDetailId = parseInt(strItemDetailId,10);
+    if (isNaN(intItemDetailId))
+    {
+      throw new Error("Invalid parameter id=\""+strItemDetailId+"\"!");
+    }
+    var strSQL = "INSERT INTO item(item_detail_id) VALUES("+intItemDetailId.toString(10)+");";
+    if (blnDel)
+    {
+      // Delete ONE copy (LIMIT 1) - should use a specific item.id (to remove a specific copy of the book - should be using its unique id)
+      strSQL = "DELETE FROM item WHERE item_detail_id = "+intItemDetailId.toString(10)+" LIMIT 1;";
+    }
+    db.runsql(strSQL /* strSQL */, function(err, arrRows, fields, objSQLConnection) {
+      if (err)
+      {
+        if (objSQLConnection)
+        {
+          objSQLConnection.end();
+        }
+        throw err;
+      }
+      if (blnDel)
+      {
+        // Removed a copy - check if there's on left (if not, display item menu)
+        db.runsql("SELECT COUNT(1) AS nb FROM item WHERE item_detail_id = "+intItemDetailId.toString(10)+";" /* strSQL */, function(err, arrRows, fields, objSQLConnection) {
+          if (objSQLConnection)
+          {
+            objSQLConnection.end();
+          }
+          if (err) throw err;
+          debug("arrRows = %j", arrRows);
+          if (arrRows && arrRows[0] && arrRows[0].nb > 0)
+          {
+            // There's at least one copy left - redirect to view page
+            res.redirect("view?id="+encodeURIComponent(intItemDetailId.toString(10)));
+          }
+          else
+          {
+            // No copies left: display list of books
+            res.redirect("list");
+          }
+
+        }, objSQLConnection);
+        if (objSQLConnection)
+        {
+          objSQLConnection.end();
+        }
+      }
+      else
+      {
+        if (objSQLConnection)
+        {
+          objSQLConnection.end();
+        }
+        // Display view form again
+        res.redirect("view?id="+encodeURIComponent(intItemDetailId.toString(10)));
+      }
+    });
+
+  } // else if (req.body["_OK"] != null)
   else
   {
     // Neither _OK nor _CANCEL: error!
@@ -365,6 +429,10 @@ router.get('/view', function(req, res, next) {
     var counter = results[1][0];
     debug("counter = %j", counter);
     var strFormInfo = req.i18n.__("Exemplaires : %d", counter.counter);
+    var strFormInfoType = (counter.counter <= 0 ? "warning" : "info");
+    var strURLCopies = "new_copy?item_detail_id="+encodeURIComponent(result.id);
+    var strURLCopiesAdd = strURLCopies+"&action="+encodeURIComponent("1");
+    var strURLCopiesRemove = strURLCopies+"&action="+encodeURIComponent("-1");
     // Display first record with "view" template
     res.render('item/view', {
       title: req.app.locals.title,
@@ -374,7 +442,9 @@ router.get('/view', function(req, res, next) {
       record:result,
       message:null,
       form_id:result.id,
-      form_info:strFormInfo });
+      form_info:{ type:strFormInfoType, text:strFormInfo },
+      form_custom_html:'<button id="_COPY_ADD" name="_COPY_ADD" type="submit" class="btn btn-default">+1</button>&#32;<button id="_COPY_DEL" name="_COPY_DEL" type="submit" class="btn btn-default">-1</button>'
+    });
   });
 
 });
