@@ -35,16 +35,12 @@ function module_context(req, res, next)
       {name:"id",label:"#",type:"Integer",required:false,validation:null},
       {name:"begin_date",label:req.i18n.__("Début"),type:"DateTime",required:true,validation:function (strValue){return(new Date().toSQL())}},
       {name:"end_date",label:req.i18n.__("Fin"),type:"DateTime",required:false,validation:null},
-/* TODO delete, useless
-      {name:"item_id",label:req.i18n.__("Livre #"),type:"Integer",required:true,validation:null},
-*/
-      {name:"title",label:req.i18n.__("Livre"),type:"String",required:false,validation:null, read_only:true /* TODO Implement read_only fields */},
-      {name:"author",label:req.i18n.__("Auteur"),type:"String",required:false,validation:null, read_only:true /* TODO Implement read_only fields */},
-/* TODO delete, useless
-      {name:"user_id",label:req.i18n.__("Lecteur #"),type:"Integer",required:true,validation:null},
-*/
-      {name:"last_name",label:req.i18n.__("Nom"),type:"String",required:true,validation:null, read_only:true /* TODO Implement read_only fields */},
-      {name:"first_name",label:req.i18n.__("Prénom"),type:"String",required:false,validation:null, read_only:true /* TODO Implement read_only fields */},
+      {name:"item_id",label:req.i18n.__("Livre #"),type:"Integer",required:true,validation:null, write_only:true},
+      {name:"title",label:req.i18n.__("Livre"),type:"String",required:false,validation:null, read_only:true},
+      {name:"author",label:req.i18n.__("Auteur"),type:"String",required:false,validation:null, read_only:true},
+      {name:"user_id",label:req.i18n.__("Lecteur #"),type:"Integer",required:true,validation:null, write_only:true},
+      {name:"last_name",label:req.i18n.__("Nom"),type:"String",required:false,validation:null, read_only:true},
+      {name:"first_name",label:req.i18n.__("Prénom"),type:"String",required:false,validation:null, read_only:true},
     ],
     allowed_states:{_ADD:false,_MODIFY:false,_DELETE:true,_VIEW:true},
     sql_counter:null

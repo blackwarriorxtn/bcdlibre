@@ -72,5 +72,7 @@
 	"Modifier la fiche #%s": "Modifier la fiche #%s",
 	"Supprimer la fiche #%s": "Supprimer la fiche #%s",
 	"Exemplaires : %d": "Exemplaires : %d",
-	"Ex.": "Ex."
+	"Ex.": "Ex.",
+	"Livre #": "Livre #",
+	"Lecteur #": "Lecteur #"
 }

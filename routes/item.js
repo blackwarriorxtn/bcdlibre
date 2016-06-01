@@ -56,7 +56,7 @@ function module_context(req, res, next)
     table_name: this.objFormParameters.table_name+"_search",
     primary_key: this.objFormParameters.primary_key,
     autoincrement_column: this.objFormParameters.autoincrement_column,
-    list_fields:"item_detail_id AS id, counter, title, author, description, isbn13, series_title, classification",
+    list_fields:"item_detail_id AS id, title, author, description, isbn13, series_title, classification",
     fields:[
       {
         name:"search",label:req.i18n.__("Titre, Auteur, Description"),type:"String",required:true,validation:null,maximum_length:255,
