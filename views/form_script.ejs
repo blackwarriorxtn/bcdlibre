@@ -44,7 +44,7 @@ $( document ).ready(function() {
       $("#_CANCEL").click();
     }
   });
-  $("#_FORM_NEW").on('submit', function(event) {
+  $("#_FORM_NEW, #FORM_NEW").on('submit', function(event) {
     var blnSubmit = false;
     var objErrors = null;
     if ($(event.target).hasClass("form-cancel"))
@@ -89,6 +89,14 @@ $( document ).ready(function() {
     $("#_ADD").prop("disabled", true);
     $("#_MODIFY").prop("disabled", true);
     $("#_DELETE").prop("disabled", true);
+    $("#_COPY_ADD").prop("disabled", true);
+    $("#_COPY_DEL").prop("disabled", true);
+
+    // TODO Disable read-only fields
+
+    // Setup for required fields
+    form_check_required(null);
+
     // Show OK/Cancel buttons
     $("#_OK_CANCEL").removeClass("hidden").addClass("show");
     // Set focus on first field
@@ -102,8 +110,11 @@ $( document ).ready(function() {
     $("#_ADD").prop("disabled", true);
     $("#_MODIFY").prop("disabled", true);
     $("#_DELETE").prop("disabled", true);
+    $("#_COPY_ADD").prop("disabled", true);
+    $("#_COPY_DEL").prop("disabled", true);
     // Show OK/Cancel buttons
     $("#_OK_CANCEL").removeClass("hidden").addClass("show");
+    // TODO Show message asking for confirmation
   });
 
   // Make clickable rows in tables - if they have the valid HTML5 attribute "data-href"

@@ -34,6 +34,8 @@ function module_context(req, res, next)
   // *** PARAMETERS (SQL)
   this.objFormParameters = {
     table_name: "item_detail",
+    /* Use a VIEW to list items with number of copies */
+    list_table_name: "item_list",
     primary_key: ["id"],
     autoincrement_column: "id",
     fields:[
@@ -46,6 +48,7 @@ function module_context(req, res, next)
       {name:"series_title",label:req.i18n.__("Série"),type:"String",required:false,validation:null,maximum_length:255,autoreplay:true},
       {name:"description",label:req.i18n.__("Description (Synopsis)"),type:"String",required:false,validation:null,maximum_length:65535},
     ],
+    allowed_states:null,
     sql_counter:"SELECT COUNT(1) AS counter FROM item WHERE item_detail_id = ?"
   };
   // To search we only have ONE field named "search" and a special SQL table with full text indexes
@@ -53,12 +56,12 @@ function module_context(req, res, next)
     table_name: this.objFormParameters.table_name+"_search",
     primary_key: this.objFormParameters.primary_key,
     autoincrement_column: this.objFormParameters.autoincrement_column,
-    list_fields:"item_detail_id AS id, title, author, description, isbn13, series_title, classification",
+    list_fields:"item_detail_id AS id, counter, title, author, description, isbn13, series_title, classification",
     fields:[
       {
         name:"search",label:req.i18n.__("Titre, Auteur, Description"),type:"String",required:true,validation:null,maximum_length:255,
         match_fields:[
-          "isbn13", 
+          "isbn13",
           "title",
           "author",
           "description",
@@ -336,6 +339,8 @@ router.post('/new_copy', function(req, res, next) {
 // ************************************************************************************* UPDATE
 // POST update (form validation then update all fields in database)
 router.post('/update', function(req, res, next) {
+
+  debug("item/update: req.body = %j", req.body);
 
   var objMyContext = new module_context(req, res, next);
   if (req.body["_CANCEL"] != null)

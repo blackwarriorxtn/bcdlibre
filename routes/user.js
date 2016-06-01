@@ -29,13 +29,14 @@ function module_context(req, res, next)
     primary_key: ["id"],
     autoincrement_column: "id",
     fields:[
-      {name:"id",label:"#",type:"String",required:false,validation:null},
+      {name:"id",label:"#",type:"Integer",required:false,validation:null},
       {name:"last_name",label:req.i18n.__("Nom"),type:"String",required:true,validation:null},
       {name:"first_name",label:req.i18n.__("Prénom"),type:"String",required:false,validation:null},
       {name:"category",label:req.i18n.__("Catégorie"),type:"String",required:false,validation:null},
       {name:"phone",label:req.i18n.__("Téléphone"),type:"String",required:false,validation:null},
       {name:"comment",label:req.i18n.__("Commentaire"),type:"String",required:false,validation:null},
     ],
+    allowed_states:null,
     sql_counter:null
   };
   // To search we only have ONE field named "search" and a special SQL table with full text indexes

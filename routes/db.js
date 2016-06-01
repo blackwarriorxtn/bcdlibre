@@ -509,7 +509,10 @@ var view_record = function(req, res, next, objFormParameters, fnCallback)
   } // for (var intPK = 0; intPK < objFormParameters.primary_key.length; intPK++)
 
   var strSQLWhere = arrSQLPKNamesEqualValues.join("\n AND ");
-  var strSQL = "SELECT * FROM "+objSQLConnection.escapeId(objFormParameters.table_name)
+
+
+  var strSQLTableName = (objFormParameters.view_table_name ? objFormParameters.view_table_name : objFormParameters.table_name);
+  var strSQL = "SELECT * FROM "+objSQLConnection.escapeId(strSQLTableName)
              + "\nWHERE "+strSQLWhere+"\n;"
              ;
   if (objFormParameters.sql_counter)
@@ -547,7 +550,8 @@ var list_record = function(req, res, next, objFormParameters, objSQLOptions, fnC
       arrOrderByFields.push(objSQLConnection.escapeId(objSQLOptions.order_by[intField].name) + (objSQLOptions.order_by[intField].direction ? " "+objSQLOptions.order_by[intField].direction : ""));
     }
   }
-  var strSQL = "SELECT * FROM "+objSQLConnection.escapeId(objFormParameters.table_name)
+  var strSQLTableName = (objFormParameters.list_table_name ? objFormParameters.list_table_name : objFormParameters.table_name);
+  var strSQL = "SELECT * FROM "+objSQLConnection.escapeId(strSQLTableName)
              + (arrOrderByFields.length ? " \nORDER BY "+ arrOrderByFields.join(", ") : "")
              + (objSQLOptions && objSQLOptions.limit ? " \nLIMIT " + objSQLConnection.escape(objSQLOptions.limit) : "")
              +"\n;";
@@ -632,7 +636,7 @@ var search_record = function(req, res, next, objFormParameters, objSQLOptions, f
   } // for (var objField in req.body)
 
   var strSQL = "SELECT "+(objFormParameters.list_fields ? objFormParameters.list_fields : "*" )+" FROM "+objSQLConnection.escapeId(objFormParameters.table_name)
-             + "\nWHERE "+arrSQLWhere.join("\n AND ")+"\n;"
+             + (arrSQLWhere.length == 0 ? "" : "\nWHERE "+arrSQLWhere.join("\n AND ") )+"\n;"
              ;
   debug(strSQL);
 

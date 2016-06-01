@@ -26,15 +26,27 @@ function module_context(req, res, next)
   // *** PARAMETERS (SQL)
   this.objFormParameters = {
     table_name: "borrow",
+    /* Use a VIEW to list borrows with full information */
+    list_table_name: "borrow_list",
+    view_table_name: "borrow_list",
     primary_key: ["id"],
     autoincrement_column: "id",
     fields:[
-      {name:"id",label:"#",type:"String",required:false,validation:null},
+      {name:"id",label:"#",type:"Integer",required:false,validation:null},
       {name:"begin_date",label:req.i18n.__("Début"),type:"DateTime",required:true,validation:function (strValue){return(new Date().toSQL())}},
       {name:"end_date",label:req.i18n.__("Fin"),type:"DateTime",required:false,validation:null},
-      {name:"item_id",label:req.i18n.__("Livre"),type:"Integer",required:true,validation:null},
-      {name:"user_id",label:req.i18n.__("Lecteur"),type:"Integer",required:true,validation:null},
+/* TODO delete, useless
+      {name:"item_id",label:req.i18n.__("Livre #"),type:"Integer",required:true,validation:null},
+*/
+      {name:"title",label:req.i18n.__("Livre"),type:"String",required:false,validation:null, read_only:true /* TODO Implement read_only fields */},
+      {name:"author",label:req.i18n.__("Auteur"),type:"String",required:false,validation:null, read_only:true /* TODO Implement read_only fields */},
+/* TODO delete, useless
+      {name:"user_id",label:req.i18n.__("Lecteur #"),type:"Integer",required:true,validation:null},
+*/
+      {name:"last_name",label:req.i18n.__("Nom"),type:"String",required:true,validation:null, read_only:true /* TODO Implement read_only fields */},
+      {name:"first_name",label:req.i18n.__("Prénom"),type:"String",required:false,validation:null, read_only:true /* TODO Implement read_only fields */},
     ],
+    allowed_states:{_ADD:false,_MODIFY:false,_DELETE:true,_VIEW:true},
     sql_counter:null
   };
   // *** PARAMETERS (MENU)
@@ -62,21 +74,11 @@ router.get('/', function(req, res, next) {
 router.get('/list', function(req, res, next) {
 
   var objMyContext = new module_context(req, res, next);
-  // Custom SQL
-  db.runsql('SELECT borrow.id, borrow.begin_date, user.last_name, user.first_name, item_detail.title \n\
-  FROM borrow \n\
-  JOIN user ON user.id = borrow.user_id \n\
-  JOIN item ON item.id = borrow.item_id \n\
-  LEFT OUTER JOIN item_detail ON item.item_detail_id = item_detail.id \n\
-  GROUP BY borrow.id \n\
-  ; \n\
-', function(err, arrRows, fields) {
+  db.list_record(req, res, next, objMyContext.objFormParameters, null /* objSQLOptions */, function(err, result, fields) {
     if (err) throw err;
-    var rows = arrRows;
     // Display records with "list" template
-    res.render('borrow/list', { title: req.app.locals.title, subtitle: req.i18n.__("Liste"), menus:[{text:req.i18n.__("Menu principal"),link:"/"},{text:objMyContext.objMenu.text,link:"/borrow/"}], records:rows });
+    res.render('borrow/list', { title: req.app.locals.title, subtitle: req.i18n.__("Liste"), menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, records:result });
   });
-
 });
 
 
