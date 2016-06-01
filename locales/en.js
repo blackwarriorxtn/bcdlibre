@@ -72,5 +72,7 @@
 	"Modifier la fiche #%s": "Modify record #%s",
 	"Supprimer la fiche #%s": "Delete record #%s",
 	"Exemplaires : %d": "Copies : %d",
-	"Ex.": "Copies"
+	"Ex.": "Copies",
+	"Livre #": "Book #",
+	"Lecteur #": "Reader #"
 }
