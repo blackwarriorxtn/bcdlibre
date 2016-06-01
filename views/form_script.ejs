@@ -33,18 +33,21 @@ $( document ).ready(function() {
 
   // When use type on ESC key, cancel form (click on CANCEL button, if any)
   $("#_FORM_NEW").on('keyup', function(event) {
-    if (event.which == 27 /* Esc */)
+    if (event.which == 27)  /* Esc */
     {
       $("#_CANCEL").click();
     }
   });
   $("#_FORM_VIEW").on('keyup', function(event) {
-    if (event.which == 27 /* Esc */)
+    if (event.which == 27) /* Esc */
     {
       $("#_CANCEL").click();
+    } else if (event.which == 13) /* Enter */
+    {
+      $("#_OK").click();
     }
   });
-  $("#_FORM_NEW, #FORM_NEW").on('submit', function(event) {
+  $("#_FORM_NEW, #FORM_VIEW").on('submit', function(event) {
     var blnSubmit = false;
     var objErrors = null;
     if ($(event.target).hasClass("form-cancel"))

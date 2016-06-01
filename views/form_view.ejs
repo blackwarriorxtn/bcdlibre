@@ -20,6 +20,9 @@
 <div class="panel-body">
 
   <!-- Use a disabled form to display field values (no placeholder) -->
+  <%
+  var blnFieldset = false;
+  %>
   <form id="_FORM_VIEW" class="form-horizontal" action="<%=action%>" method="post">
       <div class="form-group">
         <div class="col-xs-4 col-md-4">
@@ -54,7 +57,6 @@
       <%
         if (record)
         {
-          var blnFieldset = false;
           for(var i=0; i< form.fields.length; i++)
           {
             // Don't display field if it's an AUTOINCREMENT column
@@ -97,14 +99,14 @@
             } // if (form.autoincrement_column != form.fields[i].name)
           } // for
 
-          if (blnFieldset)
-          {
-            blnFieldset = false;
-            %></fieldset><%
-          } // if (blnFieldset)
         } // if (record)
         %>
-      <%- include('form_okcancel', { visible:false }) %>
-    </fieldset>
+      <%- include('form_okcancel', { visible:false }) %><%
+      if (blnFieldset)
+      {
+        blnFieldset = false;
+        %></fieldset><%
+      } // if (blnFieldset)
+      %>
   </form>
 </div><!-- class="panel-body" -->
