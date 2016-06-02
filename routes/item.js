@@ -456,7 +456,7 @@ router.get('/view', function(req, res, next) {
     var strURLCopies = "new_copy?item_detail_id="+encodeURIComponent(result.id);
     var strURLCopiesAdd = strURLCopies+"&action="+encodeURIComponent("1");
     var strURLCopiesRemove = strURLCopies+"&action="+encodeURIComponent("-1");
-    var strImageLink = (result ? result.img_url : null);
+    var strImageLink = (result && result.img_url ? "/item/webservice/img?url="+encodeURIComponent(result.img_url) : null);
     // Display first record with "view" template
     res.render('item/view', {
       title: req.app.locals.title,
@@ -866,5 +866,25 @@ DROP TEMPORARY TABLE IF EXISTS tmp_classification \n\
   }
 
 });
+// Web Service returning items image
+router.get('/webservice/img', function(req, res, next) {
+
+  var objMyContext = new module_context(req, res, next);
+  var objSQLConnection = db.new_connection();
+
+  debug("/webservice/img:req.query=%j", req.query);
+
+  // TODO Implement a local file cache for requested URL
+
+  if (req.query.url)
+  {
+    // Simple redirection for now
+    res.redirect(req.query.url);
+  }
+
+
+});
+
+
 
 module.exports = router;
