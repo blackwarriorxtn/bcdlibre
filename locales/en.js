@@ -19,7 +19,7 @@
 	"Emprunts": "Borrows",
 	"Nouvel emprunt": "New borrowing",
 	"Taper l'identifiant du livre à emprunter (ISBN ou Titre)": "Type requested book id (ISBN or Title)",
-	"Taper le nom ou la classe du lecteur": "Type reader name or classroom",
+	"Taper le nom et/ou le prénom du lecteur": "Type reader's first name or last name",
 	"Ajouter un emprunt (sortir un livre)": "Add a borrowing (borrow a book)",
 	"Rendre un livre (retour en bibliothèque)": "Return a book (put back in library)",
 	"Rechercher un emprunt": "Search borrowing",
