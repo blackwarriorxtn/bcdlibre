@@ -193,7 +193,16 @@ router.post('/new', function(req, res, next) {
         {
           // Book already exists with same ISBN: propose to add a copy
           var row = db.rows(arrRows);
-          res.render('item/new_copy', {req:req, title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, message:{text:"Ce livre est déjà dans l'inventaire. Voulez-vous ajouter un exemplaire?",type:"info"}, action:"new_copy",record:row});
+          res.render('item/new_copy',
+                     {
+                       req:req, title: req.app.locals.title, subtitle: null,
+                       menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu),
+                       form:objMyContext.objFormParameters,
+                       message:{text:req.i18n.__("Ce livre est déjà dans l'inventaire. Voulez-vous ajouter un exemplaire?"),type:"warning"},
+                       action:"new_copy",
+                       record:row
+                     }
+                   );
         }
         else
         {
@@ -205,7 +214,9 @@ router.post('/new', function(req, res, next) {
               {
                 objSQLConnection.end();
               }
-              db.handle_error(err, res, req, "item/new", { req:req, title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, message:{text:"Ce livre est déjà dans l'inventaire ("+err+")",type:"error"}, action:"new" });
+              db.handle_error(err, res, req, "item/new",
+                              { req:req, title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu),
+                                form:objMyContext.objFormParameters, message:{text:req.i18n.__("Ce livre est déjà dans l'inventaire (%s)",err),type:"error"}, action:"new" });
             }
             else
             {
@@ -217,7 +228,10 @@ router.post('/new', function(req, res, next) {
                 }
                 if (err) throw err;
                 // Display add form again
-                res.render('item/new', {req:req, title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, message:{text:"Fiche ajoutée avec succès. Veuillez remplir la fiche suivante",type:"info"}, action:"new"});
+                res.render('item/new',
+                           {
+                             req:req, title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu),
+                             form:objMyContext.objFormParameters, message:{text:req.i18n.__("Fiche ajoutée avec succès. Veuillez remplir la fiche suivante"),type:"info"}, action:"new"});
               }, objSQLConnection);
 
             }
@@ -257,7 +271,10 @@ router.post('/new_copy', function(req, res, next) {
       }
       if (err) throw err;
       // Display add form again
-      res.render('item/new', {req:req, title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, message:{text:"Exemplaire ajouté avec succès. Veuillez remplir la fiche suivante",type:"info"}, action:"new"});
+      res.render('item/new', {
+                               req:req,
+                               title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu),
+                               form:objMyContext.objFormParameters, message:{text:req.i18n.__("Exemplaire ajouté avec succès. Veuillez remplir la fiche suivante"),type:"info"}, action:"new"});
     });
 
   } // else if (req.body["_OK"] != null)
