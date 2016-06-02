@@ -23,7 +23,9 @@ cd /D %~dp0..\ || GOTO ERROR
 %COMSPEC% /C bin\stop.bat
 
 ECHO [%DATE% %TIME%] Upgrade source code...
+git stash || GOTO ERROR
 git pull || GOTO ERROR
+git stash pop || GOTO ERROR
 
 %COMSPEC% /C bin\upgrade_internal.bat || GOTO ERROR
 
