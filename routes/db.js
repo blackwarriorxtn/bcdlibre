@@ -49,7 +49,8 @@ var new_connection = function ()
       user     : strMySQLUser,
       database : strMySQLDatabase,
       password : strMySQLPassword,
-      multipleStatements: true
+      multipleStatements: true,
+      charset  : 'UTF8_GENERAL_CI'
     });
   objSQLConnection.connect();
   return(objSQLConnection);
