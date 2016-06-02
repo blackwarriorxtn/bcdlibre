@@ -49,8 +49,11 @@ CREATE TABLE item_detail(
   series_title VARCHAR(255) NULL COMMENT 'Item Series Title',
   classification TEXT NULL COMMENT 'Item Classification (free text, can include Dewey Decimal Classification)',
 
+  img_url VARCHAR(255) NULL COMMENT 'URL to book representation',  
+
   PRIMARY KEY(id),
-  UNIQUE KEY id_isbn13(isbn13)
+  UNIQUE KEY id_isbn13(isbn13),
+  KEY item_detail_img_url(img_url)
 
 ) ENGINE=INNODB COMMENT 'Item Description'
 ;

@@ -456,6 +456,7 @@ router.get('/view', function(req, res, next) {
     var strURLCopies = "new_copy?item_detail_id="+encodeURIComponent(result.id);
     var strURLCopiesAdd = strURLCopies+"&action="+encodeURIComponent("1");
     var strURLCopiesRemove = strURLCopies+"&action="+encodeURIComponent("-1");
+    var strImageLink = (result ? result.img_url : null);
     // Display first record with "view" template
     res.render('item/view', {
       title: req.app.locals.title,
@@ -466,7 +467,8 @@ router.get('/view', function(req, res, next) {
       message:null,
       form_id:result.id,
       form_info:{ type:strFormInfoType, text:strFormInfo },
-      form_custom_html:'<button id="_COPY_ADD" name="_COPY_ADD" type="submit" class="btn btn-default">+1</button>&#32;<button id="_COPY_DEL" name="_COPY_DEL" type="submit" class="btn btn-default">-1</button>'
+      form_custom_html:'<button id="_COPY_ADD" name="_COPY_ADD" type="submit" class="btn btn-default">+1</button>&#32;<button id="_COPY_DEL" name="_COPY_DEL" type="submit" class="btn btn-default">-1</button>',
+      img_url: strImageLink
     });
   });
 

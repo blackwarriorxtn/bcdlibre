@@ -76,5 +76,6 @@
 	"Livre #": "Livre #",
 	"Lecteur #": "Lecteur #",
 	"Ce livre est déjà dans l'inventaire. Voulez-vous ajouter un exemplaire?": "Ce livre est déjà dans l'inventaire. Voulez-vous ajouter un exemplaire?",
-	"Exemplaire ajouté avec succès. Veuillez remplir la fiche suivante": "Exemplaire ajouté avec succès. Veuillez remplir la fiche suivante"
+	"Exemplaire ajouté avec succès. Veuillez remplir la fiche suivante": "Exemplaire ajouté avec succès. Veuillez remplir la fiche suivante",
+	"Couverture du livre": "Couverture du livre"
 }
