@@ -17,6 +17,8 @@
 var db = require('../routes/db'); // database utilities
 var debug = require('debug')('bibliopuce:setup_img');
 var request = require('request');
+var jsdom = require("jsdom");
+var async = require("async");
 objSQLConnection = db.new_connection();
 
 db.runsql("\
@@ -36,7 +38,7 @@ ORDER BY id DESC \n\
 SELECT temp_img.*, item_detail.id AS item_detail_id, item_detail.title \n\
 FROM temp_img \n\
 JOIN item_detail ON item_detail.isbn13 = temp_img.isbn13 \n\
-LIMIT 1 /* TODO DELETE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/ \n\
+WHERE item_detail.img_url IS NULL \n\
 ; \n\
 DROP TEMPORARY TABLE IF EXISTS temp_img \n\
 ; \n\
@@ -52,22 +54,23 @@ DROP TEMPORARY TABLE IF EXISTS temp_img \n\
       }
       var rows = db.rows(arrRows);
 
-      for (var intRow = 0; intRow < rows.length; intRow++)
-      {
-        var strISBN13 = rows[intRow].isbn13;
-        var intItemDetailId = rows[intRow].item_detail_id;
+      async.eachLimit(rows, 1, function (row, callback) {
+
+        var strISBN13 = row.isbn13;
+        var intItemDetailId = row.item_detail_id;
+        var strTitle = row.title;
         if (strISBN13)
         {
           debug("isbn13 = %s", strISBN13);
-          var objResult = JSON.parse(rows[intRow].result_json);
+          var objResult = JSON.parse(row.result_json);
           if (objResult)
           {
             // debug("objResult = %j", objResult);
             if (objResult.ItemLookupResponse && objResult.ItemLookupResponse.Items && objResult.ItemLookupResponse.Items.Item && objResult.ItemLookupResponse.Items.Item.DetailPageURL)
             {
               var strDetailsURL = objResult.ItemLookupResponse.Items.Item.DetailPageURL;
-              debug("strDetailsURL=%s",strDetailsURL);
-              console.log("Downloading Book URL "+strDetailsURL);
+              // debug("strDetailsURL=%s",strDetailsURL);
+              // console.log("Downloading Book URL "+strDetailsURL);
               const options = {
                 url :  strDetailsURL,
                 json : true
@@ -76,20 +79,19 @@ DROP TEMPORARY TABLE IF EXISTS temp_img \n\
                 function(err, res, body) {
                   if (err)
                   {
-                    console.log("ERROR: %s", err);
+                    console.log("ERROR: Can't download URL %s for %s %s : %s", strDetailsURL, strISBN13, strTitle, err);
                   }
                   else
                   {
-                    // Run some jQuery on a html fragment
-                    var jsdom = require("jsdom");
-
+                    console.log("Book Page downloaded for %s %s ", strISBN13, strTitle);
+                    // Fetch img URL from HTML
                     jsdom.env(
                       body,
                       ["http://code.jquery.com/jquery.js"],
                       function (err, window) {
                         if (err)
                         {
-                          console.log("ERROR: %s", err);
+                          console.log("ERROR: Can't parse HTML for %s %s : %s", strISBN13, strTitle, err);
                         }
                         else
                         {
@@ -101,20 +103,37 @@ DROP TEMPORARY TABLE IF EXISTS temp_img \n\
                                       function(err, arrRows, fields) {
                                         if (err)
                                         {
-                                          console.log("ERROR: %s", err);
+                                          console.log("ERROR: Can't update item_detail for %s %s : %s", strISBN13, strTitle, err);
                                         }
                                       });
                           } // if (strImageLink && strImageLink.match(/^https?\:/))
+                          else
+                          {
+                            console.log("ERROR: Can't find img.id=imgBlkFront in HTML for %s %s (%s)", strISBN13, strTitle, strDetailsURL);
+                          } // if (strImageLink && strImageLink.match(/^https?\:/))
+
                         }
                       }
                     );
                   } // else if (err)
                 }
               );
-            }
+            } // if (objResult.ItemLookupResponse && objResult.ItemLookupResponse.Items && objResult.ItemLookupResponse.Items.Item && objResult.ItemLookupResponse.Items.Item.DetailPageURL)
+            else
+            {
+              console.log("ERROR: Invalid Web Service result for %s %s (no DetailPageURL)", strISBN13, strTitle);
+            } // // if (objResult.ItemLookupResponse && objResult.ItemLookupResponse.Items && objResult.ItemLookupResponse.Items.Item && objResult.ItemLookupResponse.Items.Item.DetailPageURL)
           } // if (objResult)
         } // if (strISBN13)
-      } // for (var intRow = 0; intRow < rows.length; intRow++)
+
+        // Pause 1.5s to avoid being blocked by source
+        setTimeout(function() {
+          callback();
+        }, 1500);
+
+      }, function done() {
+//        process.exit(0);
+      });
 
     }, objSQLConnection);
 
