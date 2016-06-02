@@ -19,7 +19,7 @@
 	"Emprunts": "Emprunts",
 	"Nouvel emprunt": "Nouvel emprunt",
 	"Taper l'identifiant du livre à emprunter (ISBN ou Titre)": "Taper l'identifiant du livre à emprunter (ISBN ou Titre)",
-	"Taper le nom ou le compte du lecteur": "Taper le nom ou le compte du lecteur",
+	"Taper le nom et/ou le prénom du lecteur": "Taper le nom et/ou le prénom du lecteur",
 	"Ajouter un emprunt (sortir un livre)": "Ajouter un emprunt (sortir un livre)",
 	"Rendre un livre (retour en bibliothèque)": "Rendre un livre (retour en bibliothèque)",
 	"Rechercher un emprunt": "Rechercher un emprunt",
