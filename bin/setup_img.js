@@ -106,7 +106,7 @@ DROP TEMPORARY TABLE IF EXISTS temp_img \n\
                                 }
                                 // Download and save image in cache (public/img/item/00/00/00/00/0000000001.jpg)
                                 var strImageFolder = db.img_folder(intItemDetailId);
-                                var strImageFile = db.img_file(intItemDetailId, path.extname(strImageLink));
+                                var strImageFilePath = db.img_file(intItemDetailId, path.extname(strImageLink));
                                 console.log("Cache image file : \"%s\"", strImageFilePath);
                                 mkdirp.sync(strImageFolder);
                                 request.head(strImageLink, function(err, res, body){
