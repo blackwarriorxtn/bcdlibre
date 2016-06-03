@@ -11,6 +11,7 @@ handle_error()
   exit 1
 }
 
+cd `dirname $0` || handle_error "Can't change directory!"
 node setup_img.js || handle_error "Can't setup img!"
 
 echo "[`date +'%Y-%m-%d %H:%M:%S'`] End."
