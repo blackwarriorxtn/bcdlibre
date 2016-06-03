@@ -125,6 +125,14 @@ $( document ).ready(function() {
     window.document.location = $(this).data("href");
   });
 
+  // Prepare popover on image (if any)
+  $("#_IMG_BUTTON").popover({
+    html: true,
+    trigger: 'click',
+    content: function () {
+      return '<img src="'+$(this).data('img') + '" />';
+    }} /* options */);
+
   // Set focus automatically
   form_control_autofocus(null /* strCSSParent */);
 });
