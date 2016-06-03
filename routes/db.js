@@ -17,6 +17,7 @@
 var mysql = require('mysql');
 var config = require('../setup/config.js');
 var debug = require('debug')('bibliopuce:routes_db');
+var path = require('path');
 
 var strMySQLHost = config.database.host_name;
 var strMySQLDatabase = config.database.database_name;
@@ -739,6 +740,21 @@ function sql_get_rows(arrRows, objOptions)
   return(rows);
 }
 
+function img_folder(intItemDetailId)
+{
+  var strImageFile = ("0000000000" + intItemDetailId).slice(-10);
+  var strImageFolder = path.join(__dirname,"..","public","img","item",strImageFile.substring(0,2),strImageFile.substring(2,4),strImageFile.substring(4,6),strImageFile.substring(6,8),strImageFile.substring(8,10));
+  return(strImageFolder);
+}
+
+function img_file(intItemDetailId)
+{
+  var strImageFile = ("0000000000" + intItemDetailId).slice(-10);
+  var strImageFolder = img_file(intItemDetailId);
+  var strImageFilePath = path.join(strImageFolder,strImageFile + path.extname(strImageLink));
+  return(strImageFilePath);
+}
+
 module.exports.new_connection = new_connection;
 module.exports.runsql = runsql;
 module.exports.check_field_value = check_field_value;
@@ -752,3 +768,5 @@ module.exports.search_record = search_record;
 module.exports.handle_error = handle_error;
 module.exports.format_isbn = format_isbn;
 module.exports.rows = sql_get_rows;
+module.exports.img_file = img_file;
+module.exports.img_folder = img_folder;

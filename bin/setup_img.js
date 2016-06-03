@@ -19,6 +19,9 @@ var debug = require('debug')('bibliopuce:setup_img');
 var request = require('request');
 var jsdom = require("jsdom");
 var async = require("async");
+var fs = require('fs');
+var mkdirp = require('mkdirp');
+var path = require('path');
 objSQLConnection = db.new_connection();
 
 db.runsql("\
@@ -71,11 +74,7 @@ DROP TEMPORARY TABLE IF EXISTS temp_img \n\
               var strDetailsURL = objResult.ItemLookupResponse.Items.Item.DetailPageURL;
               // debug("strDetailsURL=%s",strDetailsURL);
               // console.log("Downloading Book URL "+strDetailsURL);
-              const options = {
-                url :  strDetailsURL,
-                json : true
-              };
-              request(options,
+              request({url :  strDetailsURL},
                 function(err, res, body) {
                   if (err)
                   {
@@ -100,12 +99,30 @@ DROP TEMPORARY TABLE IF EXISTS temp_img \n\
                           if (strImageLink && strImageLink.match(/^https?\:/))
                           {
                             db.runsql("UPDATE item_detail SET img_url = "+objSQLConnection.escape(strImageLink)+" WHERE id = "+intItemDetailId.toString(10)+";",
-                                      function(err, arrRows, fields) {
-                                        if (err)
-                                        {
-                                          console.log("ERROR: Can't update item_detail for %s %s : %s", strISBN13, strTitle, err);
-                                        }
-                                      });
+                              function(err, arrRows, fields) {
+                                if (err)
+                                {
+                                  console.log("ERROR: Can't update item_detail for %s %s : %s", strISBN13, strTitle, err);
+                                }
+                                // Download and save image in cache (public/img/item/00/00/00/00/0000000001.jpg)
+                                var strImageFolder = db.img_folder(intItemDetailId);
+                                var strImageFile = db.img_file(intItemDetailId);
+                                console.log("Cache image file : \"%s\"", strImageFilePath);
+                                mkdirp.sync(strImageFolder);
+                                request.head(strImageLink, function(err, res, body){
+                                  if (err)
+                                  {
+                                    console.log("ERROR: Can't download image %s for %s %s : %s", strImageLink, strISBN13, strTitle, err);
+                                  }
+                                  else
+                                  {
+                                    console.log("Book Image downloaded for %s %s ", strISBN13, strTitle);
+                                    console.log('content-type:', res.headers['content-type']);
+                                    console.log('content-length:', res.headers['content-length']);
+                                    request(strImageLink).pipe(fs.createWriteStream(strImageFilePath));
+                                  }
+                                });
+                              });
                           } // if (strImageLink && strImageLink.match(/^https?\:/))
                           else
                           {
@@ -136,8 +153,3 @@ DROP TEMPORARY TABLE IF EXISTS temp_img \n\
       });
 
     }, objSQLConnection);
-
-if (objSQLConnection)
-{
-  objSQLConnection.end();
-}
