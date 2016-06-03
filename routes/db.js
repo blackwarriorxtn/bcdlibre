@@ -747,11 +747,11 @@ function img_folder(intItemDetailId)
   return(strImageFolder);
 }
 
-function img_file(intItemDetailId)
+function img_file(intItemDetailId, strFileExt)
 {
   var strImageFile = ("0000000000" + intItemDetailId).slice(-10);
-  var strImageFolder = img_file(intItemDetailId);
-  var strImageFilePath = path.join(strImageFolder,strImageFile + path.extname(strImageLink));
+  var strImageFolder = img_folder(intItemDetailId);
+  var strImageFilePath = path.join(strImageFolder,strImageFile + strFileExt);
   return(strImageFilePath);
 }
 
