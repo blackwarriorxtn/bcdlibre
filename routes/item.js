@@ -22,6 +22,8 @@ var request = require('request');
 var async = require('async');
 var config = require('../setup/config.js');
 var debug = require('debug')('bibliopuce:routes_item');
+var fs = require('fs');
+var path = require('path');
 
 var strAWSId = config.webservices.aws.awsId;
 var strAWSSecret = config.webservices.aws.awsSecret;
@@ -456,7 +458,7 @@ router.get('/view', function(req, res, next) {
     var strURLCopies = "new_copy?item_detail_id="+encodeURIComponent(result.id);
     var strURLCopiesAdd = strURLCopies+"&action="+encodeURIComponent("1");
     var strURLCopiesRemove = strURLCopies+"&action="+encodeURIComponent("-1");
-    var strImageLink = (result && result.img_url ? "/item/webservice/img?url="+encodeURIComponent(result.img_url) : null);
+    var strImageLink = (result && result.img_url ? "/item/webservice/img?id="+encodeURIComponent(result.id.toString(10))+"&url="+encodeURIComponent(result.img_url) : null);
     // Display first record with "view" template
     res.render('item/view', {
       title: req.app.locals.title,
@@ -874,9 +876,16 @@ router.get('/webservice/img', function(req, res, next) {
 
   debug("/webservice/img:req.query=%j", req.query);
 
-  // TODO Implement a local file cache for requested URL
-
-  if (req.query.url)
+  // Use a local file cache for requested URL
+  var intItemDetailId = req.query.id;
+  var strFilePath = db.img_file(intItemDetailId, path.extname(req.query.url));
+  var strVirtualPath = db.img_virtual_path(intItemDetailId, path.extname(req.query.url));
+  if (fs.existsSync(strFilePath))
+  {
+    // Redirect to virtual path
+    res.redirect(strVirtualPath);
+  }
+  else if (req.query.url)
   {
     // Simple redirection for now
     res.redirect(req.query.url);
