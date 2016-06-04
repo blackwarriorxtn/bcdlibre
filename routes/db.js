@@ -754,6 +754,14 @@ function img_file(intItemDetailId, strFileExt)
   var strImageFilePath = path.join(strImageFolder,strImageFile + strFileExt);
   return(strImageFilePath);
 }
+function img_virtual_path(intItemDetailId, strFileExt)
+{
+  var strImageFile = ("0000000000" + intItemDetailId).slice(-10);
+  var strImageVirtualFolder = path.join("static","img","item",strImageFile.substring(0,2),strImageFile.substring(2,4),strImageFile.substring(4,6),strImageFile.substring(6,8),strImageFile.substring(8,10));
+  var strImageFilePath = path.join(strImageVirtualFolder,strImageFile + strFileExt);
+  return(strImageFilePath);
+}
+
 
 module.exports.new_connection = new_connection;
 module.exports.runsql = runsql;
@@ -770,3 +778,4 @@ module.exports.format_isbn = format_isbn;
 module.exports.rows = sql_get_rows;
 module.exports.img_file = img_file;
 module.exports.img_folder = img_folder;
+module.exports.img_virtual_path = img_virtual_path;
