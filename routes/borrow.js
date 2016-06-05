@@ -70,7 +70,7 @@ router.get('/', function(req, res, next) {
 router.get('/list', function(req, res, next) {
 
   var objMyContext = new module_context(req, res, next);
-  db.list_record(req, res, next, objMyContext.objFormParameters, null /* objSQLOptions */, function(err, result, fields) {
+  db.list_record(req, res, next, objMyContext.objFormParameters, {order_by:[{name:"begin_date", direction:"ASC"}]} /* objSQLOptions */, function(err, result, fields) {
     if (err) throw err;
     // Display records with "list" template
     res.render('borrow/list', { title: req.app.locals.title, subtitle: req.i18n.__("Liste"), menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, records:result });
