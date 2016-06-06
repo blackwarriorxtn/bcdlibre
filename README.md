@@ -1,4 +1,4 @@
-# bibliopuce
+# BCD Libre (Book Manager Libre)
 
 Small library software (borrowing and returning books management)
 
@@ -34,12 +34,12 @@ Logiciel de gestion d'une petite bibliothèque (gestion d'emprunt de livres)
 * multiple Web Services are called and information is filled in automatically:
 ![Add book](doc/screenshot/add_book_en_02.png?raw=true "Add book with autocompletion based on Web Services requests (english version)")
 
-## Install Bibliopuce
+## Install BCD Libre
 
 Please read [setup/install.md](setup/install.md)
 
 
-## Start Bibliopuce
+## Start BCD Libre
 
 ### On Windows
 
