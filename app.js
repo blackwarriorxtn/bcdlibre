@@ -36,12 +36,12 @@ i18n.expressBind(app, {
     // setup some locales - other locales default to en silently
     locales: ['en', 'fr'],
     // change the cookie name from 'lang' to 'locale'
-    cookieName: 'bibliopuce_locale'
+    cookieName: 'bcblibre_locale'
 });
 
 // local variables: title, main menu, etc...
 app.locals.config = require('./setup/config');
-app.locals.title = app.locals.config.application.title || "Bibliopuce";
+app.locals.title = app.locals.config.application.title || "BDC Libre";
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -64,7 +64,7 @@ app.use('/static', express.static(__dirname + '/public'));
 // This is how you'd set a locale from req.cookies.
 // Don't forget to set the cookie either on the client or in your Express app.
 app.use(function(req, res, next) {
-  console.log("I18N:setLocaleFromCookie: req.cookies.bibliopuce_locale=%s",req.cookies.bibliopuce_locale);
+  console.log("I18N:setLocaleFromCookie: req.cookies.bcblibre_locale=%s",req.cookies.bcblibre_locale);
   req.i18n.setLocaleFromCookie();
   next();
 });
