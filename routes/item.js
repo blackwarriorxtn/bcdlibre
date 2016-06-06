@@ -179,12 +179,16 @@ router.post('/new', function(req, res, next) {
   } // if (req.body["_CANCEL"] != null)
   else if (req.body["_OK"] != null)
   {
-    // TODO Check that this book is not already in inventory - if it is, propose to add a new copy
-
+    // Check that this book is not already in inventory - if it is, propose to add a new copy
     debug("req.body = %j", req.body);
-
     var strISBN = req.body["isbn13"];
-    db.runsql("SELECT * FROM item_detail WHERE isbn13 = "+objSQLConnection.escape(strISBN)+";", function(err, arrRows, fields) {
+    var strSQLWhere = "isbn13 = "+objSQLConnection.escape(strISBN);
+    if (strISBN == null || strISBN == "")
+    {
+      // No ISBN : check book title + author
+      strSQLWhere = "title = "+objSQLConnection.escape(req.body["title"]) + " AND author = "+objSQLConnection.escape(req.body["author"]);
+    }
+    db.runsql("SELECT * FROM item_detail WHERE "+strSQLWhere+";", function(err, arrRows, fields) {
       if (err)
       {
         throw err;

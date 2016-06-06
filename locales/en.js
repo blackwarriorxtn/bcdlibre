@@ -77,5 +77,7 @@
 	"Lecteur #": "Reader #",
 	"Ce livre est déjà dans l'inventaire. Voulez-vous ajouter un exemplaire?": "This book is already in your inventory. Do you want to add a copy?",
 	"Exemplaire ajouté avec succès. Veuillez remplir la fiche suivante": "Copy added successfully. Please fill in new book entry.",
-	"Couverture du livre": "Book cover"
+	"Couverture du livre": "Book cover",
+	"Durée": "Durée",
+	"Fiche ajoutée avec succès. Veuillez remplir la fiche suivante": "Fiche ajoutée avec succès. Veuillez remplir la fiche suivante"
 }
