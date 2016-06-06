@@ -887,11 +887,13 @@ router.get('/webservice/img', function(req, res, next) {
   if (fs.existsSync(strFilePath))
   {
     // Redirect to virtual path
+    debug("Redirect to local virtual path %s", strVirtualPath);
     res.redirect(strVirtualPath);
   }
   else if (req.query.url)
   {
     // Simple redirection for now
+    debug("Redirect to external path %s", req.query.url);
     res.redirect(req.query.url);
   }
 

@@ -757,8 +757,8 @@ function img_file(intItemDetailId, strFileExt)
 function img_virtual_path(intItemDetailId, strFileExt)
 {
   var strImageFile = ("0000000000" + intItemDetailId).slice(-10);
-  var strImageVirtualFolder = path.join("static","img","item",strImageFile.substring(0,2),strImageFile.substring(2,4),strImageFile.substring(4,6),strImageFile.substring(6,8),strImageFile.substring(8,10));
-  var strImageFilePath = path.join(strImageVirtualFolder,strImageFile + strFileExt);
+  var strImageVirtualFolder = ["", "static","img","item",strImageFile.substring(0,2),strImageFile.substring(2,4),strImageFile.substring(4,6),strImageFile.substring(6,8),strImageFile.substring(8,10)].join("/");
+  var strImageFilePath = strImageVirtualFolder + "/" + strImageFile + strFileExt;
   return(strImageFilePath);
 }
 
