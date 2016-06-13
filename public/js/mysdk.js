@@ -11,8 +11,8 @@ function format_isbn(strRawValue)
     if (
       /* Only numbers AND dashes */
       strValue.match(/^[0-9-]+$/) ||
-      /* Only french keyboard letters for numbers (including dashes) */
-      strValue.match(/^[&é"'\(è_çà-]+$/)
+      /* Only french keyboard letters and numbers and dashes */
+      strValue.match(/^[&é"'\(è_çà0-9-]+$/)
     )
     {
       // Remove dashes and spaces - if string is longuer than 13
