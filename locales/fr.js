@@ -79,5 +79,6 @@
 	"Exemplaire ajouté avec succès. Veuillez remplir la fiche suivante": "Exemplaire ajouté avec succès. Veuillez remplir la fiche suivante",
 	"Couverture du livre": "Couverture du livre",
 	"Durée": "Durée",
-	"Fiche ajoutée avec succès. Veuillez remplir la fiche suivante": "Fiche ajoutée avec succès. Veuillez remplir la fiche suivante"
+	"Fiche ajoutée avec succès. Veuillez remplir la fiche suivante": "Fiche ajoutée avec succès. Veuillez remplir la fiche suivante",
+	"Liste des emprunts (%d emprunts en cours)": "Liste des emprunts (%d emprunts en cours)"
 }

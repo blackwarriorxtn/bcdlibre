@@ -79,5 +79,6 @@
 	"Exemplaire ajouté avec succès. Veuillez remplir la fiche suivante": "Copy added successfully. Please fill in new book entry.",
 	"Couverture du livre": "Book cover",
 	"Durée": "Durée",
-	"Fiche ajoutée avec succès. Veuillez remplir la fiche suivante": "Fiche ajoutée avec succès. Veuillez remplir la fiche suivante"
+	"Fiche ajoutée avec succès. Veuillez remplir la fiche suivante": "Fiche ajoutée avec succès. Veuillez remplir la fiche suivante",
+	"Liste des emprunts (%d emprunts en cours)": "Borrowed items (%d currenlty borrowed)"
 }

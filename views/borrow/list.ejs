@@ -28,7 +28,7 @@
         <div class="container-fluid">
           <% if (records && records.length > 0) { %>
             <table class="table table-hover table-striped table-bordered">
-              <caption>Liste des emprunts</caption>
+              <caption><%=__("Liste des emprunts (%d emprunts en cours)", records.length)%></caption>
               <thead>
                 <tr>
                   <th>#</th>
