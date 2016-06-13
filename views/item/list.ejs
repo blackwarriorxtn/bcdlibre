@@ -28,7 +28,7 @@
         <div class="container-fluid">
           <% if (records && records.length > 0) { %>
           <table class="table table-hover table-striped table-bordered">
-            <caption><%=__("Liste des livres")%></caption>
+            <caption><%=__("Liste des livres", records.length)%></caption>
             <thead>
               <tr>
                 <th>#</th>

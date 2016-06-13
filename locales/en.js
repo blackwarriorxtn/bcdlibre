@@ -41,7 +41,7 @@
 	"Lecteurs": "Readers",
 	"Gérer les lecteurs (emprunteurs)": "Manage readers (borrowers)",
 	"Liste": "List",
-	"Liste des livres": "Books List",
+	"Liste des livres": "Books List (%d books)",
 	"ISBN": "ISBN",
 	"Description": "Description",
 	"Modifier": "Modify",

@@ -41,7 +41,7 @@
 	"Lecteurs": "Lecteurs",
 	"Gérer les lecteurs (emprunteurs)": "Gérer les lecteurs (emprunteurs)",
 	"Liste": "Liste",
-	"Liste des livres": "Liste des livres",
+	"Liste des livres": "Liste des livres (%d livres)",
 	"ISBN": "ISBN",
 	"Description": "Description",
 	"Modifier": "Modifier",
