@@ -11,4 +11,4 @@ handle_error()
 }
 
 # Start VPN
-openvpn --config /etc/openvpn/tun0.conf --verb 6 || handle_error "Can't start OpenVPN"
+sudo openvpn --config /etc/openvpn/tun0.conf --verb 6 || handle_error "Can't start OpenVPN"
