@@ -34,6 +34,7 @@ if test -d "$MY_DESKTOP"
 then
   echo "[`date +'%Y-%m-%d %H:%M:%S'`] Copy shortcuts to Desktop"
   cp $LAST_DIR/*.desktop "$MY_DESKTOP/"
+  cp $LAST_DIR/*.desktop "~/.local/share/applications/"
 fi
 
 echo "[`date +'%Y-%m-%d %H:%M:%S'`] End."
