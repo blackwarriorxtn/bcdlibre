@@ -45,6 +45,16 @@ html, body
 	height: 100px;
 	clear:both;
 }
+/* Do not print page footer */
+@media print
+{
+  #page_footer{
+    display:none;
+  }
+  noprint {
+    display:none;
+  }
+}
 
 /* Override Bootstrap grid with extra spacing in MENUS */
 .bib-row-menu {
@@ -56,6 +66,15 @@ tr[data-href]
 {
   cursor: pointer;
 }
+/* Do not print a's href (bootstraps prints href between parenthesis)  */
+@media print
+{
+  a[href]:after
+  {
+    content: none !important;
+  }
+}
+
 
 /* Form : OK cancel block */
 div.okcancel

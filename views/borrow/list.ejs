@@ -36,6 +36,7 @@
                   <th><%=__('Durée')%></th>
                   <th><%=__('Nom')%></th>
                   <th><%=__('Prénom')%></th>
+                  <th><%=__('Catégorie')%></th>
                   <th><%=__('Titre')%></th>
                 </tr>
               </thead>
@@ -43,10 +44,11 @@
                 <% for(var i=0; i< records.length; i++) { %>
                   <tr data-href="view?id=<%- records[i].id %>">
                     <td><a href="view?id=<%- records[i].id %>"><%= records[i].id %></a></td>
-                    <td><%= records[i].begin_date.toLocaleString() %></td>
+                    <td><%= records[i].begin_date.toLocaleDateString() %></td>
                     <td><%= records[i].duration_in_days %></td>
                     <td><%= records[i].last_name %></td>
                     <td><%= records[i].first_name %></td>
+                    <td><%= records[i].category %></td>
                     <td><%= records[i].title %></td>
                   </tr>
                 <% } // for %>
