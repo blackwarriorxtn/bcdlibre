@@ -80,5 +80,13 @@
 	"Couverture du livre": "Book cover",
 	"Durée": "Durée",
 	"Fiche ajoutée avec succès. Veuillez remplir la fiche suivante": "Fiche ajoutée avec succès. Veuillez remplir la fiche suivante",
-	"Liste des emprunts (%d emprunts en cours)": "Borrowed items (%d currenlty borrowed)"
+	"Liste des emprunts (%d emprunts en cours)": "Borrowed items (%d currenlty borrowed)",
+	"maximum affichés": "maximum displayed",
+	"Liste des %d lecteurs": "List %d readers (borrowers)",
+	"Langue": "Langue",
+	"Gérer la langue d'affichage": "Gérer la langue d'affichage",
+	"Français": "Français",
+	"Afficher l'interface en français": "Afficher l'interface en français",
+	"English": "English",
+	"Display the interface in english": "Display the interface in english"
 }

@@ -33,10 +33,10 @@ var app = express();
 // Attach the i18n property to the express request object
 // And attach helper methods for use in templates
 i18n.expressBind(app, {
-    // setup some locales - other locales default to en silently
+    // setup some locales - other locales default to 'en' silently
     locales: ['en', 'fr'],
     // change the cookie name from 'lang' to 'locale'
-    cookieName: 'bcblibre_locale'
+    cookieName: 'bcdlibre_locale'
 });
 
 // local variables: title, main menu, etc...
@@ -64,7 +64,9 @@ app.use('/static', express.static(__dirname + '/public'));
 // This is how you'd set a locale from req.cookies.
 // Don't forget to set the cookie either on the client or in your Express app.
 app.use(function(req, res, next) {
-  console.log("I18N:setLocaleFromCookie: req.cookies.bcblibre_locale=%s",req.cookies.bcblibre_locale);
+// DEBUG
+  console.log("req.cookies=%j",req.cookies);
+  console.log("I18N:setLocaleFromCookie: req.cookies.bcdlibre_locale=%s",req.cookies.bcdlibre_locale);
   req.i18n.setLocaleFromCookie();
   next();
 });
