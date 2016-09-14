@@ -35,4 +35,13 @@ router.get('/', function(req, res, next) {
 
 });
 
+/* ******************************************************************************** LANG menu */
+router.get('/lang', function(req, res, next) {
+
+  var objMyContext = new module_context(req, res, next);
+  res.render('manage/lang', { title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu) });
+
+});
+
 module.exports = router;
+

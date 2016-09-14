@@ -28,7 +28,10 @@ router.get('/', function(req, res, next) {
   if (req && req.query && req.query.lang)
   {
     var strLang = req.query.lang;
-    res.cookie('locale', strLang);
+    res.cookie('bcdlibre_locale', strLang);
+    console.log("res.cookie('bcdlibre_locale', %s)", strLang);
+    // Back to home page
+    res.redirect("/");
   }
   res.render('index', { title: req.app.locals.title, subtitle: "", menus:[] });
 });

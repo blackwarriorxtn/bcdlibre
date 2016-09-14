@@ -72,7 +72,7 @@ router.get('/list', function(req, res, next) {
 
   var objMyContext = new module_context(req, res, next);
   // Check parameter l for limit
-  var intLimit = 100; // Default: last 100 users
+  var intLimit = 500; // Default: last 500 users
   if (req.query.l)
   {
     intLimit = parseInt(req.query.l,10);
@@ -82,7 +82,7 @@ router.get('/list', function(req, res, next) {
   db.list_record(req, res, next, objMyContext.objFormParameters, objSQLOptions, function(err, result, fields) {
     if (err) throw err;
     // Display records with "list" template
-    res.render('user/list', {title: req.app.locals.title, subtitle: req.i18n.__("Liste"), menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, records:result});
+    res.render('user/list', {title: req.app.locals.title, subtitle: req.i18n.__("Liste"), menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, records:result, sql: objSQLOptions});
   });
 
 });

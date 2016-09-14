@@ -28,7 +28,7 @@
         <div class="container-fluid">
           <% if (records && records.length > 0) { %>
           <table class="table table-hover table-striped table-bordered">
-            <caption><%=__("Liste des lecteurs")%></caption>
+            <caption><%=__("Liste des %d lecteurs", records.length)%> (<%= __("maximum affichés")%> : <%= sql.limit %>)</caption>
             <thead>
               <tr>
                 <th>#</th>
