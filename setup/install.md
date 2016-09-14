@@ -15,11 +15,11 @@ Please note that nodejs installation is automated with the setup.sh script (see 
 
 #### Get the source code
 
-    git clone git://github.com/e-dot/bibliopuce.git
+    git clone git://github.com/e-dot/bcdlibre.git
 
 #### Start setup script
 
-    CD /D bibliopuce
+    CD /D bcdlibre
     CMD /C setup\setup.bat
 
 ### On Linux (Debian 8):
@@ -38,11 +38,11 @@ Please note that nodejs installation is automated with the setup.sh script (see 
 
 #### Get the source code
 
-    git clone git://github.com/e-dot/bibliopuce.git
+    git clone git://github.com/e-dot/bcdlibre.git
 
 #### Start setup script
 
-    cd bibliopuce
+    cd bcdlibre
     bash setup/setup.sh
 
 ## Start automatically
