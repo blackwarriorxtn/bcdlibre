@@ -1,0 +1,21 @@
+#!/bin/sh
+#/etc/init.d/nodeup
+
+export PATH=$PATH:/usr/local/bin
+export NODE_PATH=$NODE_PATH:/usr/local/lib/node_modules
+export BCDLIBRE_BASE_PATH=/home/bibliopuce
+
+case "$1" in
+  start)
+  exec forever --sourceDir=$BCDLIBRE_BASE_PATH/bcdlibre -p /path/to/forever/pidetcfiles app.js
+  ;;
+stop)
+  exec forever stop --sourceDir=$BCDLIBRE_BASE_PATH/bcdlibre app.js
+  ;;
+*)
+  echo "Usage: /etc/init.d/bibliopuce {start|stop}"
+  exit 1
+  ;;
+esac
+
+exit 0
