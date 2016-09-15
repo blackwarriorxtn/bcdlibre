@@ -30,8 +30,8 @@ router.get('/', function(req, res, next) {
     var strLang = req.query.lang;
     res.cookie('bcdlibre_locale', strLang);
     console.log("res.cookie('bcdlibre_locale', %s)", strLang);
-    // Back to home page
-    res.redirect("/");
+    console.log("I18N:setLocale: %s", strLang);
+    req.i18n.setLocale(strLang);
   }
   res.render('index', { title: req.app.locals.title, subtitle: "", menus:[] });
 });

@@ -79,7 +79,7 @@ app.use(function(req, res, next) {
       for (var intL = 0; intL < arrAcceptsLanguages.length; intL++)
       {
         var strAL = arrAcceptsLanguages[intL];
-        console.log("strAL=%s", strAL);
+        // DEBUG console.log("strAL=%s", strAL);
         if (req.i18n.locales[strAL])
         {
           console.log("Picking language %s", strAL);
@@ -98,6 +98,7 @@ app.use(function(req, res, next) {
   else
   {
     console.log("I18N:setLocaleFromCookie: req.cookies.bcdlibre_locale=%s",req.cookies.bcdlibre_locale);
+    // TODO Check that coockie contains a supported languages (see req.i18n.locales)
     req.i18n.setLocaleFromCookie();
   }
   next();
