@@ -64,10 +64,42 @@ app.use('/static', express.static(__dirname + '/public'));
 // This is how you'd set a locale from req.cookies.
 // Don't forget to set the cookie either on the client or in your Express app.
 app.use(function(req, res, next) {
-// DEBUG
-  console.log("req.cookies=%j",req.cookies);
-  console.log("I18N:setLocaleFromCookie: req.cookies.bcdlibre_locale=%s",req.cookies.bcdlibre_locale);
-  req.i18n.setLocaleFromCookie();
+  // DEBUG console.log("req.cookies=%j",req.cookies);
+  // DEBUG console.log("req.i18n.locales=%j", req.i18n.locales);
+  // Check locale cookie
+  if (req.cookies.bcdlibre_locale == null)
+  {
+    var strLang = 'en';
+    // No cookie: try to detect language based on browser's configuration
+    var arrAcceptsLanguages = req.acceptsLanguages();
+    console.log("req.acceptsLanguages()=%j",arrAcceptsLanguages);
+    if (arrAcceptsLanguages)
+    {
+      // Check all supported locales to find a matching locale
+      for (var intL = 0; intL < arrAcceptsLanguages.length; intL++)
+      {
+        var strAL = arrAcceptsLanguages[intL];
+        console.log("strAL=%s", strAL);
+        if (req.i18n.locales[strAL])
+        {
+          console.log("Picking language %s", strAL);
+          strLang = strAL;
+          break;
+        }
+      }
+    } // if (arrAcceptsLanguages)
+
+    console.log("I18N:setLocale: %s", strLang);
+    req.i18n.setLocale(strLang);
+
+    // Store lang in cookie for next call
+    res.cookie('bcdlibre_locale', strLang);
+  }
+  else
+  {
+    console.log("I18N:setLocaleFromCookie: req.cookies.bcdlibre_locale=%s",req.cookies.bcdlibre_locale);
+    req.i18n.setLocaleFromCookie();
+  }
   next();
 });
 
