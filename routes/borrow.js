@@ -133,8 +133,8 @@ router.post('/new', function(req, res, next) {
       }
       else
       {
-        // Redirect to list
-        res.redirect('list'); // TODO res.redirect('view') compute parameters
+        // Redirect to MAIN menu
+        res.redirect('../');
       }
     });
   } // else if (req.body["CANCEL"] != null)
