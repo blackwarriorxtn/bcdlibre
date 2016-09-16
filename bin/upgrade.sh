@@ -29,7 +29,7 @@ bash `dirname $0`/upgrade_internal.sh || handle_error "Can't upgrade software!"
 echo "[`date +'%Y-%m-%d %H:%M:%S'`] Start service"
 bash `dirname $0`/start.sh
 
-MY_DESKTOP=$(xdg-user-dir DESKTOP)
+MY_DESKTOP=$(xdg-user-dir DESKTOP 2>/dev/null)
 if test -d "$MY_DESKTOP"
 then
   echo "[`date +'%Y-%m-%d %H:%M:%S'`] Copy shortcuts to Desktop"
