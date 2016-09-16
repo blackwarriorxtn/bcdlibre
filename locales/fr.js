@@ -90,6 +90,6 @@
 	"English": "English",
 	"Display the interface in english": "Display the interface in english",
 	"Username": "Compte utilisateur",
-	"Password": "Mot de passer",
+	"Password": "Mot de passe",
 	"Veuillez vous authentifier": "Veuillez vous authentifier"
 }
