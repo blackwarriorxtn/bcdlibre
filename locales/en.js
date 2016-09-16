@@ -88,5 +88,8 @@
 	"Français": "Français",
 	"Afficher l'interface en français": "Afficher l'interface en français",
 	"English": "English",
-	"Display the interface in english": "Display the interface in english"
+	"Display the interface in english": "Display the interface in english",
+	"Username": "Username",
+	"Password": "Password",
+	"Veuillez vous authentifier": "Please authenticate"
 }
