@@ -19,6 +19,7 @@ var router = express.Router();
 var mysql      = require('mysql');
 var db = require('./db'); // database utilities
 var debug = require('debug')('bibliopuce:routes_manage');
+var connect_ensure_login = require('connect-ensure-login');
 
 function module_context(req, res, next)
 {
@@ -29,9 +30,13 @@ function module_context(req, res, next)
 
 /* ******************************************************************************** GET menu */
 router.get('/', function(req, res, next) {
+debugger
+  connect_ensure_login.ensureLoggedIn('../login'),
+  function(req, res){
+    var objMyContext = new module_context(req, res, next);
+    res.render('manage/index', { title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu) });
+  }
 
-  var objMyContext = new module_context(req, res, next);
-  res.render('manage/index', { title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu) });
 
 });
 
@@ -44,4 +49,3 @@ router.get('/lang', function(req, res, next) {
 });
 
 module.exports = router;
-

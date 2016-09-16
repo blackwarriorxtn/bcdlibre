@@ -19,6 +19,7 @@ var router = express.Router();
 var mysql      = require('mysql');
 var db = require('./db'); // database utilities
 var debug = require('debug')('bibliopuce:routes_index');
+var passport = require('passport');
 
 /* ******************************************************************************** GET home page. */
 router.get('/', function(req, res, next) {
@@ -50,4 +51,34 @@ router.get('/set', function(req, res, next) {
   res.redirect("/");
 });
 
+/* ******************************************************************************** login */
+router.get('/login',
+  function(req, res){
+    res.render('login', { title: req.app.locals.title, subtitle: "", menus:[] });
+  }
+);
+
+router.post('/login',
+  passport.authenticate('local', { failureRedirect: '/login' }),
+  function(req, res) {
+    res.redirect('/');
+  }
+);
+
+/* ******************************************************************************** logout */
+router.get('/logout',
+  function(req, res){
+    req.logout();
+    res.redirect('/');
+  }
+);
+
+/* TODO ?
+router.get('/profile',
+  require('connect-ensure-login').ensureLoggedIn(),
+  function(req, res){
+    res.render('profile', { user: req.user, title: req.app.locals.title, subtitle: "", menus:[] });
+  }
+);
+*/
 module.exports = router;
