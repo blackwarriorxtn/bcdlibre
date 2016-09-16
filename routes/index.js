@@ -54,7 +54,7 @@ router.get('/set', function(req, res, next) {
 /* ******************************************************************************** login */
 router.get('/login',
   function(req, res){
-    res.render('login', { title: req.app.locals.title, subtitle: "", menus:[] });
+    res.render('login', { title: req.app.locals.title, subtitle: null, menus:[], message: null });
   }
 );
 
