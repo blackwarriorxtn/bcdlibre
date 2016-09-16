@@ -1,0 +1,55 @@
+<% /*
+
+      Copyright 2016 Replay SDK (http://www.replay-sdk.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+ */ -%>
+<!DOCTYPE html>
+<html>
+ <head>
+   <%- include('html_head', {title: title}) %>
+   <%- include('form_script') %>
+ </head>
+ <body>
+   <div id="page">
+     <div id="main">
+       <%- include('page_header', {title: title, subtitle: (subtitle == null ? __("Veuillez vous authentifier") : subtitle), menus:menus}) %>
+       <div class="container">
+         <%- include('form_message', {message: message}) %>
+         <div class="panel-body">
+           <form action="/login" method="post" class="form-vertical">
+             <div class="col-xs-12 col-md-12">
+               <div class="form-group">
+                 <label class="col-xs-2 col-md-2 control-label"><%= __("Username")%>:</label>
+                 <input type="text" name="username" class="form-control"/><br/>
+               </div>
+             </div>
+             <div class="col-xs-12 col-md-12">
+               <div class="form-group">
+                 <label class="col-xs-10 col-md-10 control-label"><%= __("Password")%>:</label>
+                 <input type="password" name="password" class="form-control"/>
+               </div>
+             </div>
+             <p>
+              <%- include('form_okcancel', { visible:true }) %>
+             </p>
+           </form>
+         </div><!-- class="panel-body" -->
+       </div>
+     </div>
+   </div>
+
+   <%- include('page_footer') %>
+ </body>
+</html>
