@@ -103,8 +103,12 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/static', express.static(__dirname + '/public'));
 app.use(express_session({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));
-app.use(passport.initialize());
-app.use(passport.session());
+// If authentication is enabled, set passport module to handle it
+if (app.locals.config.application.authentication == "true")
+{
+  app.use(passport.initialize());
+  app.use(passport.session());
+}
 
 // This is how you'd set a locale from req.cookies.
 // Don't forget to set the cookie either on the client or in your Express app.

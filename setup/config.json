@@ -1,6 +1,7 @@
 {
   "application": {
-    "title": "BCD Libre"
+    "title": "BCD Libre",
+    "authentication" : "false"
   },
   "database": {
     "host_name": "localhost",
