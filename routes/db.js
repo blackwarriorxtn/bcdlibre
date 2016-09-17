@@ -762,12 +762,14 @@ function img_virtual_path(intItemDetailId, strFileExt)
   return(strImageFilePath);
 }
 
+// TODO DELETE
 var records = [
     { id: 1, username: 'jack', password: 'secret', displayName: 'Jack', emails: [ { value: 'jack@example.com' } ] }
   , { id: 2, username: 'jill', password: 'birthday', displayName: 'Jill', emails: [ { value: 'jill@example.com' } ] }
 ];
 
 module.exports.userFindById = function(id, cb) {
+debugger
   process.nextTick(function() {
     var idx = id - 1;
     if (records[idx]) {
@@ -779,14 +781,17 @@ module.exports.userFindById = function(id, cb) {
 }
 
 module.exports.userFindByUsername = function(username, cb) {
-  process.nextTick(function() {
-    for (var i = 0, len = records.length; i < len; i++) {
-      var record = records[i];
-      if (record.username === username) {
-        return cb(null, record);
-      }
+  var objSQLConnection = new_connection();
+  var strSQL = "SELECT id, user_id, user_login, user_password FROM user_account WHERE user_login = "+objSQLConnection.escape(username)+";";
+  objSQLConnection.end();
+  debug(strSQL);
+  runsql(strSQL, function(err, arrRows, fields) {
+    var record = null;
+    if (arrRows && arrRows.length > 0)
+    {
+      record = arrRows[0];
     }
-    return cb(null, null);
+    return cb(null, record);
   });
 }
 

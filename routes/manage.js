@@ -30,7 +30,6 @@ function module_context(req, res, next)
 
 /* ******************************************************************************** GET menu */
 router.get('/', function(req, res, next) {
-debugger
   connect_ensure_login.ensureLoggedIn('../login'),
   function(req, res){
     var objMyContext = new module_context(req, res, next);

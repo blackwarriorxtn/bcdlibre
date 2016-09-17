@@ -31,7 +31,7 @@ var routes_user = require('./routes/user');
 var routes_item = require('./routes/item');
 var routes_borrow = require('./routes/borrow');
 var routes_manage = require('./routes/manage');
-
+var bcrypt = require('bcryptjs');
 
 // ************************************************************************** SECURITY AND AUTHENTICATION WITH PASSPORT
 // Configure the local strategy for use by Passport.
@@ -46,7 +46,10 @@ passport.use(new Strategy(
     db.userFindByUsername(username, function(err, user) {
       if (err) { return cb(err); }
       if (!user) { return cb(null, false); }
-      if (user.password != password) { return cb(null, false); }
+      console.log("Found user %s : checking password", username);
+      // Compare with hashed password from database
+      var blnPasswordOK = bcrypt.compareSync(password, user.user_password);
+      if (blnPasswordOK) { return cb(null, false); }
       return cb(null, user);
     });
   }));
