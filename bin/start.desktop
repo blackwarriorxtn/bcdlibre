@@ -6,6 +6,6 @@ Type=Application
 Terminal=true
 Icon[fr_FR]=gnome-panel-launcher
 Name[fr_FR]=BCD Libre - Démarrage
-Exec=bash /home/bibliopuce/bcdlibre/bin/start.sh
+Exec=bash -i /home/bibliopuce/bcdlibre/bin/start.sh
 Name=BCD Libre - Démarrage
 Icon=gnome-panel-launcher
