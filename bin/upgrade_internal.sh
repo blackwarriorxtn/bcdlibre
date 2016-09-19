@@ -20,6 +20,7 @@ MY_DESKTOP=$(xdg-user-dir DESKTOP 2>/dev/null)
 if test -d "$MY_DESKTOP"
 then
   echo "[`date +'%Y-%m-%d %H:%M:%S'`] Copy shortcuts to Desktop"
+  echo "cp $LAST_DIR/*.desktop $MY_DESKTOP/"
   cp $LAST_DIR/*.desktop "$MY_DESKTOP/"
   if test ! -d ~/.local/share/applications/
   then
