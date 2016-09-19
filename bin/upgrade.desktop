@@ -6,6 +6,6 @@ Type=Application
 Terminal=true
 Icon[fr_FR]=gnome-panel-launcher
 Name[fr_FR]=BCD Libre - Mise a jour
-Exec=bash -i /home/bibliopuce/bcdlibre/bin/upgrade.sh
+Exec=bash -i /home/bibliopuce/bibliopuce/bin/upgrade.sh
 Name=BCD Libre - Mise a jour
 Icon=gnome-panel-launcher

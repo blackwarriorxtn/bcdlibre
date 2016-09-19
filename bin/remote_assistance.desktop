@@ -6,6 +6,6 @@ Type=Application
 Terminal=true
 Icon[fr_FR]=gnome-panel-launcher
 Name[fr_FR]=BCD Libre - Assistance
-Exec=bash -i /home/bibliopuce/bcdlibre/bin/remote_assistance.sh
+Exec=bash -i /home/bibliopuce/bibliopuce/bin/remote_assistance.sh
 Name=BCD Libre - Assistance
 Icon=gnome-panel-launcher

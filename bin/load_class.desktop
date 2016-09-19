@@ -6,6 +6,6 @@ Type=Application
 Terminal=true
 Icon[fr_FR]=gnome-panel-launcher
 Name[fr_FR]=BCD Libre - Charge Classe (load_class.csv)
-Exec=bash -i /home/bibliopuce/bcdlibre/bin/load_class.sh
+Exec=bash -i /home/bibliopuce/bibliopuce/bin/load_class.sh
 Name=BCD Libre - Load Class (load_class.csv)
 Icon=gnome-panel-launcher

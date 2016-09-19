@@ -6,6 +6,6 @@ Type=Application
 Terminal=true
 Icon[fr_FR]=gnome-panel-launcher
 Name[fr_FR]=BCD Libre - Sauvegarde
-Exec=bash -i /home/bibliopuce/bcdlibre/bin/backup.sh
+Exec=bash -i /home/bibliopuce/bibliopuce/bin/backup.sh
 Name=BCD Libre - Sauvegarde
 Icon=gnome-panel-launcher
