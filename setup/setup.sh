@@ -59,11 +59,15 @@ if [ -f /etc/mysql/my.cnf ] ; then
   fi
   #
 fi
+
+# Change directory to be able to find .sql files below to execute them
+cd `dirname $0`/..
+
 echo "[`date +'%Y-%m-%d %H:%M:%S'`] Creating database (empty)..."
-mysql --default-character-set=utf8 --user=root --password="$MYSQL_ROOT_PASSWORD" < db/create_database.sql
+mysql --default-character-set=utf8 --user=root --password="$MYSQL_ROOT_PASSWORD" < db/create_database.sql  || handle_error "Can't create database!"
 
 if [ $MYSQL_CREATE_SAMPLE = "y" ] ; then
-  mysql --default-character-set=utf8 --user=root --password="$MYSQL_ROOT_PASSWORD" < db/insert_sample_data.sql
+  mysql --default-character-set=utf8 --user=root --password="$MYSQL_ROOT_PASSWORD" < db/insert_sample_data.sql || handle_error "Can't create sample data!"
 fi
 
 echo "[`date +'%Y-%m-%d %H:%M:%S'`] End."
