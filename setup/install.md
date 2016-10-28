@@ -15,7 +15,7 @@ Please note that nodejs installation is automated with the setup.sh script (see 
 
 #### Get the source code
 
-    git clone git://github.com/e-dot/bcdlibre.git
+    git clone https://github.com/e-dot/bcdlibre.git
 
 #### Start setup script
 
@@ -38,7 +38,7 @@ Please note that nodejs installation is automated with the setup.sh script (see 
 
 #### Get the source code
 
-    git clone git://github.com/e-dot/bcdlibre.git
+    git clone https://github.com/e-dot/bcdlibre.git
 
 #### Start setup script
 
