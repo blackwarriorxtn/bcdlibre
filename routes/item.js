@@ -51,7 +51,11 @@ function module_context(req, res, next)
       {name:"description",label:req.i18n.__("Description (Synopsis)"),type:"String",required:false,validation:null,maximum_length:65535},
     ],
     allowed_states:null,
-    sql_counter:"SELECT COUNT(1) AS counter FROM item WHERE item_detail_id = ?"
+    sql_counter:"\
+SELECT COUNT(item.id) AS counter, COUNT(borrow.id) AS borrowed\n\
+FROM item LEFT OUTER JOIN borrow ON borrow.item_id = item.id\n\
+WHERE item_detail_id = ? \n\
+GROUP BY item_detail_id"
   };
   // To search we only have ONE field named "search" and a special SQL table with full text indexes
   this.objSearchParameters = {
@@ -462,7 +466,7 @@ router.get('/view', function(req, res, next) {
     var counter = results[1][0];
     debug("counter = %j", counter);
     var strFormInfo = req.i18n.__("Exemplaires : %d", counter.counter);
-    var strFormInfoType = (counter.counter <= 0 ? "warning" : "info");
+    var strFormInfoType = (counter.counter <= 0 || counter.borrowed == counter.counter ? "warning" : "info");
     var strURLCopies = "new_copy?item_detail_id="+encodeURIComponent(result.id);
     var strURLCopiesAdd = strURLCopies+"&action="+encodeURIComponent("1");
     var strURLCopiesRemove = strURLCopies+"&action="+encodeURIComponent("-1");
