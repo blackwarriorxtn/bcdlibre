@@ -34,6 +34,7 @@
                 <th>#</th>
                 <th><%=__("ISBN")%></th>
                 <th><%=__("Ex.")%></th>
+                <th><%=__("Emprunts")%></th>
                 <th><%=__("Classification")%></th>
                 <th><%=__("Série")%></th>
                 <th><%=__("Titre")%></th>
@@ -46,7 +47,8 @@
                 <tr data-href="view?id=<%- records[i].id %>">
                   <td><a href="view?id=<%- records[i].id %>">#<%= records[i].id %></a></td>
                   <td><%= records[i].isbn13 %></td>
-                  <td><%= records[i].counter %></td>
+                  <td<%- (records[i].__cssclass_counter ? " class=\"" + records[i].__cssclass_counter + "\"" : "") %>><%= records[i].counter %></td>
+                  <td<%- (records[i].__cssclass_borrowed ? " class=\"" + records[i].__cssclass_borrowed + "\"" : "") %>><%= records[i].borrowed %></td>
                   <td><%= records[i].classification %></td>
                   <td><%= records[i].series_title %></td>
                   <td><%= records[i].title %></td>

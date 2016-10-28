@@ -58,19 +58,23 @@ function module_context(req, res, next)
     table_name: this.objFormParameters.table_name+"_search",
     primary_key: this.objFormParameters.primary_key,
     autoincrement_column: this.objFormParameters.autoincrement_column,
-    list_fields:"item_detail_id AS id, title, author, description, isbn13, series_title, classification",
+    list_fields:"item_detail_search.item_detail_id AS id, COUNT(item.id) AS counter, COUNT(borrow.id) AS borrowed, IF (COUNT(item.id) <= COUNT(borrow.id), 'warning', NULL) AS `__cssclass_counter`, IF (COUNT(item.id) <= COUNT(borrow.id), 'warning', NULL) AS `__cssclass_borrowed`, item_detail_search.title, item_detail_search.author, item_detail_search.description, item_detail_search.isbn13, item_detail_search.series_title, item_detail_search.classification",
     fields:[
       {
         name:"search",label:req.i18n.__("Titre, Auteur, Description"),type:"String",required:true,validation:null,maximum_length:255,
         match_fields:[
-          "isbn13",
-          "title",
-          "author",
-          "description",
-          "classification"
+          "item_detail_search.isbn13",
+          "item_detail_search.title",
+          "item_detail_search.author",
+          "item_detail_search.description",
+          "item_detail_search.classification"
         ]
       },
-    ]
+    ],
+    // Add a join to check if item has been borrowed (no need to investigate a book you can't borrrow)
+    join : "\nJOIN item_detail ON item_detail.id = item_detail_search.item_detail_id \nLEFT OUTER JOIN item ON item.item_detail_id = item_detail.id \nLEFT OUTER JOIN borrow ON borrow.item_id = item.id ",
+    // Add a group by for counter (number of copies and borrowed items)
+    group_by : "GROUP BY item_detail_search.id",
   };
   // *** PARAMETERS (MENU)
   this.objMenu = [{text:req.i18n.__("Gérer"),link:"/manage/"},{text:req.i18n.__("Livres"),link:"/item/"}];

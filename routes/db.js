@@ -645,7 +645,10 @@ var search_record = function(req, res, next, objFormParameters, objSQLOptions, f
   } // for (var objField in req.body)
 
   var strSQL = "SELECT "+(objFormParameters.list_fields ? objFormParameters.list_fields : "*" )+" FROM "+objSQLConnection.escapeId(objFormParameters.table_name)
-             + (arrSQLWhere.length == 0 ? "" : "\nWHERE "+arrSQLWhere.join("\n AND ") )+"\n;"
+             + (objFormParameters.join ? objFormParameters.join : "")
+             + (arrSQLWhere.length == 0 ? "" : "\nWHERE "+arrSQLWhere.join("\n AND ") )
+             + (objFormParameters.group_by ? objFormParameters.group_by : "")
+             +"\n;"
              ;
   debug(strSQL);
 
