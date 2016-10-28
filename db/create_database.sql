@@ -100,7 +100,7 @@ CREATE TABLE item_detail_search(
   FULLTEXT KEY item_ft_isbn13(isbn13),
   FULLTEXT KEY item_ft_series_title(series_title),
   FULLTEXT KEY item_ft_classification(classification),
-  FULLTEXT KEY ids_all(title, author, description, classification)
+  FULLTEXT KEY ids_all(isbn13, title, author, description, classification)
 
 )  ENGINE=MyISAM COMMENT 'Search engine for items (MyISAM Format for FULL TEXT SEARCHES)'
 ;
