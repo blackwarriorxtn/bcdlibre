@@ -44,7 +44,7 @@
             </thead>
             <tbody>
               <% for(var i=0; i< records.length; i++) { %>
-                <tr data-href="view?id=<%- records[i].id %>">
+                <tr data-href="view?id=<%- records[i].id %>"<%- (records[i].__cssclass ? " class=\"" + records[i].__cssclass + "\"" : "") %>>
                   <td><a href="view?id=<%- records[i].id %>">#<%= records[i].id %></a></td>
                   <td><%= records[i].isbn13 %></td>
                   <td<%- (records[i].__cssclass_counter ? " class=\"" + records[i].__cssclass_counter + "\"" : "") %>><%= records[i].counter %></td>

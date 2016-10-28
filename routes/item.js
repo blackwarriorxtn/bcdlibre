@@ -62,7 +62,7 @@ GROUP BY item_detail_id"
     table_name: this.objFormParameters.table_name+"_search",
     primary_key: this.objFormParameters.primary_key,
     autoincrement_column: this.objFormParameters.autoincrement_column,
-    list_fields:"item_detail_search.item_detail_id AS id, COUNT(item.id) AS counter, COUNT(borrow.id) AS borrowed, IF (COUNT(item.id) <= COUNT(borrow.id), 'warning', NULL) AS `__cssclass_counter`, IF (COUNT(item.id) <= COUNT(borrow.id), 'warning', NULL) AS `__cssclass_borrowed`, item_detail_search.title, item_detail_search.author, item_detail_search.description, item_detail_search.isbn13, item_detail_search.series_title, item_detail_search.classification",
+    list_fields:"item_detail_search.item_detail_id AS id, COUNT(item.id) AS counter, COUNT(borrow.id) AS borrowed, IF (COUNT(item.id) <= COUNT(borrow.id), 'warning', NULL) AS `__cssclass`, IF (COUNT(item.id) <= COUNT(borrow.id), 'warning', NULL) AS `__cssclass_counter`, IF (COUNT(item.id) <= COUNT(borrow.id), 'warning', NULL) AS `__cssclass_borrowed`, item_detail_search.title, item_detail_search.author, item_detail_search.description, item_detail_search.isbn13, item_detail_search.series_title, item_detail_search.classification",
     fields:[
       {
         name:"search",label:req.i18n.__("Titre, Auteur, Description"),type:"String",required:true,validation:null,maximum_length:255,
