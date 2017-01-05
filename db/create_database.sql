@@ -180,9 +180,9 @@ CREATE TABLE user(
   comment TEXT NULL COMMENT 'User Comment',
 
   PRIMARY KEY(id),
-  KEY user_category(category),
-  KEY user_last_first_name(last_name,first_name),
-  KEY user_first_last_name(first_name,last_name),
+  KEY user_category(category(64)),
+  KEY user_last_first_name(last_name,first_name(64)),
+  KEY user_first_last_name(first_name,last_name(64)),
   KEY user_phone(phone)
 
 ) ENGINE=INNODB COMMENT 'User description'
