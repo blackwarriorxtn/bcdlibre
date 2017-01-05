@@ -15,8 +15,6 @@ REM   See the License for the specific language governing permissions and
 REM   limitations under the License.
 
 CD %~dp0..
-REM TODO DELETE (debug)
-set DEBUG=bibliopuce:*
 REM Start express module and restart it after 1 sec if it crashes
 %COMSPEC% /C node_modules\.bin\forever.cmd --minUptime 1000 --spinSleepTime 1000 start bin\www || GOTO ERROR
 

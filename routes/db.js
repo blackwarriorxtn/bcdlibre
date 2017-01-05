@@ -701,8 +701,39 @@ var format_isbn = function(strRawValue)
   return(strValue);
 }
 
-// Return only rows with a value ("fieldCount" != ​0)
 function sql_get_rows(arrRows, objOptions)
+{
+  var rows = null;
+
+  var blnReturnLast = true;
+  if (objOptions && objOptions.only_last == false)
+  {
+    blnReturnLast = false;
+  }
+
+  if (arrRows != null)
+  {
+    rows = arrRows.filter(function (objElement) {
+      if (objElement.fieldCount == 0)
+      {
+        return(false);
+      }
+      return(true);
+    });
+
+    if (blnReturnLast)
+    {
+      // Return only the last non-empty record
+      rows = rows[rows.length-1];
+    } // if (blnReturnLast)
+
+  } // if (arrRows != null)
+
+  return(rows);
+}
+
+// Return only rows with a value ("fieldCount" != ​0)
+function obsolete_sql_get_rows(arrRows, objOptions)
 {
   var rows = null;
 
