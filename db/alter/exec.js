@@ -19,7 +19,7 @@ for (var intFile = 0; intFile < arrFiles.length; intFile++)
     var arrSubFiles = fs.readdirSync(arrFiles[intFile] /* path */);
     for (var intSubFile = 0; intSubFile < arrSubFiles.length; intSubFile++)
     {
-      if (arrSubFiles[intFile].match(/\.sql$/))
+      if (arrSubFiles[intFile] != null && arrSubFiles[intFile].match(/\.sql$/))
       {
         arrSQLFiles.push(arrFiles[intFile]+"/"+arrSubFiles[intSubFile]);
       }
