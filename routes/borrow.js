@@ -452,6 +452,10 @@ router.get('/webservice/borrows', function(req, res, next) {
   var strSQLWhere = null;
   if (false)
   {
+
+
+    
+    // ************************************************************ OBSOLETE : TODO DELETE
     // OLD CODE - slow!
     if (req.query.text)
     {
@@ -491,6 +495,12 @@ router.get('/webservice/borrows', function(req, res, next) {
       res.json(rows);
     },
     objSQLConnection);
+    // ************************************************************ END OF OBSOLETE
+
+
+
+
+
   } // if (oldcode)
   else
   {
