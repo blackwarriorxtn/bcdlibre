@@ -450,44 +450,195 @@ router.get('/webservice/borrows', function(req, res, next) {
   var objSQLConnection = db.new_connection();
   console.log("/webservice/borrows:req.query=%j", req.query);
   var strSQLWhere = null;
-  if (req.query.text)
+  if (false)
   {
-    var strValue = db.format_isbn(req.query.text);
-    var strSQLText = objSQLConnection.escape(strValue);
-    // Match against items AND users
-    strSQLWhere = " MATCH (item_detail_search.title,item_detail_search.author,item_detail_search.isbn13, user_search.last_name, user_search.first_name,user_search.category,user_search.comment) AGAINST ("+strSQLText+" IN BOOLEAN MODE)\n";
-  }
-  // Custom SQL, list of borrows matching a string
-  db.runsql('\
-  SELECT borrow.id  AS `id`, \n\
-    CONCAT_WS(\', \', item_detail.title, item_detail.author, item_detail.isbn13, user.category, user.last_name, user.first_name) AS `text`, \n\
-    borrow.user_id AS `borrower_id`,  \n\
-    user.category AS `borrower_category`  \n\
-  FROM borrow \n\
-  JOIN item ON borrow.item_id = item.id \n\
-  JOIN item_detail ON item.item_detail_id = item_detail.id \n\
-  JOIN item_detail_search ON item_detail_search.item_detail_id = item_detail.id \n\
-  JOIN user ON user.id = borrow.user_id \n\
-  JOIN user_search ON user_search.user_id = user.id \n\
-'+(strSQLWhere == null ? "" : "AND "+strSQLWhere)+'\
-GROUP BY item.id, user.id \n\
-; \n\
-', function(err, arrRows, fields) {
-    if (err)
+    // OLD CODE - slow!
+    if (req.query.text)
     {
-      // Cleanup
-      if (objSQLConnection)
-      {
-        objSQLConnection.end();
-      }
-      throw err;
+      var strValue = db.format_isbn(req.query.text);
+      var strSQLText = objSQLConnection.escape(strValue);
+      // Match against items AND users
+      strSQLWhere = " MATCH (item_detail_search.title,item_detail_search.author,item_detail_search.isbn13, user_search.last_name, user_search.first_name,user_search.category,user_search.comment) AGAINST ("+strSQLText+" IN BOOLEAN MODE)\n";
     }
-    var rows = arrRows;
-    // Return result as JSON
-    console.log("/webservice/borrows:rows=%j", rows);
-    res.json(rows);
-  },
-  objSQLConnection);
+    // Custom SQL, list of borrows matching a string
+    db.runsql('\
+    SELECT borrow.id  AS `id`, \n\
+      CONCAT_WS(\', \', item_detail.title, item_detail.author, item_detail.isbn13, user.category, user.last_name, user.first_name) AS `text`, \n\
+      borrow.user_id AS `borrower_id`,  \n\
+      user.category AS `borrower_category`  \n\
+    FROM borrow \n\
+    JOIN item ON borrow.item_id = item.id \n\
+    JOIN item_detail ON item.item_detail_id = item_detail.id \n\
+    JOIN item_detail_search ON item_detail_search.item_detail_id = item_detail.id \n\
+    JOIN user ON user.id = borrow.user_id \n\
+    JOIN user_search ON user_search.user_id = user.id \n\
+  '+(strSQLWhere == null ? "" : "AND "+strSQLWhere)+'\
+  GROUP BY item.id, user.id \n\
+  ; \n\
+  ', function(err, arrRows, fields) {
+      if (err)
+      {
+        // Cleanup
+        if (objSQLConnection)
+        {
+          objSQLConnection.end();
+        }
+        throw err;
+      }
+      var rows = arrRows;
+      // Return result as JSON
+      console.log("/webservice/borrows:rows=%j", rows);
+      res.json(rows);
+    },
+    objSQLConnection);
+  } // if (oldcode)
+  else
+  {
+    // New code: optimized and using temporary tables
+    if (req.query.text)
+    {
+      var strValue = db.format_isbn(req.query.text);
+      var strSQLText = objSQLConnection.escape(strValue);
+      // Match against items AND users
+      // Custom SQL, list of borrows matching a string
+      db.runsql('\
+    \
+    \
+      DROP TEMPORARY TABLE IF EXISTS tmp_item_search \n\
+      ; \n\
+      CREATE TEMPORARY TABLE tmp_item_search( \n\
+        id INTEGER NOT NULL PRIMARY KEY \n\
+      ) \n\
+      ; \n\
+      INSERT IGNORE INTO tmp_item_search(id) \n\
+      SELECT id FROM item_detail_search WHERE MATCH (item_detail_search.isbn13) AGAINST ('+strSQLText+' IN BOOLEAN MODE) \n\
+      ; \n\
+      INSERT IGNORE INTO tmp_item_search(id) \n\
+      SELECT id FROM item_detail_search WHERE MATCH (item_detail_search.title) AGAINST ('+strSQLText+' IN BOOLEAN MODE) \n\
+      ; \n\
+      INSERT IGNORE INTO tmp_item_search(id) \n\
+      SELECT id FROM item_detail_search WHERE MATCH (item_detail_search.author) AGAINST ('+strSQLText+' IN BOOLEAN MODE) \n\
+      ; \n\
+       \n\
+      DROP TEMPORARY TABLE IF EXISTS tmp_user_search \n\
+      ; \n\
+      CREATE TEMPORARY TABLE tmp_user_search( \n\
+        id INTEGER NOT NULL PRIMARY KEY \n\
+      ) \n\
+      ; \n\
+      INSERT IGNORE INTO tmp_user_search(id) \n\
+      SELECT id FROM user_search WHERE MATCH (user_search.last_name) AGAINST ('+strSQLText+' IN BOOLEAN MODE) \n\
+      ; \n\
+      INSERT IGNORE INTO tmp_user_search(id) \n\
+      SELECT id FROM user_search WHERE MATCH (user_search.first_name) AGAINST ('+strSQLText+' IN BOOLEAN MODE) \n\
+      ; \n\
+      INSERT IGNORE INTO tmp_user_search(id) \n\
+      SELECT id FROM user_search WHERE MATCH (user_search.category) AGAINST ('+strSQLText+' IN BOOLEAN MODE) \n\
+      ; \n\
+      INSERT IGNORE INTO tmp_user_search(id) \n\
+      SELECT id FROM user_search WHERE MATCH (user_search.comment) AGAINST ('+strSQLText+' IN BOOLEAN MODE) \n\
+      ; \n\
+       \n\
+      DROP TEMPORARY TABLE IF EXISTS tmp_borrow \n\
+      ; \n\
+      CREATE TEMPORARY TABLE tmp_borrow( \n\
+        id INTEGER NOT NULL PRIMARY KEY \n\
+      ) \n\
+      ; \n\
+      INSERT IGNORE INTO tmp_borrow(id) \n\
+      SELECT borrow.id \n\
+        FROM borrow \n\
+        JOIN item ON borrow.item_id = item.id \n\
+        JOIN item_detail ON item.item_detail_id = item_detail.id \n\
+        JOIN item_detail_search ON item_detail_search.item_detail_id = item_detail.id \n\
+        JOIN tmp_item_search ON item_detail_search.id = tmp_item_search.id \n\
+      ; \n\
+      INSERT IGNORE INTO tmp_borrow(id) \n\
+      SELECT borrow.id \n\
+        FROM borrow \n\
+        JOIN user ON user.id = borrow.user_id \n\
+        JOIN user_search ON user_search.user_id = user.id \n\
+        JOIN tmp_user_search ON user_search.id = tmp_user_search.id \n\
+      ; \n\
+      \n\
+      SELECT \n\
+        CONCAT_WS(", ", item_detail.title, item_detail.author, item_detail.isbn13, user.category, user.last_name, user.first_name) AS `text`, \n\
+          borrow.user_id AS `borrower_id`, \n\
+          user.category AS `borrower_category` \n\
+        FROM tmp_borrow \n\
+        JOIN borrow ON tmp_borrow.id = borrow.id \n\
+        JOIN item ON borrow.item_id = item.id \n\
+        JOIN item_detail ON item.item_detail_id = item_detail.id \n\
+        JOIN item_detail_search ON item_detail_search.item_detail_id = item_detail.id \n\
+        JOIN user ON user.id = borrow.user_id \n\
+        JOIN user_search ON user_search.user_id = user.id \n\
+        GROUP BY item.id, user.id \n\
+      ; \n\
+      \n\
+      /* Cleanup */ \n\
+      DROP TEMPORARY TABLE IF EXISTS tmp_item_search \n\
+      ; \n\
+      DROP TEMPORARY TABLE IF EXISTS tmp_user_search \n\
+      ; \n\
+      DROP TEMPORARY TABLE IF EXISTS tmp_borrow \n\
+      ; \n\
+    ; \n\
+    ', function(err, arrRows, fields) {
+        if (err)
+        {
+          // Cleanup
+          if (objSQLConnection)
+          {
+            objSQLConnection.end();
+          }
+          throw err;
+        }
+        var rows = db.rows(arrRows, null /* objOptions */);
+        // Return result as JSON
+        console.log("/webservice/borrows:rows=%j", rows);
+        res.json(rows);
+      },
+      objSQLConnection);
+
+    } // if (req.query.text)
+    else
+    {
+
+      // No text, list ALL borrows
+      db.runsql('\
+      SELECT borrow.id  AS `id`, \n\
+        CONCAT_WS(\', \', item_detail.title, item_detail.author, item_detail.isbn13, user.category, user.last_name, user.first_name) AS `text`, \n\
+        borrow.user_id AS `borrower_id`,  \n\
+        user.category AS `borrower_category`  \n\
+      FROM borrow \n\
+      JOIN item ON borrow.item_id = item.id \n\
+      JOIN item_detail ON item.item_detail_id = item_detail.id \n\
+      JOIN item_detail_search ON item_detail_search.item_detail_id = item_detail.id \n\
+      JOIN user ON user.id = borrow.user_id \n\
+      JOIN user_search ON user_search.user_id = user.id \n\
+    '+(strSQLWhere == null ? "" : "AND "+strSQLWhere)+'\
+    GROUP BY item.id, user.id \n\
+    ; \n\
+    ', function(err, arrRows, fields) {
+        if (err)
+        {
+          // Cleanup
+          if (objSQLConnection)
+          {
+            objSQLConnection.end();
+          }
+          throw err;
+        }
+        var rows = arrRows;
+        // Return result as JSON
+        console.log("/webservice/borrows:rows=%j", rows);
+        res.json(rows);
+      },
+      objSQLConnection);
+
+    } // else if (req.query.text)
+
+  } // else new code
 
   if (objSQLConnection)
   {
