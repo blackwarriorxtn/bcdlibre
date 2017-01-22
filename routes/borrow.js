@@ -228,25 +228,30 @@ router.get('/webservice/items', function(req, res, next) {
     db.runsql('DROP TEMPORARY TABLE IF EXISTS tmp_item_search \n\
 ; \n\
 CREATE TEMPORARY TABLE tmp_item_search( \n\
-  id INTEGER NOT NULL PRIMARY KEY \n\
+  id INTEGER NOT NULL PRIMARY KEY, \n\
+  relevance DOUBLE NULL, \n\
+  KEY(relevance, id) \n\
 ) \n\
 ; \n'
 + 
   (strSQLSearchValue == null 
     ? /* No text - list all items */
-'INSERT IGNORE INTO tmp_item_search(id) \n\
-SELECT id FROM item_detail_search \n\
+'INSERT IGNORE INTO tmp_item_search(id, relevance) \n\
+SELECT id, 1 FROM item_detail_search \n\
 ; \n'
 
     : /* Search text - in three fields with 3 queries to optimize and ensure a proper key is used */ '\
-INSERT IGNORE INTO tmp_item_search(id) \n\
-SELECT id FROM item_detail_search WHERE MATCH(item_detail_search.isbn13) AGAINST ('+strSQLSearchValue+' IN BOOLEAN MODE) \n\
+INSERT IGNORE INTO tmp_item_search(id, relevance) \n\
+SELECT id, MATCH(item_detail_search.isbn13) AGAINST ('+strSQLSearchValue+' IN BOOLEAN MODE) \n\
+FROM item_detail_search WHERE MATCH(item_detail_search.isbn13) AGAINST ('+strSQLSearchValue+' IN BOOLEAN MODE) \n\
 ; \n\
-INSERT IGNORE INTO tmp_item_search(id) \n\
-SELECT id FROM item_detail_search WHERE MATCH(item_detail_search.title) AGAINST ('+strSQLSearchValue+' IN BOOLEAN MODE) \n\
+INSERT IGNORE INTO tmp_item_search(id, relevance) \n\
+SELECT id, MATCH(item_detail_search.title) AGAINST ('+strSQLSearchValue+' IN BOOLEAN MODE) \n\
+FROM item_detail_search WHERE MATCH(item_detail_search.title) AGAINST ('+strSQLSearchValue+' IN BOOLEAN MODE) \n\
 ; \n\
-INSERT IGNORE INTO tmp_item_search(id) \n\
-SELECT id FROM item_detail_search WHERE MATCH(item_detail_search.author) AGAINST ('+strSQLSearchValue+' IN BOOLEAN MODE) \n\
+INSERT IGNORE INTO tmp_item_search(id, relevance) \n\
+SELECT id, MATCH(item_detail_search.author) AGAINST ('+strSQLSearchValue+' IN BOOLEAN MODE) \n\
+FROM item_detail_search WHERE MATCH(item_detail_search.author) AGAINST ('+strSQLSearchValue+' IN BOOLEAN MODE) \n\
 ; \n\
 ') + '\
 \n\
@@ -259,6 +264,7 @@ SELECT item.id AS `id`, CONCAT_WS(\', \', CONCAT("#",item.id), item_detail.title
   LEFT OUTER JOIN borrow ON borrow.item_id = item.id \n\
   WHERE borrow.id IS NULL \n\
   GROUP BY item.id \n\
+  ORDER BY tmp_item_search.relevance DESC \n\
 ; \n\
  \n\
 DROP TEMPORARY TABLE IF EXISTS tmp_item_search \n\
