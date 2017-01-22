@@ -869,7 +869,7 @@ DROP TEMPORARY TABLE IF EXISTS tmp_classification \n\
       debug("/webservice/items/classification:rows=%j", rows);
       res.json(rows);
     }, objSQLConnection);
-  } // if (req.body.action == "borrow")
+  } // if (req.query && req.query.action == "classification")
   else
   {
     throw new Error(req.i18n.__("ERROR: Action \"%s\" is not supported!",req.query.action));
