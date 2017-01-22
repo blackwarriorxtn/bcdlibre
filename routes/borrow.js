@@ -246,12 +246,12 @@ SELECT id, MATCH(item_detail_search.isbn13) AGAINST ('+strSQLSearchValue+' IN BO
 FROM item_detail_search WHERE MATCH(item_detail_search.isbn13) AGAINST ('+strSQLSearchValue+' IN BOOLEAN MODE) \n\
 ; \n\
 INSERT IGNORE INTO tmp_item_search(id, relevance) \n\
-SELECT id, MATCH(item_detail_search.title) AGAINST ('+strSQLSearchValue+' IN BOOLEAN MODE) * 2 /* title is very relevant */ \n\
-FROM item_detail_search WHERE MATCH(item_detail_search.title) AGAINST ('+strSQLSearchValue+' IN BOOLEAN MODE) \n\
+SELECT id, MATCH(item_detail_search.title) AGAINST ('+strSQLSearchValue+' IN NATURAL LANGUAGE MODE) * 2 /* title is very relevant */ \n\
+FROM item_detail_search WHERE MATCH(item_detail_search.title) AGAINST ('+strSQLSearchValue+' IN NATURAL LANGUAGE MODE) \n\
 ; \n\
 INSERT IGNORE INTO tmp_item_search(id, relevance) \n\
-SELECT id, MATCH(item_detail_search.author) AGAINST ('+strSQLSearchValue+' IN BOOLEAN MODE) /* author is less relevant */  \n\
-FROM item_detail_search WHERE MATCH(item_detail_search.author) AGAINST ('+strSQLSearchValue+' IN BOOLEAN MODE) \n\
+SELECT id, MATCH(item_detail_search.author) AGAINST ('+strSQLSearchValue+' IN NATURAL LANGUAGE MODE) /* author is less relevant */  \n\
+FROM item_detail_search WHERE MATCH(item_detail_search.author) AGAINST ('+strSQLSearchValue+' IN NATURAL LANGUAGE MODE) \n\
 ; \n\
 ') + '\
 \n\
@@ -281,7 +281,7 @@ DROP TEMPORARY TABLE IF EXISTS tmp_item_search \n\
       }
       var rows = db.rows(arrRows);
       // Return result as JSON
-      console.log("/webservice/items:rows=%j", rows);
+      console.log("/webservice/items:rows=%j", rows ? rows.slice(0,20) : null);
       res.json(rows);
     }, objSQLConnection);
   } // if (req.body.action == "borrow")
