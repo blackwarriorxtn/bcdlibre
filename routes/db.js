@@ -648,6 +648,7 @@ var search_record = function(req, res, next, objFormParameters, objSQLOptions, f
              + (objFormParameters.join ? objFormParameters.join : "")
              + (arrSQLWhere.length == 0 ? "" : "\nWHERE "+arrSQLWhere.join("\n AND ") )
              + (objFormParameters.group_by ? objFormParameters.group_by : "")
+             + (objFormParameters.order_by ? " \nORDER BY " + arrSQLWhere.map(function (value, index) {return(value + " " + objFormParameters.order_by)}).join(",") : "")
              +"\n;"
              ;
   debug(strSQL);

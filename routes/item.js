@@ -79,6 +79,8 @@ GROUP BY item_detail_id"
     join : "\nJOIN item_detail ON item_detail.id = item_detail_search.item_detail_id \nLEFT OUTER JOIN item ON item.item_detail_id = item_detail.id \nLEFT OUTER JOIN borrow ON borrow.item_id = item.id ",
     // Add a group by for counter (number of copies and borrowed items)
     group_by : "GROUP BY item_detail_search.id",
+    // Add an order by clause
+    order_by : "DESC"
   };
   // *** PARAMETERS (MENU)
   this.objMenu = [{text:req.i18n.__("Gérer"),link:"/manage/"},{text:req.i18n.__("Livres"),link:"/item/"}];
@@ -128,7 +130,7 @@ function aws_post_processing(strISBN, objResultItem, objWebServiceResult)
 
     debug("Amazon Web Service Title (processed) = %s",strNewValue);
     // WARNING: don't overwrite result from another Web Service, unless this result is longuer (ok, it's a silly way to finding the most appropriate answer) and well-encoded (not UTF8 garbage from AWS)
-    if (objWebServiceResult.title == null || (objWebServiceResult.title.length < strNewValue.length && strNewValue.match(/Ã/) == null ))
+    if (objWebServiceResult.title == null || (objWebServiceResult.title.length < strNewValue.length && strNewValue.MATCH(/Ã/) == null ))
     {
       objWebServiceResult.title = strNewValue;
     }
