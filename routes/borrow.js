@@ -240,13 +240,13 @@ SELECT id FROM item_detail_search \n\
 
     : /* Search text - in three fields with 3 queries to optimize and ensure a proper key is used */ '\
 INSERT IGNORE INTO tmp_item_search(id) \n\
-SELECT id FROM item_detail_search WHERE MATCH (item_detail_search.isbn13) AGAINST ('+strSQLSearchValue+' IN BOOLEAN MODE) \n\
+SELECT id FROM item_detail_search WHERE MATCH(item_detail_search.isbn13) AGAINST ('+strSQLSearchValue+' IN BOOLEAN MODE) \n\
 ; \n\
 INSERT IGNORE INTO tmp_item_search(id) \n\
-SELECT id FROM item_detail_search WHERE MATCH (item_detail_search.title) AGAINST ('+strSQLSearchValue+' IN BOOLEAN MODE) \n\
+SELECT id FROM item_detail_search WHERE MATCH(item_detail_search.title) AGAINST ('+strSQLSearchValue+' IN BOOLEAN MODE) \n\
 ; \n\
 INSERT IGNORE INTO tmp_item_search(id) \n\
-SELECT id FROM item_detail_search WHERE MATCH (item_detail_search.author) AGAINST ('+strSQLSearchValue+' IN BOOLEAN MODE) \n\
+SELECT id FROM item_detail_search WHERE MATCH(item_detail_search.author) AGAINST ('+strSQLSearchValue+' IN BOOLEAN MODE) \n\
 ; \n\
 ') + '\
 \n\
@@ -352,7 +352,7 @@ router.get('/webservice/users', function(req, res, next) {
     var strValue = req.query.text;
     var strSQLText = objSQLConnection.escape(strValue);
     var strSQLTextStartWith = objSQLConnection.escape(strValue+"%");
-    strSQLWhere1 = " MATCH (user_search.last_name, user_search.first_name, user_search.category,user_search.comment) AGAINST ("+strSQLText+" IN BOOLEAN MODE)\n";
+    strSQLWhere1 = " MATCH(user_search.last_name, user_search.first_name, user_search.category,user_search.comment) AGAINST ("+strSQLText+" IN BOOLEAN MODE)\n";
     strSQLWhere2 = " last_name LIKE "+strSQLTextStartWith+"\n";
     strSQLWhere3 = " first_name LIKE "+strSQLTextStartWith+"\n";
   }
@@ -498,7 +498,7 @@ router.get('/webservice/borrows', function(req, res, next) {
       var strValue = db.format_isbn(req.query.text);
       var strSQLText = objSQLConnection.escape(strValue);
       // Match against items AND users
-      strSQLWhere = " MATCH (item_detail_search.title,item_detail_search.author,item_detail_search.isbn13, user_search.last_name, user_search.first_name,user_search.category,user_search.comment) AGAINST ("+strSQLText+" IN BOOLEAN MODE)\n";
+      strSQLWhere = " MATCH(item_detail_search.title,item_detail_search.author,item_detail_search.isbn13, user_search.last_name, user_search.first_name,user_search.category,user_search.comment) AGAINST ("+strSQLText+" IN BOOLEAN MODE)\n";
     }
     // Custom SQL, list of borrows matching a string
     db.runsql('\
@@ -557,13 +557,13 @@ router.get('/webservice/borrows', function(req, res, next) {
       ) \n\
       ; \n\
       INSERT IGNORE INTO tmp_item_search(id) \n\
-      SELECT id FROM item_detail_search WHERE MATCH (item_detail_search.isbn13) AGAINST ('+strSQLText+' IN BOOLEAN MODE) \n\
+      SELECT id FROM item_detail_search WHERE MATCH(item_detail_search.isbn13) AGAINST ('+strSQLText+' IN BOOLEAN MODE) \n\
       ; \n\
       INSERT IGNORE INTO tmp_item_search(id) \n\
-      SELECT id FROM item_detail_search WHERE MATCH (item_detail_search.title) AGAINST ('+strSQLText+' IN BOOLEAN MODE) \n\
+      SELECT id FROM item_detail_search WHERE MATCH(item_detail_search.title) AGAINST ('+strSQLText+' IN BOOLEAN MODE) \n\
       ; \n\
       INSERT IGNORE INTO tmp_item_search(id) \n\
-      SELECT id FROM item_detail_search WHERE MATCH (item_detail_search.author) AGAINST ('+strSQLText+' IN BOOLEAN MODE) \n\
+      SELECT id FROM item_detail_search WHERE MATCH(item_detail_search.author) AGAINST ('+strSQLText+' IN BOOLEAN MODE) \n\
       ; \n\
        \n\
       DROP TEMPORARY TABLE IF EXISTS tmp_user_search \n\
@@ -573,16 +573,16 @@ router.get('/webservice/borrows', function(req, res, next) {
       ) \n\
       ; \n\
       INSERT IGNORE INTO tmp_user_search(id) \n\
-      SELECT id FROM user_search WHERE MATCH (user_search.last_name) AGAINST ('+strSQLText+' IN BOOLEAN MODE) \n\
+      SELECT id FROM user_search WHERE MATCH(user_search.last_name) AGAINST ('+strSQLText+' IN BOOLEAN MODE) \n\
       ; \n\
       INSERT IGNORE INTO tmp_user_search(id) \n\
-      SELECT id FROM user_search WHERE MATCH (user_search.first_name) AGAINST ('+strSQLText+' IN BOOLEAN MODE) \n\
+      SELECT id FROM user_search WHERE MATCH(user_search.first_name) AGAINST ('+strSQLText+' IN BOOLEAN MODE) \n\
       ; \n\
       INSERT IGNORE INTO tmp_user_search(id) \n\
-      SELECT id FROM user_search WHERE MATCH (user_search.category) AGAINST ('+strSQLText+' IN BOOLEAN MODE) \n\
+      SELECT id FROM user_search WHERE MATCH(user_search.category) AGAINST ('+strSQLText+' IN BOOLEAN MODE) \n\
       ; \n\
       INSERT IGNORE INTO tmp_user_search(id) \n\
-      SELECT id FROM user_search WHERE MATCH (user_search.comment) AGAINST ('+strSQLText+' IN BOOLEAN MODE) \n\
+      SELECT id FROM user_search WHERE MATCH(user_search.comment) AGAINST ('+strSQLText+' IN BOOLEAN MODE) \n\
       ; \n\
        \n\
       DROP TEMPORARY TABLE IF EXISTS tmp_borrow \n\

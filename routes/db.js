@@ -638,7 +638,7 @@ var search_record = function(req, res, next, objFormParameters, objSQLOptions, f
       } // else if (objField == null)
 
       // Build where clause with primary key names and values
-      arrSQLWhere.push("MATCH ("+objField.match_fields.join(", ")+") AGAINST ("+strSQLValue+" IN BOOLEAN MODE)");
+      arrSQLWhere.push("MATCH("+objField.match_fields.join(", ")+") AGAINST ("+strSQLValue+" IN BOOLEAN MODE)");
 
     } // if (form_ignore_fields.indexOf(strSentName) == -1)
 

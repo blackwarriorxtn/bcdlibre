@@ -97,21 +97,21 @@ SELECT * FROM item_detail_search WHERE title LIKE 'Le fant%'
 
 * Title containing...
 EXPLAIN
-SELECT * FROM item_detail_search WHERE MATCH (title) AGAINST ('fant�me c�t�' IN BOOLEAN MODE)
+SELECT * FROM item_detail_search WHERE MATCH(title) AGAINST ('fant�me c�t�' IN BOOLEAN MODE)
 
 EXPLAIN
-SELECT * FROM item_detail_search WHERE MATCH (title) AGAINST ('fantome cote' IN BOOLEAN MODE)
+SELECT * FROM item_detail_search WHERE MATCH(title) AGAINST ('fantome cote' IN BOOLEAN MODE)
 
 EXPLAIN
-SELECT * FROM item_detail_search WHERE MATCH (title) AGAINST ('1+1' IN BOOLEAN MODE)
+SELECT * FROM item_detail_search WHERE MATCH(title) AGAINST ('1+1' IN BOOLEAN MODE)
 
 * Description containing...
 
 EXPLAIN
-SELECT * FROM item_detail_search WHERE MATCH (title,description) AGAINST ('fantome cote' IN BOOLEAN MODE)
+SELECT * FROM item_detail_search WHERE MATCH(title,description) AGAINST ('fantome cote' IN BOOLEAN MODE)
 
 EXPLAIN
-SELECT * FROM `item_detail_search` WHERE MATCH (title,description) AGAINST ('pens�' IN BOOLEAN MODE)
+SELECT * FROM `item_detail_search` WHERE MATCH(title,description) AGAINST ('pens�' IN BOOLEAN MODE)
 
 
 */
