@@ -242,15 +242,15 @@ SELECT id, 1 FROM item_detail_search \n\
 
     : /* Search text - in three fields with 3 queries to optimize and ensure a proper key is used */ '\
 INSERT IGNORE INTO tmp_item_search(id, relevance) \n\
-SELECT id, MATCH(item_detail_search.isbn13) AGAINST ('+strSQLSearchValue+' IN BOOLEAN MODE) \n\
+SELECT id, MATCH(item_detail_search.isbn13) AGAINST ('+strSQLSearchValue+' IN BOOLEAN MODE) * 3 /* ISBN is most relevant */ \n\
 FROM item_detail_search WHERE MATCH(item_detail_search.isbn13) AGAINST ('+strSQLSearchValue+' IN BOOLEAN MODE) \n\
 ; \n\
 INSERT IGNORE INTO tmp_item_search(id, relevance) \n\
-SELECT id, MATCH(item_detail_search.title) AGAINST ('+strSQLSearchValue+' IN BOOLEAN MODE) \n\
+SELECT id, MATCH(item_detail_search.title) AGAINST ('+strSQLSearchValue+' IN BOOLEAN MODE) * 2 /* title is very relevant */ \n\
 FROM item_detail_search WHERE MATCH(item_detail_search.title) AGAINST ('+strSQLSearchValue+' IN BOOLEAN MODE) \n\
 ; \n\
 INSERT IGNORE INTO tmp_item_search(id, relevance) \n\
-SELECT id, MATCH(item_detail_search.author) AGAINST ('+strSQLSearchValue+' IN BOOLEAN MODE) \n\
+SELECT id, MATCH(item_detail_search.author) AGAINST ('+strSQLSearchValue+' IN BOOLEAN MODE) /* author is less relevant */  \n\
 FROM item_detail_search WHERE MATCH(item_detail_search.author) AGAINST ('+strSQLSearchValue+' IN BOOLEAN MODE) \n\
 ; \n\
 ') + '\
