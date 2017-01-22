@@ -206,28 +206,64 @@ router.get('/webservice/items', function(req, res, next) {
 
   var objMyContext = new module_context(req, res, next);
   var objSQLConnection = db.new_connection();
+  var strSearchValue = null;
+  var strSQLSearchValue = null;
 
   console.log("/webservice/items:req.query=%j", req.query);
-  var strSQLWhere = null;
   if (req.query.text)
   {
-    var strValue = db.format_isbn(req.query.text);
-    var strSQLText = objSQLConnection.escape(strValue);
-    strSQLWhere = " MATCH(item_detail_search.title,item_detail_search.author,item_detail_search.isbn13) AGAINST ("+strSQLText+" IN BOOLEAN MODE)\n";
-  }
+    strSearchValue = db.format_isbn(req.query.text);
+    strSQLSearchValue = objSQLConnection.escape(strSearchValue);
+    // Match against items AND users
+  } // if (req.query.text)
+  else
+  {
+    // No text, list ALL borrows
+    strSearchValue = null;
+    strSQLSearchValue = null;
+  } // if (req.query.text)  
   if (req.query && req.query.action == "borrow")
   {
     // Custom SQL, list of items not already borrowed (LEFT OUTER JOIN borrow ... WHERE borrow.id IS NULL)
-    db.runsql('SELECT item.id AS `id`, CONCAT_WS(\', \', CONCAT("#",item.id), item_detail.title, item_detail.author, item_detail.isbn13) AS `text`  \n\
-  FROM item \n\
-  JOIN item_detail ON item.item_detail_id = item_detail.id \n\
-  JOIN item_detail_search ON item_detail_search.item_detail_id = item_detail.id \n\
+    db.runsql('DROP TEMPORARY TABLE IF EXISTS tmp_item_search \n\
+; \n\
+CREATE TEMPORARY TABLE tmp_item_search( \n\
+  id INTEGER NOT NULL PRIMARY KEY \n\
+) \n\
+; \n'
++ 
+  (strSQLSearchValue == null 
+    ? /* No text - list all items */
+'INSERT IGNORE INTO tmp_item_search(id) \n\
+SELECT id FROM item_detail_search \n\
+; \n'
+
+    : /* Search text - in three fields with 3 queries to optimize and ensure a proper key is used */ '\
+INSERT IGNORE INTO tmp_item_search(id) \n\
+SELECT id FROM item_detail_search WHERE MATCH (item_detail_search.isbn13) AGAINST ('+strSQLSearchValue+' IN BOOLEAN MODE) \n\
+; \n\
+INSERT IGNORE INTO tmp_item_search(id) \n\
+SELECT id FROM item_detail_search WHERE MATCH (item_detail_search.title) AGAINST ('+strSQLSearchValue+' IN BOOLEAN MODE) \n\
+; \n\
+INSERT IGNORE INTO tmp_item_search(id) \n\
+SELECT id FROM item_detail_search WHERE MATCH (item_detail_search.author) AGAINST ('+strSQLSearchValue+' IN BOOLEAN MODE) \n\
+; \n\
+') + '\
+\n\
+/* List found items from temporary table */ \n\
+SELECT item.id AS `id`, CONCAT_WS(\', \', CONCAT("#",item.id), item_detail.title, item_detail.author, item_detail.isbn13) AS `text` \n\
+  FROM tmp_item_search \n\
+  JOIN item_detail_search ON item_detail_search.id = tmp_item_search.id \n\
+  JOIN item_detail ON item_detail.id = item_detail_search.item_detail_id \n\
+  LEFT OUTER JOIN item ON item.item_detail_id = item_detail.id \n\
   LEFT OUTER JOIN borrow ON borrow.item_id = item.id \n\
   WHERE borrow.id IS NULL \n\
-  '+(strSQLWhere == null ? "" : "AND "+strSQLWhere)+'\
   GROUP BY item.id \n\
-  ; \n\
-  ', function(err, arrRows, fields, objSQLConnection) {
+; \n\
+ \n\
+DROP TEMPORARY TABLE IF EXISTS tmp_item_search \n\
+; \n\
+', function(err, arrRows, fields, objSQLConnection) {
       if (err)
       {
         // Cleanup
@@ -237,7 +273,7 @@ router.get('/webservice/items', function(req, res, next) {
         }
         throw err;
       }
-      var rows = arrRows;
+      var rows = db.rows(arrRows);
       // Return result as JSON
       console.log("/webservice/items:rows=%j", rows);
       res.json(rows);
@@ -262,7 +298,7 @@ router.get('/webservice/items', function(req, res, next) {
   ; \n\
   ', function(err, arrRows, fields) {
       if (err) throw err;
-      var rows = arrRows;
+      var rows = db.rows(arrRows);
       // Return result as JSON
       console.log("/webservice/items:rows=%j", rows);
       res.json(rows);
@@ -287,7 +323,7 @@ router.get('/webservice/items', function(req, res, next) {
         }
         throw err;
       }
-      var rows = arrRows;
+      var rows = db.rows(arrRows);
       // Return result as JSON
       console.log("/webservice/items:rows=%j", rows);
       res.json(rows);
@@ -402,7 +438,7 @@ DROP TEMPORARY TABLE IF EXISTS tmp_search \n\
         }
         throw err;
       }
-      var rows = arrRows;
+      var rows = db.rows(arrRows);
       // Return result as JSON
       console.log("/webservice/users:rows=%j", rows);
       res.json(rows);
@@ -427,7 +463,7 @@ DROP TEMPORARY TABLE IF EXISTS tmp_search \n\
         }
         throw err;
       }
-      var rows = arrRows;
+      var rows = db.rows(arrRows);
       // Return result as JSON
       console.log("/webservice/users:rows=%j", rows);
       res.json(rows);
@@ -489,7 +525,7 @@ router.get('/webservice/borrows', function(req, res, next) {
         }
         throw err;
       }
-      var rows = arrRows;
+      var rows = db.rows(arrRows);
       // Return result as JSON
       console.log("/webservice/borrows:rows=%j", rows);
       res.json(rows);
@@ -639,7 +675,7 @@ router.get('/webservice/borrows', function(req, res, next) {
           }
           throw err;
         }
-        var rows = arrRows;
+        var rows = db.rows(arrRows);
         // Return result as JSON
         console.log("/webservice/borrows:rows=%j", rows);
         res.json(rows);
