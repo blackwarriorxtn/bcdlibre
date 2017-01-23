@@ -560,7 +560,8 @@ router.get('/webservice/borrows', function(req, res, next) {
     ; \n\
     \n\
     SELECT \n\
-      CONCAT_WS(", ", item_detail.title, item_detail.author, item_detail.isbn13, user.category, user.last_name, user.first_name) AS `text`, \n\
+        tmp_borrow.id AS `id`, \n\
+        CONCAT_WS(", ", item_detail.title, item_detail.author, item_detail.isbn13, user.category, user.last_name, user.first_name) AS `text`, \n\
         borrow.user_id AS `borrower_id`, \n\
         user.category AS `borrower_category` \n\
       FROM tmp_borrow \n\
