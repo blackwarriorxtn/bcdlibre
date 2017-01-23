@@ -130,7 +130,7 @@ function aws_post_processing(strISBN, objResultItem, objWebServiceResult)
 
     debug("Amazon Web Service Title (processed) = %s",strNewValue);
     // WARNING: don't overwrite result from another Web Service, unless this result is longuer (ok, it's a silly way to finding the most appropriate answer) and well-encoded (not UTF8 garbage from AWS)
-    if (objWebServiceResult.title == null || (objWebServiceResult.title.length < strNewValue.length && strNewValue.MATCH(/Ã/) == null ))
+    if (objWebServiceResult.title == null || (objWebServiceResult.title.length < strNewValue.length && strNewValue.match(/Ã/) == null ))
     {
       objWebServiceResult.title = strNewValue;
     }
