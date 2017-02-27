@@ -24,16 +24,16 @@ Please note that nodejs installation is automated with the setup.sh script (see 
 
 ### On Linux (Debian 8):
 
-#### Install prerequisites
+#### Install prerequisites (as root)
 
     apt-get install sudo
     apt-get install git
     apt-get install mysql-server
 
-#### Login as root - create dedicated user
+#### Create dedicated user (via sudo)
 
     sudo adduser bibliopuce
-    adduser bibliopuce sudo
+    sudo adduser bibliopuce sudo
     su - bibliopuce
 
 #### Get the source code
@@ -45,7 +45,29 @@ Please note that nodejs installation is automated with the setup.sh script (see 
     cd bcdlibre
     bash setup/setup.sh
 
-## Start automatically
+### On Linux (Ubuntu Desktop 16.04.2):
+
+#### Install prerequisites (as any user member of the sudo group)
+
+    sudo apt-get install git
+    sudo apt-get install mysql-server
+
+#### Login as root - create dedicated user
+
+    sudo adduser bibliopuce
+    sudo adduser bibliopuce sudo
+    su - bibliopuce
+
+#### Get the source code
+
+    git clone https://github.com/e-dot/bcdlibre.git
+
+#### Start setup script
+
+    cd bcdlibre
+    bash setup/setup.sh
+
+## Start automatically (Debian/Ubuntu)  
 
 ### On Linux
 
