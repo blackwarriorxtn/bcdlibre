@@ -39,7 +39,7 @@ Logiciel de gestion d'une petite bibliothèque (gestion d'emprunt de livres)
 Please read [setup/install.md](setup/install.md)
 
 
-## Start BCD Libre
+## Start BCD Libre Server
 
 ### On Windows
 
@@ -51,3 +51,9 @@ Please read [setup/install.md](setup/install.md)
     su - bibliopuce
     cd bibliopuce
     bin/start.sh
+
+## Access BCD Libre from Browser
+
+BCDLibre is a Web-base software : you need to start a web browser to access the software interface. Start your favorite web browser, e.g. Firefox, and access the server on port 3000:
+  http://localhost:3000
+
