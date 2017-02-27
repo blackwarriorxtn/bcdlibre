@@ -75,5 +75,5 @@ To start the software automatically when login in as bibliopuce, add the followi
 
     ...
     # Autostart at login
-    cd $HOME/bibliopuce
-    npm start 1>$HOME/bibliopuce.log 2>$HOME/bibliopuce.err &
+    cd $HOME/bcdlibre   
+    npm start 1>$HOME/bcdlibre.log 2>$HOME/bcdlibre.err &
