@@ -58,4 +58,4 @@ BCDLibre is a Web-base software : you need to start a web browser to access the 
 
 * Start your favorite web browser, e.g. Firefox, and access the server on port 3000:
 
-  http://localhost:3000
+  (http://localhost:3000)
