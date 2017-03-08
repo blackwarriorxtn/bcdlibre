@@ -24,6 +24,7 @@ var config = require('../setup/config.js');
 var debug = require('debug')('bibliopuce:routes_item');
 var fs = require('fs');
 var path = require('path');
+var xml2js = require('xml2js');
 
 var strAWSId = config.webservices.aws.awsId;
 var strAWSSecret = config.webservices.aws.awsSecret;
@@ -521,6 +522,8 @@ router.get('/webservice', function(req, objLocalWebServiceResult, next) {
   const urls= [
     "http://xisbn.worldcat.org/webservices/xid/isbn/"+encodeURIComponent(strISBN)+"?method=getMetadata&format=json&fl="+encodeURIComponent('*'),
     "https://www.googleapis.com/books/v1/volumes?q=isbn:"+encodeURIComponent(strISBN),
+    /* TODO : fetch api key from configuration */
+    "https://www.goodreads.com/search.xml?key=VaCw4UGPa9vUTlncfWfg&q="+encodeURIComponent(strISBN),
     "http://localhost:3000/item/aws?isbn="+encodeURIComponent(strISBN)
   ];
   async.map(urls, function (url, callback) {
@@ -533,15 +536,34 @@ router.get('/webservice', function(req, objLocalWebServiceResult, next) {
       function(err, res, body) {
         debug("Body = %j",body);
         var objSQLConnection = db.new_connection();
-        db.runsql("\
-    INSERT INTO log(`date_time`, `type`, `label`, `request`, `result`) \n\
-    VALUES (\n\
-      NOW(), 'WEBSERVICE', "+objSQLConnection.escape("ISBN Web Service")+", "+objSQLConnection.escape(url)+",COMPRESS("+objSQLConnection.escape(JSON.stringify(body))+") \n\
-    )\n\
-    ;\n\
-    " /* strSQL */, null /* fnCallback */, objSQLConnection);
-        callback(err, body, objSQLConnection);
-      }
+        var objResult = body;
+        if (res.headers['content-type'] && res.headers['content-type'].match(/(application|text)\/xml/))
+        {
+          // Result contains XML: convert it to JSON automatically
+          xml2js.parseString(objResult, {trim: true}, function (err, objResultJSON) {
+          db.runsql("\
+INSERT INTO log(`date_time`, `type`, `label`, `request`, `result`) \n\
+VALUES (\n\
+  NOW(), 'WEBSERVICE', "+objSQLConnection.escape("ISBN Web Service")+", "+objSQLConnection.escape(url)+",COMPRESS("+objSQLConnection.escape(JSON.stringify(objResultJSON))+") \n\
+)\n\
+;\n\
+" /* strSQL */, null /* fnCallback */, objSQLConnection);
+            callback(err, objResultJSON, objSQLConnection);
+          });
+        }
+        else
+        {
+          db.runsql("\
+INSERT INTO log(`date_time`, `type`, `label`, `request`, `result`) \n\
+VALUES (\n\
+  NOW(), 'WEBSERVICE', "+objSQLConnection.escape("ISBN Web Service")+", "+objSQLConnection.escape(url)+",COMPRESS("+objSQLConnection.escape(JSON.stringify(objResult))+") \n\
+)\n\
+;\n\
+" /* strSQL */, null /* fnCallback */, objSQLConnection);
+            callback(err, objResult, objSQLConnection);
+          }
+
+        }
     );
   }, function (err, res, objSQLConnection) {
 
@@ -672,6 +694,43 @@ router.get('/webservice', function(req, objLocalWebServiceResult, next) {
             console.log("Amazon Web Service error : ignore it");
           }
         }
+        else if (res[intResult].GoodreadsResponse)
+        {
+          // Goodreads answer
+          if (res[intResult].GoodreadsResponse.search 
+              && res[intResult].GoodreadsResponse.search.length > 0
+              && res[intResult].GoodreadsResponse.search[0].results
+              && res[intResult].GoodreadsResponse.search[0].results.length > 0
+              && res[intResult].GoodreadsResponse.search[0].results[0].work
+              && res[intResult].GoodreadsResponse.search[0].results[0].work.length > 0
+              && res[intResult].GoodreadsResponse.search[0].results[0].work[0].best_book
+              && res[intResult].GoodreadsResponse.search[0].results[0].work[0].best_book.length > 0
+              )
+          {
+            var objResultItem = res[intResult].GoodreadsResponse.search[0].results[0].work[0].best_book[0]; // TODO Handle multiple results? (let the user pick one?)
+            if (objResultItem && objResultItem.author && objResultItem.author.length > 0 && objResultItem.author[0].name)
+            {
+              var strNewValue = objResultItem.author[0].name[0]; // TODO Handle multiple authors?
+              // WARNING: don't overwrite result from another Web Service, unless this result is longuer (ok, it's a silly way to finding the most appropriate answer)
+              if (objWebServiceResult.authors == null || objWebServiceResult.authors.length < strNewValue.length)
+              {
+                objWebServiceResult.authors = strNewValue;
+              }
+            }
+            if (objResultItem && objResultItem.title)
+            {
+              objWebServiceResult.title = objResultItem.title[0];
+            }
+            // TODO handle image_url and small_image_url ?
+            objWebServiceResult.status = "OK";
+          }
+          else
+          {
+            // Goodreads error : ignore it
+            console.log("Goodreads error : ignore it");
+          }
+          
+        }
         else
         {
           // Unknown format - fatal error
@@ -692,6 +751,7 @@ router.get('/webservice', function(req, objLocalWebServiceResult, next) {
       objLocalWebServiceResult.json(objWebServiceResult);
 
     } // if (res && res.length > 0)
+
   });
 
 });
