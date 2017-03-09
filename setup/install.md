@@ -80,7 +80,6 @@ Please note that nodejs installation is automated with the setup.sh script (see 
 
 #### Start setup script (as login 'pi')
 
-    cd $HOME
     cd bcdlibre
     sudo bash setup/setup.sh
 
