@@ -67,6 +67,25 @@ Please note that nodejs installation is automated with the setup.sh script (see 
     cd bcdlibre
     bash setup/setup.sh
 
+### On Raspberry Pi  (Debian 8 Jessie):
+
+#### Install prerequisites (as login 'pi')
+
+    sudo apt-get install git
+    sudo apt-get install mysql-server
+
+#### Get the source code (as login 'pi')
+
+    git clone https://github.com/e-dot/bcdlibre.git
+
+#### Start setup script (as login 'pi')
+
+    cd $HOME
+    cd bcdlibre
+    sudo bash setup/setup.sh
+
+
+
 ## Start automatically (Debian/Ubuntu)  
 
 ### On Linux
