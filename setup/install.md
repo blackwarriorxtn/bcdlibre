@@ -95,3 +95,14 @@ To start the software automatically when login in as bibliopuce, add the followi
     # Autostart at login
     cd $HOME/bcdlibre   
     npm start 1>$HOME/bcdlibre.log 2>$HOME/bcdlibre.err &
+
+### Start at boot on Raspberry Pi
+
+Type this command in a terminal, launched as "pi" user:
+
+        crontab -e
+
+Pick an editor (nano is the easiest) and add these lines
+
+    # Start BCDLibre at boot, as user "pi"
+    @reboot /usr/bin/sudo -u pi -H /bin/bash /home/pi/bcdlibre/bin/start.sh
