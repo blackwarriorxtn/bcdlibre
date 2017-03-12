@@ -85,6 +85,9 @@ $(document).ready(function(){
     $("#user_id").val(suggestion.id);
     // Set success on form control
     $(event.target).closest(".form-group").removeClass("has-error has-warning").addClass("has-success");
+    // Set message text and class according to actual number of items borrowed by users
+    $("#client_message_text").html(suggestion.message);
+    $("#client_message").removeClass("panel-default panel-primary panel-success panel-info panel-warning panel-danger").addClass("panel-"+suggestion.message_class);
   }).bind('typeahead:render', function(event) {
     // Automatically select first option returned by autocomplete
     $(event.target).parent().find('.tt-selectable:first').addClass('tt-cursor');

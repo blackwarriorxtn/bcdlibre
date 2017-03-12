@@ -399,9 +399,27 @@ WHERE "+strSQLWhere3+"\
 ");
     } // if (strSQLWhere3 != null)
     arrSQL.push("\
-SELECT tmp_search.id, CONCAT_WS(\', \', CONCAT(\'#\',user.id), user.last_name, user.first_name, user.category) AS `text` FROM tmp_search \n\
+SELECT \n\
+  tmp_search.id, \n\
+  CONCAT_WS(', ', CONCAT('#',user.id), user.last_name, user.first_name, user.category) AS `text`, \n\
+  COUNT(borrow.id) AS borrowed, \n\
+  CASE COUNT(borrow.id) \n\
+    WHEN 0 THEN " + objSQLConnection.escape(req.i18n.__("Aucun emprunt en cours.")) + " \n\
+    WHEN 1 THEN " + objSQLConnection.escape(req.i18n.__("ATTENTION: 1 emprunt en cours...")) + " \n\
+    WHEN 2 THEN " + objSQLConnection.escape(req.i18n.__("ATTENTION: 2 emprunts en cours...")) + " \n\
+    ELSE " + objSQLConnection.escape(req.i18n.__("ALERTE: Plus de 2 emprunts en cours!")) + " \n\
+  END AS message, \n\
+  CASE COUNT(borrow.id) \n\
+    WHEN 0 THEN 'success' \n\
+    WHEN 1 THEN 'info' \n\
+    WHEN 2 THEN 'warning' \n\
+    ELSE 'danger' \n\
+  END AS message_class \n\
+FROM tmp_search \n\
 JOIN user ON user.id = tmp_search.id \n\
-; \n");
+LEFT OUTER JOIN borrow ON borrow.user_id = user.id \n\
+GROUP BY user.id \n\
+;");
     arrSQL.push("\
 DROP TEMPORARY TABLE IF EXISTS tmp_search \n\
 ; \n");
