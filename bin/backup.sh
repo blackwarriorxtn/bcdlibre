@@ -26,9 +26,14 @@ if test "$MYSQL_ROOT_PASSWORD" != ""
 then
   PASSWORD_OPTION=--password=$MYSQL_ROOT_PASSWORD
 fi
-mysqldump --user=root $PASSWORD_OPTION --lock-all-tables $DB_NAME --result-file=$BACKUP_FILE_SQL || handle_error "Can't dump mysql database"
+mysqldump --user=root $PASSWORD_OPTION --lock-all-tables $DB_NAME --result-file=$BACKUP_FILE_SQL || handle_error "Can't dump mysql database!"
 
 gzip $BACKUP_FILE_SQL || handle_error "Can't compress mysql dump with gzip"
 echo "[`date +'%Y-%m-%d %H:%M:%S'`] Database $DB_NAME backup done in file:"
 echo "$BACKUP_FILE_ZIP"
+
+BACKUP_FILE_IMG=$BACKUP_PATH/$DATE_NOW.$DB_NAME.backup.img.tar.gz
+cd `dirname $0`/..
+tar -cvzf $BACKUP_FILE_IMG public/img/item || handle_error "Can't archive and compress images!"
+
 echo "[`date +'%Y-%m-%d %H:%M:%S'`] End."
