@@ -28,7 +28,7 @@
       <div id="main">
         <%- include('../page_header', {title: title, subtitle: (subtitle == null ? __("Nouveau") : subtitle), menus:menus}) %>
         <div class="container">
-          <%- include('../form_new', {req:req, form:form, message:message, action:action}) %>
+          <%- include('../form_new', {req:req, form:form, message:message, action:action, img_url:""}) %>
         </div>
       </div>
     </div>

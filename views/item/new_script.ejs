@@ -67,6 +67,15 @@ function check_isbn(event, strValue)
           $("#series_title").parent().addClass("has-success").removeClass("has-warning has-error");
         }
       }
+      if (data.image_urls && data.image_urls[0])
+      {
+        var strURL = data.image_urls[0];
+        // Bind a function to store image URL when it has been successfull loaded
+        $("#_IMG").load(function() {
+          $("#img_url").val(strURL);
+        });
+        $("#_IMG").attr("src", strURL);
+      }
       // Success
       $("#isbn13").parent().addClass("has-success").removeClass("has-warning has-error");
       $("#isbn13").parent().find(".glyphicon.form-control-feedback").addClass("glyphicon-ok").removeClass("glyphicon-warning-sign glyphicon-remove");

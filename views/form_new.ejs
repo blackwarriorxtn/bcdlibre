@@ -19,6 +19,7 @@
 <%- include('form_message', {message: message}) %>
 <div class="panel-body">
 <form id="_FORM_NEW" class="form-horizontal" action="<%=action%>" method="post">
+<div class="col-xs-10 col-md-10">
   <fieldset id="_FORM_NEW_FIELDS">
   <%
   var intDisplayCount = 0;
@@ -27,6 +28,19 @@
     // Don't display field if it's an AUTOINCREMENT column
     if (form.autoincrement_column != form.fields[i].name)
     {
+      if (form.fields[i].hidden)
+      {
+    %>
+    <input type="hidden" class="form-control<%= (form.fields[i].required ? " form-control-required" : "") %>" name="<%= form.fields[i].name %>"
+            id="<%= form.fields[i].name %>" placeholder="<%= form.fields[i].placeholder %>"
+            <%- (form.fields[i].maximum_length ? " maxlength=\""+form.fields[i].maximum_length+"\"" : "") %>
+            aria-describedby="_STATUS_<%= form.fields[i].name %>"
+            value="<%= (form.fields[i].autoreplay ? req.body[form.fields[i].name] : "") %>"
+            >
+    <%
+      } // if (form.fields[i].hidden)
+      else
+      {
     %>
       <div class="form-group has-feedback">
         <label for="<%= form.fields[i].name %>" class="control-label col-xs-2 col-md-2"><%= form.fields[i].label %></label>
@@ -45,14 +59,16 @@
                id="<%= form.fields[i].name %>" placeholder="<%= form.fields[i].placeholder %>"
                <%- (form.fields[i].maximum_length ? " maxlength=\""+form.fields[i].maximum_length+"\"" : "") %>
                 aria-describedby="_STATUS_<%= form.fields[i].name %>"
-               value="<%= (form.fields[i].autoreplay ? req.body[form.fields[i].name] : "") %>">
+               value="<%= (form.fields[i].autoreplay ? req.body[form.fields[i].name] : "") %>"
+               >
         <%
         } // else if (form.fields[i].maximum_length > 255)
         %>
-        <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+        <span class="glyphicon glyphicon-ok form-control-feedback"></span>
         <span id="_STATUS_<%= form.fields[i].name %>" class="sr-only">(success)</span>
         </div><!-- class="col-xs-10 col-md-10" -->
     </div><!-- class="form-group has-feedback" --><%
+      } // else if (form.fields[i].hidden)
 
       intDisplayCount++;
     } // if (form.primary_key.indexOf(form.fields[i]) == -1)
@@ -60,5 +76,12 @@
 } // for %>
 <%- include('form_okcancel', { visible:true }) %>
 </fieldset>
+</div><!-- class="col-xs-10 col-md-10" -->
+
+<div class="col-xs-2 col-md-2">
+  <% if (img_url != null) {%>
+    <img id="_IMG" src="<%-img_url%>" class="img-responsive img-thumbnail">
+  <%} // (img_url)%>
+</div><!-- class="col-xs-2 col-md-2" -->
 </form>
 </div><!-- class="panel-body" -->

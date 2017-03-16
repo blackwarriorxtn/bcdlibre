@@ -51,6 +51,7 @@ function module_context(req, res, next)
       {name:"author",label:req.i18n.__("Auteur"),type:"String",required:true,validation:null,maximum_length:255},
       {name:"series_title",label:req.i18n.__("Série"),type:"String",required:false,validation:null,maximum_length:255,autoreplay:true},
       {name:"description",label:req.i18n.__("Description (Synopsis)"),type:"String",required:false,validation:null,maximum_length:65535},
+      {name:"img_url",label:null,type:"String",required:false,hidden:true,validation:null,maximum_length:255},
     ],
     allowed_states:null,
     sql_counter:"\
@@ -474,7 +475,7 @@ router.get('/view', function(req, res, next) {
     var strURLCopies = "new_copy?item_detail_id="+encodeURIComponent(result.id);
     var strURLCopiesAdd = strURLCopies+"&action="+encodeURIComponent("1");
     var strURLCopiesRemove = strURLCopies+"&action="+encodeURIComponent("-1");
-    var strImageLink = (result && result.img_url ? "/item/webservice/img?id="+encodeURIComponent(result.id.toString(10))+"&url="+encodeURIComponent(result.img_url) : null);
+    var strImageLink = "/item/webservice/img?id="+encodeURIComponent(result.id.toString(10)) + (result && result.img_url ? "&url="+encodeURIComponent(result.img_url) : "");
     // Display first record with "view" template
     res.render('item/view', {
       title: req.app.locals.title,
@@ -519,13 +520,19 @@ router.get('/webservice', function(req, objLocalWebServiceResult, next) {
     console.log("ERROR: Web Service called with an empty isbn parameter");
     return objLocalWebServiceResult.sendStatus(400);
   }
+  var strServerPort = req.app.get('port');
+  var strServerHostPort = req.headers['host'];
+  if (strServerHostPort == "" || strServerHostPort == null)
+  {
+    strServerHostPort = "localhost:"+strServerPort;
+  }
 
   const urls= [
     "http://xisbn.worldcat.org/webservices/xid/isbn/"+encodeURIComponent(strISBN)+"?method=getMetadata&format=json&fl="+encodeURIComponent('*'),
     "https://www.googleapis.com/books/v1/volumes?q=isbn:"+encodeURIComponent(strISBN),
     /* TODO : fetch api key from configuration */
     "https://www.goodreads.com/search.xml?key=VaCw4UGPa9vUTlncfWfg&q="+encodeURIComponent(strISBN),
-    "http://localhost:3000/item/aws?isbn="+encodeURIComponent(strISBN)
+    "http://" + strServerHostPort + "/item/aws?isbn="+encodeURIComponent(strISBN)
   ];
   async.map(urls, function (url, callback) {
     console.log("Calling Web Service "+url);
@@ -549,7 +556,7 @@ VALUES (\n\
 )\n\
 ;\n\
 " /* strSQL */, null /* fnCallback */, objSQLConnection);
-            callback(err, objResultJSON, objSQLConnection);
+            callback(err, objResultJSON);
           });
         }
         else
@@ -561,17 +568,13 @@ VALUES (\n\
 )\n\
 ;\n\
 " /* strSQL */, null /* fnCallback */, objSQLConnection);
-            callback(err, objResult, objSQLConnection);
+            callback(err, objResult);
           }
 
         }
     );
-  }, function (err, res, objSQLConnection) {
+  }, function (err, res) {
 
-    if (objSQLConnection)
-    {
-      objSQLConnection.end();
-    }
     // Handle errors gracefully
     if (err)
     {
@@ -756,6 +759,23 @@ VALUES (\n\
       }
 
       debug("objWebServiceResult=%j", objWebServiceResult);
+
+      // Log final result
+      var objSQLConnection = db.new_connection();
+      var strURL = "http://" + strServerHostPort + "/item/webservice?isbn="+encodeURIComponent(strISBN);
+      db.runsql("\
+INSERT INTO log(`date_time`, `type`, `label`, `request`, `result`) \n\
+VALUES (\n\
+  NOW(), 'WEBSERVICE', "+objSQLConnection.escape("ISBN Web Service (final)")+", "+objSQLConnection.escape(strURL)+",COMPRESS("+objSQLConnection.escape(JSON.stringify(objWebServiceResult))+") \n\
+)\n\
+;\n\
+" /* strSQL */, null /* fnCallback */, objSQLConnection);
+
+      // Nettoyage
+      if (objSQLConnection)
+      {
+        objSQLConnection.end();
+      }
 
       // Return final result
       objLocalWebServiceResult.json(objWebServiceResult);
@@ -972,52 +992,59 @@ router.get('/webservice/img', function(req, res, next) {
   }
   else if (req.query.url)
   {
-    // Simple redirection for now
+    // Simple redirection to get image
     debug("Redirect to external path %s", req.query.url);
     res.redirect(req.query.url);
     // And download external image in local cache for next call
-    var strImageURL = req.query.url;
-    // Call HEAD method to check that URL exists
-    request.head(strImageURL,
-      function(err, res, body) {
-        if (err)
-        {
-          console.log("ERROR: Can't find URL %s for item id %d : %s", strImageURL, intItemDetailId, err);
-        }
-        else
-        {
-          console.log("Image found at URL %s for item id %d", strImageURL, intItemDetailId);
-          var strContentType = res.headers['content-type'];
-          // TODO Check content type (must be image/something)
-          var strContentLength = res.headers['content-length'];
-          if (strContentLength != null)
-          {
-            var intContentLength = parseInt(strContentLength, 10);
-            if (isNaN(intContentLength) || intContentLength == 0)
-            {
-              console.log("ERROR: Invalid content-type \"%s\"from URL %s for item id %d : %s", strContentLength, strImageURL, intItemDetailId);
-            }
-          }
-          var strDate = res.headers['date'];
-          var strLastModifided = res.headers['last-modified'];
-          // TODO : if local file date is after 'last-modified', don't download it again (otherwise DO the download)
-          
-          console.log('content-type:', strContentType);
-          console.log('content-length:', strContentLength);
-          console.log('headers = %j', res.headers);
-          // Save image in local cache (public/img/item/00/00/00/00/0000000001.jpg)
-          var strImageFolder = db.img_folder(intItemDetailId);
-          console.log("Saving to cache image file : \"%s\"", strImageFilePath);
-          mkdirp.sync(strImageFolder);
-          request({url : strImageURL, encoding: null /* We expect binary data */}).pipe(fs.createWriteStream(strImageFilePath));
-        }
-      }
-    );
+    item_image_save_to_local_cache(req.query.url, strImageFilePath, intItemDetailId);
+  }
+  else
+  {
+    // TODO Try to fetch image URL from isbn (live or from previous calls)
   }
 
 
 });
 
-
+// Download external image in local cache for further use
+function item_image_save_to_local_cache(strImageURL, strImageFilePath, intItemDetailId)
+{
+  // Call HEAD method to check that URL exists
+  request.head(strImageURL,
+    function(err, res, body) {
+      if (err)
+      {
+        console.log("ERROR: Can't find URL %s for item id %d : %s", strImageURL, intItemDetailId, err);
+      }
+      else
+      {
+        console.log("Image found at URL %s for item id %d", strImageURL, intItemDetailId);
+        var strContentType = res.headers['content-type'];
+        // TODO Check content type (must be image/something)
+        var strContentLength = res.headers['content-length'];
+        if (strContentLength != null)
+        {
+          var intContentLength = parseInt(strContentLength, 10);
+          if (isNaN(intContentLength) || intContentLength == 0)
+          {
+            console.log("ERROR: Invalid content-type \"%s\"from URL %s for item id %d : %s", strContentLength, strImageURL, intItemDetailId);
+          }
+        }
+        var strDate = res.headers['date'];
+        var strLastModifided = res.headers['last-modified'];
+        // TODO : if local file date is after 'last-modified', don't download it again (otherwise DO the download)
+        
+        console.log('content-type:', strContentType);
+        console.log('content-length:', strContentLength);
+        console.log('headers = %j', res.headers);
+        // Save image in local cache (public/img/item/00/00/00/00/0000000001.jpg)
+        var strImageFolder = db.img_folder(intItemDetailId);
+        console.log("Saving to cache image file : \"%s\"", strImageFilePath);
+        mkdirp.sync(strImageFolder);
+        request({url : strImageURL, encoding: null /* We expect binary data */}).pipe(fs.createWriteStream(strImageFilePath));
+      }
+    }
+  );
+}
 
 module.exports = router;
