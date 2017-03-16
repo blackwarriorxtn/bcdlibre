@@ -33,6 +33,11 @@
               // Set hidden field with primary key
               %><input type="hidden" name="<%= form.fields[i].name %>" id="<%= form.fields[i].name %>" value="<%= record[form.fields[i].name] %>"><%
             }
+            else if (form.fields[i].hidden)
+            {
+%><input type="hidden" name="<%= form.fields[i].name %>" id="<%= form.fields[i].name %>" value="<%= (form.fields[i].autoreplay ? req.body[form.fields[i].name] : "") %>">
+<%
+            }
             else
             {
               if (!blnFieldset)

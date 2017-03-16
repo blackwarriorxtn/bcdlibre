@@ -728,14 +728,28 @@ VALUES (\n\
             // Handle image_url, small_image_url and possibly "large" image url
             var arrLargeImageURLs = [];
             var arrMediumImageURLs = objResultItem.image_url;
-            if (arrMediumImageURLs && arrMediumImageURLs.length >= 1 && arrMediumImageURLs[0].match(/[0-9]+m\/[0-9]+/))
-            {
-              // URL contains "m" for "medium size", try to guess large image (replace "m"" by "l)
-              arrLargeImageURLs.push(arrMediumImageURLs[0].replace(/([0-9]+)m\/([0-9]+)/, "$1l/$2"))
-            }
             var arrSmallImageURLs = objResultItem.small_image_url;
+
+            if (arrMediumImageURLs && arrMediumImageURLs.length >= 1)
+            {
+              if (arrMediumImageURLs[0].match(/\/nophoto\//))
+              {
+                // No Gooreads picture: clear all
+                arrMediumImageURLs = null;
+                arrLargeImageURLs = null;
+                arrSmallImageURLs = null;
+              }
+              else if (arrMediumImageURLs[0].match(/[0-9]+m\/[0-9]+/))
+              {
+                // URL contains "m" for "medium size", try to guess large image (replace "m"" by "l)
+                arrLargeImageURLs.push(arrMediumImageURLs[0].replace(/([0-9]+)m\/([0-9]+)/, "$1l/$2"))
+              }
+            }
             objWebServiceResult.status = "OK";
-            objWebServiceResult.image_urls = arrLargeImageURLs.concat(arrMediumImageURLs, arrSmallImageURLs);
+            if (arrLargeImageURLs)
+            {
+              objWebServiceResult.image_urls = arrLargeImageURLs.concat(arrMediumImageURLs, arrSmallImageURLs);
+            }
           }
           else
           {
