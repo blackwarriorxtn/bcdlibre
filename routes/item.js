@@ -996,28 +996,31 @@ router.get('/webservice/img', function(req, res, next) {
 
   // Use a local file cache for requested URL
   var intItemDetailId = req.query.id;
-  var strImageFilePath = db.img_file(intItemDetailId, path.extname(req.query.url));
-  var strImageVirtualPath = db.img_virtual_path(intItemDetailId, path.extname(req.query.url));
-  if (fs.existsSync(strImageFilePath))
+  if (req.query.url)
   {
-    // Redirect to virtual path
-    debug("Redirect to local virtual path %s", strImageVirtualPath);
-    res.redirect(strImageVirtualPath);
-  }
-  else if (req.query.url)
-  {
-    // Simple redirection to get image
-    debug("Redirect to external path %s", req.query.url);
-    res.redirect(req.query.url);
-    // And download external image in local cache for next call
-    item_image_save_to_local_cache(req.query.url, strImageFilePath, intItemDetailId);
-  }
+    var strImageFilePath = db.img_file(intItemDetailId, path.extname(req.query.url));
+    var strImageVirtualPath = db.img_virtual_path(intItemDetailId, path.extname(req.query.url));
+    if (fs.existsSync(strImageFilePath))
+    {
+      // Redirect to virtual path
+      debug("Redirect to local virtual path %s", strImageVirtualPath);
+      res.redirect(strImageVirtualPath);
+    }
+    else
+    {
+      // Simple redirection to get image
+      debug("Redirect to external path %s", req.query.url);
+      res.redirect(req.query.url);
+      // And download external image in local cache for next call
+      item_image_save_to_local_cache(req.query.url, strImageFilePath, intItemDetailId);
+    }
+  } // if (req.query.url)
   else
   {
     // TODO Try to fetch image URL from isbn (live or from previous calls)
-  }
+  } // else if (req.query.url)
 
-
+  return(res.sendStatus(404)); // Not found
 });
 
 // Download external image in local cache for further use
