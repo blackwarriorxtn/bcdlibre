@@ -25,6 +25,7 @@ var debug = require('debug')('bibliopuce:routes_item');
 var fs = require('fs');
 var path = require('path');
 var xml2js = require('xml2js');
+var mkdirp = require('mkdirp');
 
 var strAWSId = config.webservices.aws.awsId;
 var strAWSSecret = config.webservices.aws.awsSecret;
@@ -721,8 +722,17 @@ VALUES (\n\
             {
               objWebServiceResult.title = objResultItem.title[0];
             }
-            // TODO handle image_url and small_image_url ?
+            // Handle image_url, small_image_url and possibly "large" image url
+            var arrLargeImageURLs = [];
+            var arrMediumImageURLs = objResultItem.image_url;
+            if (arrMediumImageURLs && arrMediumImageURLs.length >= 1 && arrMediumImageURLs[0].match(/[0-9]+m\/[0-9]+/))
+            {
+              // URL contains "m" for "medium size", try to guess large image (replace "m"" by "l)
+              arrLargeImageURLs.push(arrMediumImageURLs[0].replace(/([0-9]+)m\/([0-9]+)/, "$1l/$2"))
+            }
+            var arrSmallImageURLs = objResultItem.small_image_url;
             objWebServiceResult.status = "OK";
+            objWebServiceResult.image_urls = arrLargeImageURLs.concat(arrMediumImageURLs, arrSmallImageURLs);
           }
           else
           {
@@ -952,19 +962,57 @@ router.get('/webservice/img', function(req, res, next) {
 
   // Use a local file cache for requested URL
   var intItemDetailId = req.query.id;
-  var strFilePath = db.img_file(intItemDetailId, path.extname(req.query.url));
-  var strVirtualPath = db.img_virtual_path(intItemDetailId, path.extname(req.query.url));
-  if (fs.existsSync(strFilePath))
+  var strImageFilePath = db.img_file(intItemDetailId, path.extname(req.query.url));
+  var strImageVirtualPath = db.img_virtual_path(intItemDetailId, path.extname(req.query.url));
+  if (fs.existsSync(strImageFilePath))
   {
     // Redirect to virtual path
-    debug("Redirect to local virtual path %s", strVirtualPath);
-    res.redirect(strVirtualPath);
+    debug("Redirect to local virtual path %s", strImageVirtualPath);
+    res.redirect(strImageVirtualPath);
   }
   else if (req.query.url)
   {
     // Simple redirection for now
     debug("Redirect to external path %s", req.query.url);
     res.redirect(req.query.url);
+    // And download external image in local cache for next call
+    var strImageURL = req.query.url;
+    // Call HEAD method to check that URL exists
+    request.head(strImageURL,
+      function(err, res, body) {
+        if (err)
+        {
+          console.log("ERROR: Can't find URL %s for item id %d : %s", strImageURL, intItemDetailId, err);
+        }
+        else
+        {
+          console.log("Image found at URL %s for item id %d", strImageURL, intItemDetailId);
+          var strContentType = res.headers['content-type'];
+          // TODO Check content type (must be image/something)
+          var strContentLength = res.headers['content-length'];
+          if (strContentLength != null)
+          {
+            var intContentLength = parseInt(strContentLength, 10);
+            if (isNaN(intContentLength) || intContentLength == 0)
+            {
+              console.log("ERROR: Invalid content-type \"%s\"from URL %s for item id %d : %s", strContentLength, strImageURL, intItemDetailId);
+            }
+          }
+          var strDate = res.headers['date'];
+          var strLastModifided = res.headers['last-modified'];
+          // TODO : if local file date is after 'last-modified', don't download it again (otherwise DO the download)
+          
+          console.log('content-type:', strContentType);
+          console.log('content-length:', strContentLength);
+          console.log('headers = %j', res.headers);
+          // Save image in local cache (public/img/item/00/00/00/00/0000000001.jpg)
+          var strImageFolder = db.img_folder(intItemDetailId);
+          console.log("Saving to cache image file : \"%s\"", strImageFilePath);
+          mkdirp.sync(strImageFolder);
+          request({url : strImageURL, encoding: null /* We expect binary data */}).pipe(fs.createWriteStream(strImageFilePath));
+        }
+      }
+    );
   }
 
 
