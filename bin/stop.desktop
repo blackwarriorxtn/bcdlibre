@@ -6,6 +6,6 @@ Type=Application
 Terminal=true
 Icon[fr_FR]=gnome-panel-launcher
 Name[fr_FR]=BCD Libre - Arrêt
-Exec=bash -i -c "${BCDLIBRE_HOME}/bin/stop.sh"
+Exec=bash -i /usr/bin/bcdlibre_stop.sh
 Name=BCD Libre - Arrêt
 Icon=gnome-panel-launcher

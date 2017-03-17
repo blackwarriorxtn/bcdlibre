@@ -10,6 +10,20 @@ handle_error()
   exit 1
 }
 
+# Copy bootstrap files in /usr/bin
+for S in `dirname $0`/../setup/usr/bin/*
+do
+  SHORTCUT_NAME=`basename $S`
+  if test ! -f /usr/bin/$SHORTCUT_NAME
+  then
+    echo "Shortcut $SHORTCUT_NAME : installing /usr/bin/$SHORTCUT_NAME"
+    sudo cp $S /usr/bin/$SHORTCUT_NAME
+    chmod +x /usr/bin/$SHORTCUT_NAME
+  # else copy if modified
+  fi
+done
+
+# Copy shortcuts in Desktop folders
 MY_DESKTOP=$(xdg-user-dir DESKTOP 2>/dev/null)
 if test -d "$MY_DESKTOP"
 then

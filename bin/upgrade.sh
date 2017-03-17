@@ -32,5 +32,3 @@ bash `dirname $0`/start.sh
 echo "[`date +'%Y-%m-%d %H:%M:%S'`] End."
 cd $LAST_DIR
 
-echo "Press ENTER to exit."
-read any
