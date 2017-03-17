@@ -33,6 +33,9 @@ then
     then
       diff $S "$MY_DESKTOP/$SHORTCUT_NAME" >/dev/null
       SHORTCUT_DIFF=$?
+    else
+      # No shortcut file : we need to install it
+      SHORTCUT_DIFF=1
     fi
     if test "$SHORTCUT_DIFF" == "0"
     then
@@ -40,7 +43,9 @@ then
     else
       echo "Shortcut $SHORTCUT_NAME : copying"
       cp $S "$MY_DESKTOP/"
+      chmod u+x "$MY_DESKTOP/*.desktop"
       cp $S ~/.local/share/applications/
+      chmod u+x ~/.local/share/applications/*.desktop
     fi
   done
 
