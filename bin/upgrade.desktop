@@ -8,4 +8,4 @@ Icon[fr_FR]=gnome-panel-launcher
 Name[fr_FR]=BCD Libre - Mise a jour
 Exec=bash -i /usr/bin/bcdlibre_upgrade.sh
 Name=BCD Libre - Mise a jour
-Icon=gnome-panel-launcher
+Icon=system-software-update

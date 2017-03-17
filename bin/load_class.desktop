@@ -8,4 +8,4 @@ Icon[fr_FR]=gnome-panel-launcher
 Name[fr_FR]=BCD Libre - Charge Classe (load_class.csv)
 Exec=bash -i /usr/bin/bcdlibre_load_class.sh
 Name=BCD Libre - Load Class (load_class.csv)
-Icon=gnome-panel-launcher
+Icon=folder-open

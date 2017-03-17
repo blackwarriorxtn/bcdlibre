@@ -8,4 +8,4 @@ Icon[fr_FR]=gnome-panel-launcher
 Name[fr_FR]=BCD Libre - Sauvegarde
 Exec=bash -i /usr/bin/bcdlibre_backup.sh
 Name=BCD Libre - Sauvegarde
-Icon=gnome-panel-launcher
+Icon=document-save

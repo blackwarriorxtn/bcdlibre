@@ -8,4 +8,4 @@ Icon[fr_FR]=gnome-panel-launcher
 Name[fr_FR]=BCD Libre - Assistance
 Exec=bash -i /usr/bin/bcdlibre_remote_assistance.sh
 Name=BCD Libre - Assistance
-Icon=gnome-panel-launcher
+Icon=help-browser

@@ -8,4 +8,4 @@ Icon[fr_FR]=gnome-panel-launcher
 Name[fr_FR]=BCD Libre - Arrêt
 Exec=bash -i /usr/bin/bcdlibre_stop.sh
 Name=BCD Libre - Arrêt
-Icon=gnome-panel-launcher
+Icon=call-stop
