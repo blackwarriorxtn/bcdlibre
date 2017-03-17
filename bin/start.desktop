@@ -8,4 +8,4 @@ Icon[fr_FR]=gnome-panel-launcher
 Name[fr_FR]=BCD Libre - Démarrage
 Exec=bash -i /usr/bin/bcdlibre_start.sh
 Name=BCD Libre - Démarrage
-Icon=call-start
+Icon=media-playback-start
