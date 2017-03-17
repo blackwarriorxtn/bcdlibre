@@ -1,7 +1,8 @@
 #!/bin/bash
 # Bootstrap program for desktop shortcut
 
-if test -f `dirname $0`/bcdlibre.sh then
+if test -f `dirname $0`/bcdlibre.sh
+then
   . `dirname $0`/bcdlibre.sh
 fi
 

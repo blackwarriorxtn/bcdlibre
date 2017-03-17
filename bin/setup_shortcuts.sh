@@ -18,7 +18,7 @@ do
   then
     echo "Shortcut $SHORTCUT_NAME : installing /usr/bin/$SHORTCUT_NAME"
     sudo cp $S /usr/bin/$SHORTCUT_NAME
-    chmod +x /usr/bin/$SHORTCUT_NAME
+    sudo chmod +x /usr/bin/$SHORTCUT_NAME
   # else copy if modified
   fi
 done
