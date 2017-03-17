@@ -18,8 +18,20 @@ do
   then
     echo "Shortcut $SHORTCUT_NAME : installing /usr/bin/$SHORTCUT_NAME"
     sudo cp $S /usr/bin/$SHORTCUT_NAME
-    sudo chmod +x /usr/bin/$SHORTCUT_NAME
-  # else copy if modified
+    sudo chmod ug+x /usr/bin/$SHORTCUT_NAME
+  else
+    # shortcut already exists: copy it only if different
+    SHORTCUT_DIFF="0"
+    diff $S /usr/bin/$SHORTCUT_NAME >/dev/null
+    SHORTCUT_DIFF=$?
+    if test "$SHORTCUT_DIFF" == "0"
+    then
+      echo "Shortcut $SHORTCUT_NAME : no changes"
+    else
+      echo "Shortcut $SHORTCUT_NAME : upgrade in /usr/bin"
+      cp $S /usr/bin/$SHORTCUT_NAME
+      chmod ug+x /usr/bin/$SHORTCUT_NAME
+    fi
   fi
 done
 
@@ -50,9 +62,9 @@ then
     else
       echo "Shortcut $SHORTCUT_NAME : copying"
       cp $S "$MY_DESKTOP/$SHORTCUT_NAME"
-      chmod u+x "$MY_DESKTOP/$SHORTCUT_NAME"
+      chmod ug+x "$MY_DESKTOP/$SHORTCUT_NAME"
       cp $S ~/.local/share/applications/$SHORTCUT_NAME
-      chmod u+x ~/.local/share/applications/$SHORTCUT_NAME
+      chmod ug+x ~/.local/share/applications/$SHORTCUT_NAME
     fi
   done
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "[`date +'%Y-%m-%d %H:%M:%S'`] Begin..."
+echo "[`date +'%Y-%m-%d %H:%M:%S'`] `basename $0` : Begin..."
 LAST_DIR=`dirname $0`
 
 # Define error handling function
@@ -29,6 +29,6 @@ bash `dirname $0`/upgrade_internal.sh || handle_error "Can't upgrade software!"
 echo "[`date +'%Y-%m-%d %H:%M:%S'`] Start service"
 bash `dirname $0`/start.sh
 
-echo "[`date +'%Y-%m-%d %H:%M:%S'`] End."
+echo "[`date +'%Y-%m-%d %H:%M:%S'`] `basename $0` : End."
 cd $LAST_DIR
 

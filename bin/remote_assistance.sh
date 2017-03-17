@@ -12,3 +12,5 @@ handle_error()
 
 # Start VPN
 sudo openvpn --config /etc/openvpn/tun0.conf --verb 6 || handle_error "Can't start OpenVPN"
+
+echo "[`date +'%Y-%m-%d %H:%M:%S'`] `basename $0` : End."

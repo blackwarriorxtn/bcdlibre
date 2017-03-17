@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "[`date +'%Y-%m-%d %H:%M:%S'`] Begin..."
+echo "[`date +'%Y-%m-%d %H:%M:%S'`] `basename $0` : Begin..."
 
 # Define error handling function
 handle_error()
@@ -36,4 +36,4 @@ BACKUP_FILE_IMG=$BACKUP_PATH/$DATE_NOW.$DB_NAME.backup.img.tar.gz
 cd `dirname $0`/..
 tar -cvzf $BACKUP_FILE_IMG public/img/item || handle_error "Can't archive and compress images!"
 
-echo "[`date +'%Y-%m-%d %H:%M:%S'`] End."
+echo "[`date +'%Y-%m-%d %H:%M:%S'`] `basename $0` : End."
