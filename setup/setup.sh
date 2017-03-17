@@ -52,6 +52,9 @@ if [ $MYSQL_CREATE_SAMPLE = "y" ] ; then
   mysql --default-character-set=utf8 --user=root --password="$MYSQL_ROOT_PASSWORD" < db/insert_sample_data.sql || handle_error "Can't create sample data!"
 fi
 
+# Create application shortcuts
+bash `dirname $0`/../bin/setup_shortcuts.sh || handle_error "Can't setup application shortcuts!"
+
 echo "[`date +'%Y-%m-%d %H:%M:%S'`] End."
 cd `dirname $0`/..
 bash bin/start.sh
