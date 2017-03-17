@@ -92,8 +92,9 @@
 	"Username": "Compte utilisateur",
 	"Password": "Mot de passe",
 	"Veuillez vous authentifier": "Veuillez vous authentifier",
-	"Aucun emprunt en cours.": "Aucun emprunt en cours.",
 	"ATTENTION: 1 emprunt en cours...": "ATTENTION: 1 emprunt en cours...",
 	"ATTENTION: 2 emprunts en cours...": "ATTENTION: 2 emprunts en cours...",
-	"ALERTE: Plus de 2 emprunts en cours!": "ALERTE: Plus de 2 emprunts en cours!"
+	"ALERTE: Plus de 2 emprunts en cours!": "ALERTE: Plus de 2 emprunts en cours!",
+	"Disponible": "Disponible",
+	"ATTENTION : Aucun exemplaire disponible": "ATTENTION : Aucun exemplaire disponible"
 }

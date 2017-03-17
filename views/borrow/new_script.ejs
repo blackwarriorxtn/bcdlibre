@@ -69,12 +69,18 @@ $(document).ready(function(){
   // Callbacks for auto-completion
   $('#item_search').bind('typeahead:select', function(event, suggestion) {
     console.log('Selection: ',suggestion);
+    // Set message text and class according to results
+    $("#client_message_text").html(suggestion.message);
+    $("#client_message").removeClass("panel-default panel-primary panel-success panel-info panel-warning panel-danger").addClass("panel-"+suggestion.message_class);
     // Store selection id in hidden field
     $("#item_id").val(suggestion.id);
-    // Set success on form control
-    $(event.target).closest(".form-group").removeClass("has-error has-warning").addClass("has-success");
-    // Set focus on next field (user)
-    $("#user_search").focus();
+    // Set success or error on form control according to results' message_class
+    $(event.target).closest(".form-group").removeClass("has-error has-warning has-success").addClass("has-"+suggestion.message_class);
+    if (suggestion.message_class == "success")
+    {
+      // Set focus on next field (user)
+      $("#user_search").focus();
+    }
   }).bind('typeahead:render', function(event) {
     // Automatically select first option returned by autocomplete
     $(event.target).parent().find('.tt-selectable:first').addClass('tt-cursor');

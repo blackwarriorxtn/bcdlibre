@@ -256,15 +256,18 @@ FROM item_detail_search WHERE MATCH(item_detail_search.author) AGAINST ('+strSQL
 ') + '\
 \n\
 /* List found items from temporary table */ \n\
-SELECT item.id AS `id`, CONCAT_WS(\', \', CONCAT("#",item.id), item_detail.title, item_detail.author, item_detail.isbn13) AS `text` \n\
-  FROM tmp_item_search \n\
-  JOIN item_detail_search ON item_detail_search.id = tmp_item_search.id \n\
-  JOIN item_detail ON item_detail.id = item_detail_search.item_detail_id \n\
-  LEFT OUTER JOIN item ON item.item_detail_id = item_detail.id \n\
-  LEFT OUTER JOIN borrow ON borrow.item_id = item.id \n\
-  WHERE borrow.id IS NULL \n\
-  GROUP BY item.id \n\
-  ORDER BY tmp_item_search.relevance DESC \n\
+SELECT \n\
+  IF (borrow.id IS NULL, item.id, NULL) AS `id`, \n\
+  CONCAT_WS(", ", CONCAT("#",item.id), item_detail.title, item_detail.author, item_detail.isbn13) AS `text`, \n\
+  IF (borrow.id IS NULL, ' + objSQLConnection.escape(req.i18n.__('Disponible')) + ', ' + objSQLConnection.escape(req.i18n.__('ATTENTION : Aucun exemplaire disponible')) + ') AS message, \n\
+  IF (borrow.id IS NULL, "success", "warning") AS message_class \n\
+FROM tmp_item_search \n\
+JOIN item_detail_search ON item_detail_search.id = tmp_item_search.id \n\
+JOIN item_detail ON item_detail.id = item_detail_search.item_detail_id \n\
+LEFT OUTER JOIN item ON item.item_detail_id = item_detail.id \n\
+LEFT OUTER JOIN borrow ON borrow.item_id = item.id \n\
+GROUP BY item.id \n\
+ORDER BY tmp_item_search.relevance DESC \n\
 ; \n\
  \n\
 DROP TEMPORARY TABLE IF EXISTS tmp_item_search \n\
@@ -280,8 +283,8 @@ DROP TEMPORARY TABLE IF EXISTS tmp_item_search \n\
         throw err;
       }
       var rows = db.rows(arrRows);
-      // Return result as JSON
       console.log("/webservice/items:rows=%j", rows ? rows.slice(0,20) : null);
+      // Return result as JSON
       res.json(rows);
     }, objSQLConnection);
   } // if (req.body.action == "borrow")

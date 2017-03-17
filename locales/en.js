@@ -95,5 +95,7 @@
 	"Aucun emprunt en cours.": "No book borrowed.",
 	"ATTENTION: 1 emprunt en cours...": "WARNING: 1 book borrowed...",
 	"ATTENTION: 2 emprunts en cours...": "WARNING: 2 books borrowed...",
-	"ALERTE: Plus de 2 emprunts en cours!": "ALERT: more than 2 books borrowed!"
+	"ALERTE: Plus de 2 emprunts en cours!": "ALERT: more than 2 books borrowed!",
+	"Disponible": "Available",
+	"ATTENTION : Aucun exemplaire disponible": "WARNING : No copy available"
 }
