@@ -4,8 +4,10 @@
 Version=1.0
 Type=Application
 Terminal=true
-Icon[fr_FR]=gnome-panel-launcher
+Icon[fr_FR]=folder-open
 Name[fr_FR]=BCD Libre - Charge Classe (load_class.csv)
+Icon[en_US]=folder-open
+Name[en_US]=BCD Libre - Load classes
 Exec=bash -i /usr/bin/bcdlibre_load_class.sh
 Name=BCD Libre - Load Class (load_class.csv)
 Icon=folder-open

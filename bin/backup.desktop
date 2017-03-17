@@ -4,8 +4,10 @@
 Version=1.0
 Type=Application
 Terminal=true
-Icon[fr_FR]=gnome-panel-launcher
+Icon[fr_FR]=document-save
 Name[fr_FR]=BCD Libre - Sauvegarde
+Icon[en_US]=document-save
+Name[en_US]=BCD Libre - Backup
 Exec=bash -i /usr/bin/bcdlibre_backup.sh
 Name=BCD Libre - Sauvegarde
 Icon=document-save

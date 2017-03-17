@@ -4,8 +4,10 @@
 Version=1.0
 Type=Application
 Terminal=true
-Icon[fr_FR]=gnome-panel-launcher
+Icon[fr_FR]=system-software-update
 Name[fr_FR]=BCD Libre - Mise a jour
+Icon[en_US]=system-software-update
+Name[en_US]=BCD Libre - Upgrade
 Exec=bash -i /usr/bin/bcdlibre_upgrade.sh
 Name=BCD Libre - Mise a jour
 Icon=system-software-update

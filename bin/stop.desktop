@@ -4,8 +4,10 @@
 Version=1.0
 Type=Application
 Terminal=true
-Icon[fr_FR]=gnome-panel-launcher
+Icon[fr_FR]=media-playback-stop
 Name[fr_FR]=BCD Libre - Arrêt
+Icon[en_US]=media-playback-stop
+Name[en_US]=BCD Libre - Stop
 Exec=bash -i /usr/bin/bcdlibre_stop.sh
 Name=BCD Libre - Arrêt
 Icon=media-playback-stop

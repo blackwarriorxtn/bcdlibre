@@ -4,8 +4,10 @@
 Version=1.0
 Type=Application
 Terminal=true
-Icon[fr_FR]=gnome-panel-launcher
+Icon[fr_FR]=help-browser
 Name[fr_FR]=BCD Libre - Assistance
+Icon[en_US]=help-browser
+Name[en_US]=BCD Libre - Help
 Exec=bash -i /usr/bin/bcdlibre_remote_assistance.sh
 Name=BCD Libre - Assistance
 Icon=help-browser
