@@ -24,7 +24,11 @@ BACKUP_FILE_ZIP=$BACKUP_FILE_SQL.gz
 PASSWORD_OPTION=--password
 if test "$MYSQL_ROOT_PASSWORD" != ""
 then
-  PASSWORD_OPTION=--password=$MYSQL_ROOT_PASSWORD
+  # Use MySQL specific environment variable
+  # Note: this is considered insecure (some system the "ps" command can view environment variables)
+  # TODO use mysql configuration files instead (see https://dev.mysql.com/doc/refman/5.5/en/password-security-user.html)
+  export MYSQL_PWD=$MYSQL_ROOT_PASSWORD
+  PASSWORD_OPTION=""
 fi
 mysqldump --user=root $PASSWORD_OPTION --lock-all-tables $DB_NAME --result-file=$BACKUP_FILE_SQL || handle_error "Can't dump mysql database!"
 
