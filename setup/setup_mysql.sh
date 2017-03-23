@@ -43,24 +43,36 @@ if [ -d /etc/mysql ] ; then
   # ft_stopword_file : Set custom stopword_file for full-text search (empty)
   grep ft_stopword_file 1>/dev/null 2>/dev/null ${MYSQL_CONF}
 
+  # use empty stopword file by default
+  src_stopword_file=`dirname $0`/mysql_ft_stopword_file.txt
+  # if a specific stopword file exists for current default language, use it
+  if [ -f "`dirname $0`/../locales/mysql_ft_stopword_file_${LANG:0:2}.txt" ] ; then
+    src_stopword_file="`dirname $0`/../locales/mysql_ft_stopword_file_${LANG:0:2}.txt"
+  fi
+  mysql_restart=0
   if [ "$?" != "0" ] ; then
-    # use empty stopword file by default
-    src_stopword_file=`dirname $0`/mysql_ft_stopword_file.txt
-    # if a specific stopword file exists for current default language, use it
-    if [ -f "`dirname $0`/../locales/mysql_ft_stopword_file_${LANG:0:2}.txt" ] ; then
-      src_stopword_file="`dirname $0`/../locales/mysql_ft_stopword_file_${LANG:0:2}.txt"
-    fi
     echo "[`date +'%Y-%m-%d %H:%M:%S'`] Set ft_stopword_file='`basename $src_stopword_file`'..."
     my_backup=${MYSQL_CONF}.`date +'%Y%m%d%H%M%S'`
     sudo cp ${MYSQL_CONF} $my_backup || handle_error "Can't backup my.cnf!"
     # Append ft_stopword_file='mysql_ft_stopword_file.txt' after [mysqld]
     sudo sed -e '/^\[mysqld\]/aft_stopword_file="/etc/mysql/mysql_ft_stopword_file.txt"' $my_backup > /tmp/my.cnf.new || handle_error "Can't add ft_min_word_len to /tmp/my.cnf.new!"
-    sudo cp $src_stopword_file /etc/mysql/mysql_ft_stopword_file.txt || handle_error "Can't copy $src_stopword_file to /etc/mysql/mysql_ft_stopword_file.txt!"
     sudo cp /tmp/my.cnf.new ${MYSQL_CONF} || handle_error "Can't copy /tmp/my.cnf.new to my.cnf!"
-    # Restart MySQL
-    sudo service mysql restart
+    mysql_restart=1
   else
     echo "[`date +'%Y-%m-%d %H:%M:%S'`] ft_min_word_len already configured in ${MYSQL_CONF}"
+  fi
+  diff $src_stopword_file /etc/mysql/mysql_ft_stopword_file.txt 1>/dev/null 2>/dev/null
+  if test "$?" == "0"
+  then
+    echo "Stopword list `basename $src_stopword_file` : no changes"
+  else
+    echo "Stopword list `basename $src_stopword_file` : copy to /etc/mysql/mysql_ft_stopword_file.txt"
+    sudo cp $src_stopword_file /etc/mysql/mysql_ft_stopword_file.txt || handle_error "Can't copy $src_stopword_file to /etc/mysql/mysql_ft_stopword_file.txt!"
+    mysql_restart=1
+  fi
+  if [ "$mysql_restart" = "1"] ; then
+    # Restart MySQL
+    sudo service mysql restart
   fi
 
   # sql_mode : remove 'ONLY_FULL_GROUP_BY' option
