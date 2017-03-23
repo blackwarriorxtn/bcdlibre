@@ -70,7 +70,7 @@ if [ -d /etc/mysql ] ; then
     sudo cp $src_stopword_file /etc/mysql/mysql_ft_stopword_file.txt || handle_error "Can't copy $src_stopword_file to /etc/mysql/mysql_ft_stopword_file.txt!"
     mysql_restart=1
   fi
-  if [ "$mysql_restart" = "1"] ; then
+  if [ "$mysql_restart" == "1"] ; then
     # Restart MySQL
     sudo service mysql restart
   fi
