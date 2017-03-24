@@ -283,6 +283,11 @@ DROP TEMPORARY TABLE IF EXISTS tmp_item_search \n\
         throw err;
       }
       var rows = db.rows(arrRows);
+      if (rows.length == 0 && strSearchValue.match(/^[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]$/))
+      {
+        // ISBN Search returned no results: display message "unknow book"
+        rows = [{id:null, text:strSearchValue+" : LIVRE INCONNU : Ce livre n'est pas dans l'inventaire", message:"LIVRE INCONNU : Ce livre n'est pas dans l'inventaire", message_class:"error"}];
+      }
       console.log("/webservice/items:rows=%j", rows ? rows.slice(0,20) : null);
       // Return result as JSON
       res.json(rows);
@@ -519,26 +524,30 @@ router.get('/webservice/borrows', function(req, res, next) {
     var strValue = db.format_isbn(req.query.text);
     var strSQLText = objSQLConnection.escape(strValue);
     // Match against items AND users
-    // Custom SQL, list of borrows matching a string
+    // Custom SQL, list of borrows matching a string, and sorted by RELEVANCE as detected by MySQL full-text search engine
     db.runsql('\
   \
   \
     DROP TEMPORARY TABLE IF EXISTS tmp_item_search \n\
     ; \n\
     CREATE TEMPORARY TABLE tmp_item_search( \n\
-      id INTEGER NOT NULL PRIMARY KEY \n\
+      id INTEGER NOT NULL PRIMARY KEY, \n\
+      relevance DOUBLE NULL, \n\
+      KEY(relevance, id) \n\
     ) \n\
     ; \n\
-    INSERT IGNORE INTO tmp_item_search(id) \n\
-    SELECT id FROM item_detail_search WHERE MATCH(item_detail_search.isbn13) AGAINST ('+strSQLText+' IN BOOLEAN MODE) \n\
+    INSERT IGNORE INTO tmp_item_search(id, relevance) \n\
+    SELECT id, MATCH(item_detail_search.isbn13) AGAINST ('+strSQLText+' IN BOOLEAN MODE) * 3 /* ISBN is most relevant */ \n\
+    FROM item_detail_search WHERE MATCH(item_detail_search.isbn13) AGAINST ('+strSQLText+' IN BOOLEAN MODE) \n\
     ; \n\
-    INSERT IGNORE INTO tmp_item_search(id) \n\
-    SELECT id FROM item_detail_search WHERE MATCH(item_detail_search.title) AGAINST ('+strSQLText+' IN BOOLEAN MODE) \n\
+    INSERT IGNORE INTO tmp_item_search(id, relevance) \n\
+    SELECT id, MATCH(item_detail_search.title) AGAINST ('+strSQLText+' IN NATURAL LANGUAGE MODE) * 2 /* title is very relevant */ \n\
+    FROM item_detail_search WHERE MATCH(item_detail_search.title) AGAINST ('+strSQLText+' IN NATURAL LANGUAGE MODE) \n\
     ; \n\
-    INSERT IGNORE INTO tmp_item_search(id) \n\
-    SELECT id FROM item_detail_search WHERE MATCH(item_detail_search.author) AGAINST ('+strSQLText+' IN BOOLEAN MODE) \n\
-    ; \n\
-      \n\
+    INSERT IGNORE INTO tmp_item_search(id, relevance) \n\
+    SELECT id, MATCH(item_detail_search.author) AGAINST ('+strSQLText+' IN NATURAL LANGUAGE MODE) /* author is less relevant */  \n\
+    FROM item_detail_search WHERE MATCH(item_detail_search.author) AGAINST ('+strSQLText+' IN NATURAL LANGUAGE MODE) \n\
+    \n\
     DROP TEMPORARY TABLE IF EXISTS tmp_user_search \n\
     ; \n\
     CREATE TEMPORARY TABLE tmp_user_search( \n\
@@ -571,6 +580,7 @@ router.get('/webservice/borrows', function(req, res, next) {
       JOIN item_detail ON item.item_detail_id = item_detail.id \n\
       JOIN item_detail_search ON item_detail_search.item_detail_id = item_detail.id \n\
       JOIN tmp_item_search ON item_detail_search.id = tmp_item_search.id \n\
+    ORDER BY tmp_item_search.relevance DESC \n\
     ; \n\
     INSERT IGNORE INTO tmp_borrow(id) \n\
     SELECT borrow.id \n\
