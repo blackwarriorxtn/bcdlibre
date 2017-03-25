@@ -268,6 +268,7 @@ LEFT OUTER JOIN item ON item.item_detail_id = item_detail.id \n\
 LEFT OUTER JOIN borrow ON borrow.item_id = item.id \n\
 GROUP BY item.id \n\
 ORDER BY tmp_item_search.relevance DESC \n\
+LIMIT 50 \n\
 ; \n\
  \n\
 DROP TEMPORARY TABLE IF EXISTS tmp_item_search \n\
@@ -581,6 +582,7 @@ router.get('/webservice/borrows', function(req, res, next) {
       JOIN item_detail_search ON item_detail_search.item_detail_id = item_detail.id \n\
       JOIN tmp_item_search ON item_detail_search.id = tmp_item_search.id \n\
     ORDER BY tmp_item_search.relevance DESC \n\
+    LIMIT 50 \n\
     ; \n\
     INSERT IGNORE INTO tmp_borrow(id) \n\
     SELECT borrow.id \n\
