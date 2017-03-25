@@ -547,7 +547,7 @@ router.get('/webservice/borrows', function(req, res, next) {
     INSERT IGNORE INTO tmp_item_search(id, relevance) \n\
     SELECT id, MATCH(item_detail_search.author) AGAINST ('+strSQLText+' IN NATURAL LANGUAGE MODE) /* author is less relevant */  \n\
     FROM item_detail_search WHERE MATCH(item_detail_search.author) AGAINST ('+strSQLText+' IN NATURAL LANGUAGE MODE) \n\
-    \n\
+    ;\n\
     DROP TEMPORARY TABLE IF EXISTS tmp_user_search \n\
     ; \n\
     CREATE TEMPORARY TABLE tmp_user_search( \n\
