@@ -16,3 +16,5 @@ REPAIR TABLE `bibliopuce`.`item_detail_search` QUICK
 REPAIR TABLE `bibliopuce`.`user_search` QUICK
 ;
 
+
+
