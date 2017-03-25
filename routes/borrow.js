@@ -571,9 +571,12 @@ router.get('/webservice/borrows', function(req, res, next) {
     DROP TEMPORARY TABLE IF EXISTS tmp_borrow \n\
     ; \n\
     CREATE TEMPORARY TABLE tmp_borrow( \n\
-      id INTEGER NOT NULL PRIMARY KEY \n\
-    ) \n\
-    ; \n\
+      order_by INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY, \n\
+      id INTEGER NOT NULL, \n\
+      UNIQUE KEY(id), \n\
+      KEY(id,order_by) \n\
+    )  \n\
+    ;  \n\
     INSERT IGNORE INTO tmp_borrow(id) \n\
     SELECT borrow.id \n\
       FROM borrow \n\
@@ -604,7 +607,7 @@ router.get('/webservice/borrows', function(req, res, next) {
       STRAIGHT_JOIN item_detail_search ON item_detail_search.item_detail_id = item_detail.id \n\
       STRAIGHT_JOIN user ON user.id = borrow.user_id \n\
       STRAIGHT_JOIN user_search ON user_search.user_id = user.id \n\
-      GROUP BY item.id, user.id \n\
+      GROUP BY tmp_borrow.order_by, item.id, user.id \n\
     ; \n\
     \n\
     /* Cleanup */ \n\
