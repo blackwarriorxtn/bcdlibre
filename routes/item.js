@@ -339,8 +339,8 @@ router.post('/new_copy', function(req, res, next) {
           }
           else
           {
-            // No copies left: display list of books
-            res.redirect("list");
+            // No copies left: Redirect to menu
+            res.redirect('./');
           }
 
         }, objSQLConnection);
@@ -397,9 +397,8 @@ router.post('/update', function(req, res, next) {
       }
       else
       {
-        // Redirect to list
-        res.redirect('list');
-
+        // Redirect to menu
+        res.redirect('./');
       }
     });
   } // else if (req.body["_CANCEL"] != null)
@@ -438,9 +437,8 @@ router.post('/delete', function(req, res, next) {
       }
       else
       {
-        // Redirect to list
-        res.redirect('list');
-
+        // Redirect to menu
+        res.redirect('./');
       }
     });
   } // else if (req.body["_CANCEL"] != null)

@@ -107,8 +107,8 @@ router.post('/new', function(req, res, next) {
     db.insert_record(req, res, next, objMyContext.objFormParameters, function(err, result, fields) {
       if (err) throw err;
 
-      // Redirect to list of users
-      res.redirect('list'); // TODO res.redirect('view') compute parameters
+      // Redirect to menu
+      res.redirect('./');
     });
   } // else if (req.body["_OK"] != null)
   else
@@ -141,9 +141,8 @@ router.post('/update', function(req, res, next) {
       }
       else
       {
-        // Redirect to list
-        res.redirect('list');
-
+        // Redirect to menu
+        res.redirect('./');
       }
     });
   } // else if (req.body["_CANCEL"] != null)
@@ -176,9 +175,8 @@ router.post('/delete', function(req, res, next) {
       }
       else
       {
-        // Redirect to list
-        res.redirect('list');
-
+        // Redirect to menu
+        res.redirect('./');
       }
     });
   } // else if (req.body["_CANCEL"] != null)
