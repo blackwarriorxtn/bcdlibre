@@ -596,12 +596,12 @@ router.get('/webservice/borrows', function(req, res, next) {
         borrow.user_id AS `borrower_id`, \n\
         user.category AS `borrower_category` \n\
       FROM tmp_borrow \n\
-      JOIN borrow ON tmp_borrow.id = borrow.id \n\
-      JOIN item ON borrow.item_id = item.id \n\
-      JOIN item_detail ON item.item_detail_id = item_detail.id \n\
-      JOIN item_detail_search ON item_detail_search.item_detail_id = item_detail.id \n\
-      JOIN user ON user.id = borrow.user_id \n\
-      JOIN user_search ON user_search.user_id = user.id \n\
+      STRAIGHT_JOIN borrow ON tmp_borrow.id = borrow.id \n\
+      STRAIGHT_JOIN item ON borrow.item_id = item.id \n\
+      STRAIGHT_JOIN item_detail ON item.item_detail_id = item_detail.id \n\
+      STRAIGHT_JOIN item_detail_search ON item_detail_search.item_detail_id = item_detail.id \n\
+      STRAIGHT_JOIN user ON user.id = borrow.user_id \n\
+      STRAIGHT_JOIN user_search ON user_search.user_id = user.id \n\
       GROUP BY item.id, user.id \n\
     ; \n\
     \n\
