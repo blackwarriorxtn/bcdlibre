@@ -46,8 +46,8 @@ if [ -d /etc/mysql ] ; then
   # use empty stopword file by default
   src_stopword_file=`dirname $0`/mysql_ft_stopword_file.txt
   # if a specific stopword file exists for current default language, use it
-  if [ -f "`dirname $0`/../locales/mysql_ft_stopword_file_${LANG:0:2}.txt" ] ; then
-    src_stopword_file="`dirname $0`/../locales/mysql_ft_stopword_file_${LANG:0:2}.txt"
+  if [ -f "`dirname $0`/mysql_ft_stopword_file_${LANG:0:2}.txt" ] ; then
+    src_stopword_file="`dirname $0`/mysql_ft_stopword_file_${LANG:0:2}.txt"
   fi
   mysql_restart=0
   if [ "$?" != "0" ] ; then
