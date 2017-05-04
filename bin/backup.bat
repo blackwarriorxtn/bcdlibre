@@ -1,6 +1,6 @@
 @ECHO OFF
 
-REM       Copyright 2016 Replay SDK (http://www.replay-sdk.com)
+REM       Copyright 2016-2017 Replay SDK (http://www.replay-sdk.com)
 REM
 REM   Licensed under the Apache License, Version 2.0 (the "License");
 REM   you may not use this file except in compliance with the License.
@@ -36,6 +36,10 @@ SET PASSWORD_OPTION=--password
 GOTO POST_SET_PASSWORD
 
 :POST_SET_PASSWORD
+
+REM Check that MySQL is up and running (need this to backup via mysqldump)
+CALL %~dp0mysql_ping.bat || GOTO ERROR
+
 ECHO [%DATE% %TIME%] mysqldump...
 mysqldump --user=root %PASSWORD_OPTION% --lock-all-tables %DB_NAME% --result-file=%BACKUP_FILE_SQL% || GOTO ERROR
 
