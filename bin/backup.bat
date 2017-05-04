@@ -22,9 +22,20 @@ SET BACKUP_PATH=%~dp0..\..\%DB_NAME%-backup\%MY_YEAR%\%MY_MONTH%\%MY_DAY%
 IF NOT EXIST %BACKUP_PATH% MKDIR %BACKUP_PATH% || GOTO ERROR
 SET BACKUP_FILE_SQL=%BACKUP_PATH%\%MY_YEAR%%MY_MONTH%%MY_DAY%.%MY_HOUR%%MY_MINUTE%%MY_SECOND%.%MY_MILLISECOND%.%DB_NAME%.backup.sql
 SET BACKUP_FILE_ZIP=%BACKUP_FILE_SQL%
+
 REM If there's an environment variable MYSQL_ROOT_PASSWORD, use it as the root password (otherwise ask for password interactively)
+IF "%MYSQL_ROOT_PASSWORD%" == "" GOTO NO_PASSWORD
+:USE_PASSWORD
+REM Use MySQL specific environment variable
+REM Note: this is considered insecure (some system the "ps" command can view environment variables)
+REM TODO use mysql configuration files instead (see https://dev.mysql.com/doc/refman/5.5/en/password-security-user.html)
+SET MYSQL_PWD=%MYSQL_ROOT_PASSWORD%
+GOTO POST_SET_PASSWORD
+:NO_PASSWORD
 SET PASSWORD_OPTION=--password
-IF NOT "%MYSQL_ROOT_PASSWORD%" == "" SET PASSWORD_OPTION=--password=%MYSQL_ROOT_PASSWORD%
+GOTO POST_SET_PASSWORD
+
+:POST_SET_PASSWORD
 ECHO [%DATE% %TIME%] mysqldump...
 mysqldump --user=root %PASSWORD_OPTION% --lock-all-tables %DB_NAME% --result-file=%BACKUP_FILE_SQL% || GOTO ERROR
 
