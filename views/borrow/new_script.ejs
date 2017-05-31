@@ -68,7 +68,7 @@ $(document).ready(function(){
 
   // Callbacks for auto-completion
   $('#item_search').bind('typeahead:select', function(event, suggestion) {
-    console.log('Selection: ',suggestion);
+    console.log('typeahead:select suggestion=',suggestion);
     // Set message text and class according to results
     $("#client_message_text").html(suggestion.message);
     $("#client_message").removeClass("panel-default panel-primary panel-success panel-info panel-warning panel-danger").addClass("panel-"+suggestion.message_class);
@@ -82,11 +82,12 @@ $(document).ready(function(){
       $("#user_search").focus();
     }
   }).bind('typeahead:render', function(event) {
+    console.log('typeahead:render  event=',event);
     // Automatically select first option returned by autocomplete
     $(event.target).parent().find('.tt-selectable:first').addClass('tt-cursor');
   });
   $('#user_search').bind('typeahead:select', function(event, suggestion) {
-    console.log('Selection: ',suggestion);
+    console.log('typeahead:select suggestion=',suggestion);
     // Store selection id in hidden field
     $("#user_id").val(suggestion.id);
     // Set success on form control
@@ -95,6 +96,7 @@ $(document).ready(function(){
     $("#client_message_text").html(suggestion.message);
     $("#client_message").removeClass("panel-default panel-primary panel-success panel-info panel-warning panel-danger").addClass("panel-"+suggestion.message_class);
   }).bind('typeahead:render', function(event) {
+    console.log('typeahead:render  event=',event);
     // Automatically select first option returned by autocomplete
     $(event.target).parent().find('.tt-selectable:first').addClass('tt-cursor');
   });
