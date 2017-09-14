@@ -1,7 +1,7 @@
 {
 	"Menu principal": "Main menu",
 	"Emprunter": "Borrow",
-	"Emprunter un livre": "Borrow a book",
+	"Emprunter un livree": "Borrow a book",
 	"Retourner": "Return",
 	"Retourner un livre": "Return a book",
 	"Rechercher": "Search",
@@ -91,8 +91,7 @@
 	"Display the interface in english": "Display the interface in english",
 	"Username": "Username",
 	"Password": "Password",
-	"Veuillez vous authentifier": "Please authenticate"
-	"Aucun emprunt en cours.": "No book borrowed.",
+	"Veuillez vous authentifier": "Please authenticate",
 	"ATTENTION: 1 emprunt en cours...": "WARNING: 1 book borrowed...",
 	"ATTENTION: 2 emprunts en cours...": "WARNING: 2 books borrowed...",
 	"ALERTE: Plus de 2 emprunts en cours!": "ALERT: more than 2 books borrowed!",
