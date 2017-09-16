@@ -57,7 +57,7 @@ var new_connection = function ()
   return(objSQLConnection);
 }
 
-var runsql = function (objSQL, fnCallback, objSQLConnection)
+var runsql = function (objSQL, fnCallback, objSQLConnection, blnLogIt)
 {
   var blnMustDisconnect = false;
   if (objSQLConnection == null)
@@ -66,14 +66,20 @@ var runsql = function (objSQL, fnCallback, objSQLConnection)
     objSQLConnection= new_connection();
     blnMustDisconnect = true;
   }
+  if (blnLogIt == null) {
+    blnLogIt = true;
+  }
 
   var strSQL = null;
-  if (Array.isArray(objSQL))
-  {
-    strSQL = objSQL.join("\n");
-  }
-  else
-  {
+  if (Array.isArray(objSQL)) {
+    if (blnLogIt) {
+      objSQL.push(getSQLLog(objSQL.join('\n'), objSQLConnection))
+    }
+    strSQL = objSQL.join("\n")
+  } else {
+    if (blnLogIt) {
+      objSQL = objSQL + '\n' + getSQLLog(objSQL, objSQLConnection)
+    }
     strSQL = objSQL;
   }
   debug("SQL:\n%s\n", strSQL);
@@ -270,7 +276,7 @@ var insert_record = function(req, res, next, objFormParameters, fnCallback)
       }
       res.redirect('list');
     }
-  }, objSQLConnection);
+  }, objSQLConnection, true /* blnLogIt */);
 }
 
 var update_record = function(req, res, next, objFormParameters, fnCallback)
@@ -383,7 +389,7 @@ var update_record = function(req, res, next, objFormParameters, fnCallback)
       }
       res.redirect('list');
     }
-  }, objSQLConnection);
+  }, objSQLConnection, true /* blnLogIt */);
 }
 
 var delete_record = function(req, res, next, objFormParameters, fnCallback)
@@ -477,7 +483,7 @@ var delete_record = function(req, res, next, objFormParameters, fnCallback)
       }
       res.redirect('list');
     }
-  }, objSQLConnection);
+  }, objSQLConnection, true /* blnLogIt */);
 }
 
 var view_record = function(req, res, next, objFormParameters, fnCallback)
@@ -830,6 +836,15 @@ module.exports.userFindByUsername = function(username, cb) {
   });
 }
 
+function getSQLLog(strSQL, objSQLConnection) {
+  return 'INSERT INTO log(`date_time`, `type`, `label`, `request`, `result`) \n\
+  VALUES (\n\
+    NOW(), \'WEBSERVICE\' /* TODO \'SQL\' */, '+objSQLConnection.escape('SQL')+', '+objSQLConnection.escape(strSQL)+',CONCAT(\'ROW_COUNT()=\',ROW_COUNT(),\' ; LAST_INSERT_ID()=\',LAST_INSERT_ID()) \n\
+  )\n\
+  ;\n\
+  '
+}
+
 module.exports.new_connection = new_connection;
 module.exports.runsql = runsql;
 module.exports.check_field_value = check_field_value;
@@ -846,3 +861,4 @@ module.exports.rows = sql_get_rows;
 module.exports.img_file = img_file;
 module.exports.img_folder = img_folder;
 module.exports.img_virtual_path = img_virtual_path;
+module.exports.getSQLLog = getSQLLog;

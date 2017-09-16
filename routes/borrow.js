@@ -292,7 +292,7 @@ DROP TEMPORARY TABLE IF EXISTS tmp_item_search \n\
       console.log("/webservice/items:rows=%j", rows ? rows.slice(0,20) : null);
       // Return result as JSON
       res.json(rows);
-    }, objSQLConnection);
+    }, objSQLConnection, false /* blnLogIt */);
   } // if (req.body.action == "borrow")
   else if (req.query && req.query.action == "return")
   {
@@ -317,7 +317,7 @@ DROP TEMPORARY TABLE IF EXISTS tmp_item_search \n\
       // Return result as JSON
       console.log("/webservice/items:rows=%j", rows);
       res.json(rows);
-    }, objSQLConnection);
+    }, objSQLConnection, false /* blnLogIt */);
   } // if (req.query && req.query.action == "return")
   else
   {
@@ -342,7 +342,7 @@ DROP TEMPORARY TABLE IF EXISTS tmp_item_search \n\
       // Return result as JSON
       console.log("/webservice/items:rows=%j", rows);
       res.json(rows);
-    });
+    }, objSQLConnection, false /* blnLogIt */);
   } // else if (req.query && req.query.action == "return")
 
   // Cleanup
@@ -448,7 +448,7 @@ DROP TEMPORARY TABLE IF EXISTS tmp_search \n\
       console.log("/webservice/users:rows=%j", rows);
       res.json(rows);
     },
-    objSQLConnection);
+    objSQLConnection, false /* blnLogIt */);
   } // if (req.body.action == "borrow")
   else if (req.query && req.query.action == "return")
   {
@@ -476,7 +476,7 @@ DROP TEMPORARY TABLE IF EXISTS tmp_search \n\
       console.log("/webservice/users:rows=%j", rows);
       res.json(rows);
     },
-  objSQLConnection);
+  objSQLConnection, false /* blnLogIt */);
   } // if (req.query && req.query.action == "return")
   else
   {
@@ -501,7 +501,7 @@ DROP TEMPORARY TABLE IF EXISTS tmp_search \n\
       console.log("/webservice/users:rows=%j", rows);
       res.json(rows);
     },
-  objSQLConnection);
+  objSQLConnection, false /* blnLogIt */);
   } // else if (req.query && req.query.action == "return")
 
   if (objSQLConnection)
@@ -633,7 +633,7 @@ router.get('/webservice/borrows', function(req, res, next) {
       console.log("/webservice/borrows:rows=%j", rows);
       res.json(rows);
     },
-    objSQLConnection);
+    objSQLConnection, false /* blnLogIt */);
 
   } // if (req.query.text)
   else
@@ -669,7 +669,7 @@ router.get('/webservice/borrows', function(req, res, next) {
       console.log("/webservice/borrows:rows=%j", rows);
       res.json(rows);
     },
-    objSQLConnection);
+    objSQLConnection, false /* blnLogIt */);
 
   } // else if (req.query.text)
 

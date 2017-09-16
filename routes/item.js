@@ -553,7 +553,7 @@ VALUES (\n\
   NOW(), 'WEBSERVICE', "+objSQLConnection.escape("ISBN Web Service")+", "+objSQLConnection.escape(url)+",COMPRESS("+objSQLConnection.escape(JSON.stringify(objResultJSON))+") \n\
 )\n\
 ;\n\
-" /* strSQL */, null /* fnCallback */, objSQLConnection);
+" /* strSQL */, null /* fnCallback */, objSQLConnection, false /* blnLogIt */);
             callback(err, objResultJSON);
           });
         }
@@ -565,7 +565,7 @@ VALUES (\n\
   NOW(), 'WEBSERVICE', "+objSQLConnection.escape("ISBN Web Service")+", "+objSQLConnection.escape(url)+",COMPRESS("+objSQLConnection.escape(JSON.stringify(objResult))+") \n\
 )\n\
 ;\n\
-" /* strSQL */, null /* fnCallback */, objSQLConnection);
+" /* strSQL */, null /* fnCallback */, objSQLConnection, false /* blnLogIt */);
             callback(err, objResult);
           }
 
@@ -781,7 +781,7 @@ VALUES (\n\
   NOW(), 'WEBSERVICE', "+objSQLConnection.escape("ISBN Web Service (final)")+", "+objSQLConnection.escape(strURL)+",COMPRESS("+objSQLConnection.escape(JSON.stringify(objWebServiceResult))+") \n\
 )\n\
 ;\n\
-" /* strSQL */, null /* fnCallback */, objSQLConnection);
+" /* strSQL */, null /* fnCallback */, objSQLConnection, false /* blnLogIt */);
 
       // Nettoyage
       if (objSQLConnection)
