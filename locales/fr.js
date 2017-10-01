@@ -96,5 +96,6 @@
 	"ATTENTION: 2 emprunts en cours...": "ATTENTION: 2 emprunts en cours...",
 	"ALERTE: Plus de 2 emprunts en cours!": "ALERTE: Plus de 2 emprunts en cours!",
 	"Disponible": "Disponible",
-	"ATTENTION : Aucun exemplaire disponible": "ATTENTION : Aucun exemplaire disponible"
+	"ATTENTION : Aucun exemplaire disponible": "ATTENTION : Aucun exemplaire disponible",
+	"Impossible de modifier ce lecteur (%s)": "Impossible de modifier ce lecteur (%s)"
 }

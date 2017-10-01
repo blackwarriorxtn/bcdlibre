@@ -540,7 +540,7 @@ var view_record = function(req, res, next, objFormParameters, fnCallback)
     debug("arrRows = %j",arrRows);
     // MUST HAVE a custom function defined
     fnCallback(err, arrRows, fields);
-  }, objSQLConnection);
+  }, objSQLConnection, false /* blnLogIt */);
 
   if (objSQLConnection)
   {
