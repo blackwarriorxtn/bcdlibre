@@ -103,7 +103,7 @@ router.get('/activity/item', function(req, res, next) {
   
   var objMyContext = new module_context(req, res, next);
 
-  var strSQL = 'SELECT id, date_time,type,label,request,CAST(result AS CHAR) AS result FROM log WHERE type = \'SQL\' AND label = \'item\'  AND date_time BETWEEN DATE_ADD(NOW(), INTERVAL - 60 DAY) AND NOW() ORDER BY id DESC LIMIT 1000'
+  var strSQL = 'SELECT id, date_time,type,label,request,CAST(result AS CHAR) AS result FROM log WHERE type = \'SQL\' AND label IN (\'item\',\'item_detail\')  AND date_time BETWEEN DATE_ADD(NOW(), INTERVAL - 60 DAY) AND NOW() ORDER BY id DESC LIMIT 1000'
   db.list_sql(req, res, next, strSQL, function (err, result, fields) {
     if (err) throw err
     // Display records with "list" template

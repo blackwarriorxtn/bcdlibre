@@ -240,7 +240,7 @@ router.post('/new', function(req, res, next) {
             else
             {
               // Always add at least ONE copy of the book (item => item_detail)
-              db.runsql("INSERT INTO item(item_detail_id) VALUES(LAST_INSERT_ID());" /* strSQL */, function(err, arrRows, fields) {
+              db.runsql("INSERT INTO item(item_detail_id) VALUES(IF (@last_insert_id IS NULL, LAST_INSERT_ID(), @last_insert_id));" /* strSQL */, function(err, arrRows, fields) {
                 if (objSQLConnection)
                 {
                   objSQLConnection.end();
@@ -251,7 +251,7 @@ router.post('/new', function(req, res, next) {
                            {
                              req:req, title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu),
                              form:objMyContext.objFormParameters, message:{text:req.i18n.__("Fiche ajoutée avec succès. Veuillez remplir la fiche suivante"),type:"info"}, action:"new"});
-              }, objSQLConnection);
+              }, objSQLConnection, true /* blnLogIt */);
 
             }
           });
@@ -294,7 +294,7 @@ router.post('/new_copy', function(req, res, next) {
                                req:req,
                                title: req.app.locals.title, subtitle: null, menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu),
                                form:objMyContext.objFormParameters, message:{text:req.i18n.__("Exemplaire ajouté avec succès. Veuillez remplir la fiche suivante"),type:"info"}, action:"new"});
-    });
+    }, null /* objSQLConnection */, true /* blnLogIt */);
 
   } // else if (req.body["_OK"] != null)
   else if (req.body["_COPY_ADD"] != null || req.body["_COPY_DEL"] != null)
@@ -358,7 +358,7 @@ router.post('/new_copy', function(req, res, next) {
         // Display view form again
         res.redirect("view?id="+encodeURIComponent(intItemDetailId.toString(10)));
       }
-    });
+    }, null /* objSQLConnection */, true /* blnLogIt */);
 
   } // else if (req.body["_OK"] != null)
   else
@@ -970,7 +970,7 @@ DROP TEMPORARY TABLE IF EXISTS tmp_classification \n\
       // Return result as JSON
       debug("/webservice/items/classification:rows=%j", rows);
       res.json(rows);
-    }, objSQLConnection);
+    }, objSQLConnection, false /* blnLogIt */);
   } // if (req.query && req.query.action == "classification")
   else
   {

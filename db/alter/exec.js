@@ -119,7 +119,7 @@ ORDER BY tmp_alter.commit_timestamp \n\
               {
                 process.exit(0);
               }
-            });
+            }, null /* objSQLConnection */, false /* blnLogIt TODO true? */);
 
             fnCallback();
         }, 1); // maximum 1 parrallel (thus => sequence)
@@ -143,7 +143,7 @@ ORDER BY tmp_alter.commit_timestamp \n\
         process.exit(0);
       } // else if (rows.length)
 
-    }, objSQLConnection);
+    }, objSQLConnection, false /* blnLogIt TODO true? */);
 
   }
 });

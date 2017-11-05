@@ -57,8 +57,7 @@ var new_connection = function ()
   return(objSQLConnection);
 }
 
-var runsql = function (objSQL, fnCallback, objSQLConnection, blnLogIt)
-{
+var runsql = function (objSQL, fnCallback, objSQLConnection, blnLogIt) {
   var blnMustDisconnect = false;
   if (objSQLConnection == null)
   {
@@ -67,8 +66,10 @@ var runsql = function (objSQL, fnCallback, objSQLConnection, blnLogIt)
     blnMustDisconnect = true;
   }
 
+/* TODO DELETE  
   // Désactive temporairement le log des requêtes SQL
   blnLogIt = false;
+*/
 
   if (blnLogIt == null) {
     blnLogIt = true;
@@ -77,12 +78,12 @@ var runsql = function (objSQL, fnCallback, objSQLConnection, blnLogIt)
   var strSQL = null;
   if (Array.isArray(objSQL)) {
     if (blnLogIt) {
-      objSQL.push(getSQLLog(objSQL.join('\n'), objSQLConnection))
+      objSQL = objSQL.concat(getSQLLog(objSQL.join('\n'), objSQLConnection))
     }
     strSQL = objSQL.join("\n")
   } else {
     if (blnLogIt) {
-      objSQL = objSQL + '\n' + getSQLLog(objSQL, objSQLConnection)
+      objSQL = objSQL + '\n' + getSQLLog(objSQL, objSQLConnection).join('\n')
     }
     strSQL = objSQL;
   }
@@ -258,13 +259,11 @@ var insert_record = function(req, res, next, objFormParameters, fnCallback)
     } // if (strFieldName)
   } // for (var intField = 0; intField < objFormParameters.fields.length; intField++)
 
-  var strSQL = "INSERT INTO "+objSQLConnection.escapeId(objFormParameters.table_name)+"("+arrSQLNames.join(",")+")\n"
-             + "VALUES("+arrSQLValues.join(",")+")\n;"
-             ;
-  debug(strSQL);
+  var arrSQL = ['SET @last_insert_id := NULL\n;', 'INSERT INTO ' + objSQLConnection.escapeId(objFormParameters.table_name) + '(' + arrSQLNames.join(',') + ')\n VALUES(' + arrSQLValues.join(',') + ')\n;']
+  debug(arrSQL.join('\n'))
 
   // Execute INSERT query, reusing the same connection
-  runsql(strSQL, function(err, arrRows, fields) {
+  runsql(arrSQL, function(err, arrRows, fields) {
     if (fnCallback)
     {
       // Custom function defined: call it with the same connection (to successfully use LAST_INSERT_ID() function)
@@ -874,12 +873,13 @@ function getSQLLog(strSQL, objSQLConnection) {
       }
     }
   }
-  return 'INSERT INTO log(`date_time`, `type`, `label`, `request`, `result`) \n\
+  return ['SET @last_insert_id := LAST_INSERT_ID()\n;', 
+  'INSERT INTO log(`date_time`, `type`, `label`, `request`, `result`) \n\
   VALUES (\n\
-    NOW(), \'SQL\', '+objSQLConnection.escape(strSQLTable)+', '+objSQLConnection.escape(strSQL)+',CONCAT(\'ROW_COUNT()=\',ROW_COUNT(),\' ; LAST_INSERT_ID()=\',LAST_INSERT_ID()) \n\
+    NOW(), \'SQL\', '+objSQLConnection.escape(strSQLTable)+', '+objSQLConnection.escape(strSQL)+',CONCAT(\'ROW_COUNT()=\',ROW_COUNT(),\' ; LAST_INSERT_ID()=\',@last_insert_id) \n\
   )\n\
   ;\n\
-  '
+  ']
 }
 
 module.exports.new_connection = new_connection;

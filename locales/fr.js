@@ -114,5 +114,6 @@
 	"Date/Heure": "Date/Heure",
 	"Type": "Type",
 	"Libellé": "Libellé",
-	"Requête": "Requête"
+	"Requête": "Requête",
+	"Ce livre est déjà dans l'inventaire (%s)": "Ce livre est déjà dans l'inventaire (%s)"
 }
