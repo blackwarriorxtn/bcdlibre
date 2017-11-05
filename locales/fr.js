@@ -97,5 +97,22 @@
 	"ALERTE: Plus de 2 emprunts en cours!": "ALERTE: Plus de 2 emprunts en cours!",
 	"Disponible": "Disponible",
 	"ATTENTION : Aucun exemplaire disponible": "ATTENTION : Aucun exemplaire disponible",
-	"Impossible de modifier ce lecteur (%s)": "Impossible de modifier ce lecteur (%s)"
+	"Impossible de modifier ce lecteur (%s)": "Impossible de modifier ce lecteur (%s)",
+	"Activité": "Activité",
+	"Afficher l'activité": "Afficher l'activité",
+	"Afficher les derniers emprunts": "Afficher les derniers emprunts",
+	"Afficher les dernières modifications dans l'inventaire": "Afficher les dernières modifications dans l'inventaire",
+	"Afficher les dernières modifications des lecteurs": "Afficher les dernières modifications des lecteurs",
+	"log_id": "#",
+	"log_type": "Type",
+	"log_date_time": "Date/Heure",
+	"log_label": "Libellé",
+	"log_request": "Requête",
+	"log_result": "Résultat",
+	"Aucun emprunt dans l'historique d'activité.": "Aucun emprunt dans l'historique d'activité.",
+	"Aucune historique d'activité.": "Aucune historique d'activité.",
+	"Date/Heure": "Date/Heure",
+	"Type": "Type",
+	"Libellé": "Libellé",
+	"Requête": "Requête"
 }

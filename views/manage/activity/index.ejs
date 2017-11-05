@@ -18,24 +18,22 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <%- include('../html_head', {title: title}) %>
+    <%- include('../../html_head', {title: title}) %>
   </head>
   <body>
     <div id="page">
       <div id="main">
-        <%- include('../page_header', {title: title, subtitle: subtitle, menus:menus}) %>
+        <%- include('../../page_header', {title: title, subtitle: __("Activité"), menus:menus}) %>
         <div class="container-fluid">
-          <%- include('../page_menu', {items:[
-            {link:"../item/", label:__("Livres"), icon:"book", tooltip:__("Gérer les livres (inventaire)")},
-            {link:"../user/", label:__("Lecteurs"), icon:"user", tooltip:__("Gérer les lecteurs (emprunteurs)")},
-            {link:"../borrow/", label:__("Emprunts"), icon:"refresh", tooltip:__("Gérer les emprunts")},
-            {link:"/manage/lang", label:__("Langue"), icon:"flag", tooltip:__("Gérer la langue d'affichage")},
-            {link:"/manage/activity/", label:__("Activité"), icon:"stats", tooltip:__("Afficher l'activité")},
+          <%- include('../../page_menu', {items:[
+            {link:"borrow", label:__("Emprunts"), icon:"refresh", tooltip:__("Afficher les derniers emprunts")},
+            {link:"item", label:__("Livres"), icon:"book", tooltip:__("Afficher les dernières modifications dans l'inventaire")},
+            {link:"user", label:__("Lecteurs"), icon:"user", tooltip:__("Afficher les dernières modifications des lecteurs")},
             ]}) %>
         </div>
       </div>
     </div>
 
-    <%- include('../page_footer') %>
+    <%- include('../../page_footer') %>
   </body>
 </html>

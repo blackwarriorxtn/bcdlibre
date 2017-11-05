@@ -572,9 +572,23 @@ var list_record = function(req, res, next, objFormParameters, objSQLOptions, fnC
              +"\n;";
   debug(strSQL);
 
+  list_sql(req, res, next, strSQL, fnCallback)
+
+  if (objSQLConnection)
+  {
+    objSQLConnection.end();
+  }
+}
+
+var list_sql = function(req, res, next, strSQL, fnCallback)
+{
+  debug("list_sql");
+
+  var objSQLConnection = new_connection();
+
   runsql(strSQL, function(err, arrRows, fields) {
     fnCallback(err, arrRows, fields);
-  });
+  }, objSQLConnection /* objSQLConnection */, false /* blnLogIt */);
 
   if (objSQLConnection)
   {
@@ -837,9 +851,28 @@ module.exports.userFindByUsername = function(username, cb) {
 }
 
 function getSQLLog(strSQL, objSQLConnection) {
+  // Try to determine the SQL table name by parsing the SQL request
+  var strSQLTable = null;
+  // Search "INSERT INTO ..."
+  var arrMatch = strSQL.match(/ INTO `?([A-Za-z_][A-Za-z_0-9]*)`?/);
+  if (arrMatch) {
+    strSQLTable = (arrMatch ? arrMatch[1] : null);
+  } else {
+    // Search "DELETE FROM ..."
+    arrMatch = strSQL.match(/ FROM `?([A-Za-z_][A-Za-z_0-9]*)`?/)
+    if (arrMatch) {
+      strSQLTable = (arrMatch ? arrMatch[1] : null);
+    } else {
+      // Search "UPDATE ..."
+      arrMatch = strSQL.match(/UPDATE `?([A-Za-z_][A-Za-z_0-9]*)`?/)
+      if (arrMatch) {
+        strSQLTable = (arrMatch ? arrMatch[1] : null);
+      }
+    }
+  }
   return 'INSERT INTO log(`date_time`, `type`, `label`, `request`, `result`) \n\
   VALUES (\n\
-    NOW(), \'WEBSERVICE\' /* TODO \'SQL\' */, '+objSQLConnection.escape('SQL')+', '+objSQLConnection.escape(strSQL)+',CONCAT(\'ROW_COUNT()=\',ROW_COUNT(),\' ; LAST_INSERT_ID()=\',LAST_INSERT_ID()) \n\
+    NOW(), \'SQL\', '+objSQLConnection.escape(strSQLTable)+', '+objSQLConnection.escape(strSQL)+',CONCAT(\'ROW_COUNT()=\',ROW_COUNT(),\' ; LAST_INSERT_ID()=\',LAST_INSERT_ID()) \n\
   )\n\
   ;\n\
   '
@@ -854,6 +887,7 @@ module.exports.update_record = update_record;
 module.exports.delete_record = delete_record;
 module.exports.view_record = view_record;
 module.exports.list_record = list_record;
+module.exports.list_sql = list_sql;
 module.exports.search_record = search_record;
 module.exports.handle_error = handle_error;
 module.exports.format_isbn = format_isbn;
