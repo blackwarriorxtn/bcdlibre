@@ -82,7 +82,7 @@ router.get('/list', function(req, res, next) {
   db.list_record(req, res, next, objMyContext.objFormParameters, objSQLOptions, function(err, result, fields) {
     if (err) throw err;
     // Display records with "list" template
-    res.render('user/list', {title: req.app.locals.title, subtitle: req.i18n.__("Liste"), menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, records:result[0], sql: objSQLOptions});
+    res.render('user/list', {title: req.app.locals.title, subtitle: req.i18n.__("Liste"), menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, records:result, sql: objSQLOptions});
   });
 
 });
@@ -242,7 +242,7 @@ router.post('/search', function(req, res, next) {
     db.search_record(req, res, next, objMyContext.objSearchParameters, objSQLOptions, function(err, result, fields) {
       if (err) throw err;
       // Display records with "list" template
-      res.render('user/list', { title: req.app.locals.title, subtitle: req.i18n.__("Liste"), menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, records:result[0], sql: objSQLOptions });
+      res.render('user/list', { title: req.app.locals.title, subtitle: req.i18n.__("Liste"), menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, records:result, sql: objSQLOptions });
     });
   } // else if (req.body["_CANCEL"] != null)
   else

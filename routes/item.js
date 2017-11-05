@@ -163,7 +163,7 @@ router.get('/list', function(req, res, next) {
   db.list_record(req, res, next, objMyContext.objFormParameters, null /* objSQLOptions */, function(err, result, fields) {
     if (err) throw err;
     // Display records with "list" template
-    res.render('item/list', { title: req.app.locals.title, subtitle: req.i18n.__("Liste"), menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, records:result[0] });
+    res.render('item/list', { title: req.app.locals.title, subtitle: req.i18n.__("Liste"), menus:[objMyContext.objMainMenu].concat(objMyContext.objMenu), form:objMyContext.objFormParameters, records:result });
   });
 
 });
