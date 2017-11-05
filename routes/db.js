@@ -66,6 +66,10 @@ var runsql = function (objSQL, fnCallback, objSQLConnection, blnLogIt)
     objSQLConnection= new_connection();
     blnMustDisconnect = true;
   }
+
+  // Désactive temporairement le log des requêtes SQL
+  blnLogIt = false;
+
   if (blnLogIt == null) {
     blnLogIt = true;
   }
@@ -675,7 +679,7 @@ var search_record = function(req, res, next, objFormParameters, objSQLOptions, f
 
   runsql(strSQL, function(err, arrRows, fields) {
     fnCallback(err, arrRows, fields);
-  });
+  }, null /* objSQLConnection */, false /* blnLogIt */);
 
   if (objSQLConnection)
   {
@@ -847,7 +851,7 @@ module.exports.userFindByUsername = function(username, cb) {
       record = arrRows[0];
     }
     return cb(null, record);
-  });
+  }, null /* objSQLConnection */, false /* blnLogIt */);
 }
 
 function getSQLLog(strSQL, objSQLConnection) {

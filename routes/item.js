@@ -258,7 +258,7 @@ router.post('/new', function(req, res, next) {
         }
       }
 
-    }, objSQLConnection);
+    }, objSQLConnection, false /* blnLogIt */);
 
   } // else if (req.body["_CANCEL"] != null)
   else
@@ -343,7 +343,7 @@ router.post('/new_copy', function(req, res, next) {
             res.redirect('./');
           }
 
-        }, objSQLConnection);
+        }, objSQLConnection, false /* blnLogIt */);
         if (objSQLConnection)
         {
           objSQLConnection.end();
