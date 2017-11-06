@@ -158,6 +158,7 @@ CREATE TABLE item_classification(
 INSERT INTO item_classification(label)
 VALUES
 ('ROMAN'),
+('ROMAN - Première Lecture'),
 ('ALBUM'),
 ('ALBUM - Animaux'),
 ('ALBUM - Découverte'),
