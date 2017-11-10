@@ -17,12 +17,13 @@
 @CALL %~dp0must_be_admin.bat || GOTO ERROR
 
 SET DEBUG=bibliopuce:*
-CD /D %~dp0.. || PAUSE
+SET BCDLIBRE_PATH=%~dps0..
+CD /D %BCDLIBRE_PATH% || PAUSE
 %COMSPEC% /C %~dp0\stop.bat 2>NUL
 SET VSCODE_EXE=C:\Program Files\Microsoft VS Code\Code.exe
 IF EXIST "C:\Program Files (x86)\Microsoft VS Code\Code.exe" SET VSCODE_EXE=C:\Program Files (x86)\Microsoft VS Code\Code.exe
 IF NOT EXIST "%VSCODE_EXE%" GOTO ERROR
-FOR %%P IN ("%VSCODE_EXE%") DO START %%~sP %~dps0bcdlibre || GOTO ERROR
+FOR %%P IN ("%VSCODE_EXE%") DO START /D %BCDLIBRE_PATH% %%~sP %BCDLIBRE_PATH% || GOTO ERROR
 EXIT /B 0
 
 :ERROR
