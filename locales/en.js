@@ -61,11 +61,13 @@
 	"log_label": "Libellé",
 	"log_request": "Requête",
 	"log_result": "Résultat",
-	"Aucun emprunt dans l'historique d'activité.": "Aucun emprunt dans l'historique d'activité.",
-	"Numéro ISBN": "Numéro ISBN",
-	"Classification": "Classification",
-	"Titre": "Titre",
-	"Série": "Série",
-	"Description (Synopsis)": "Description (Synopsis)",
-	"Titre, Auteur, Description": "Titre, Auteur, Description"
+	"Aucun emprunt dans l'historique d'activité.": "No borrowing in activity history.",
+	"Aucune historique d'activité.": "No activity history.",
+	"Date/Heure": "Date/Time",
+	"Type": "Type",
+	"Libellé": "Label",
+	"Requête": "Request",
+	"Ce livre est déjà dans l'inventaire (%s)": "This book is already in inventory (%s)",
+	"Dé-doublonner": "Deduplicate",
+	"Supprimer les lecteurs en doubles (dé-doublonner)": "Delete duplicate users (de-duplicate)"
 }

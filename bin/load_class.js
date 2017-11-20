@@ -114,6 +114,7 @@ INSERT INTO user(last_name, first_name, category) SELECT field0,field1,field4 FR
         }
         throw err;
       }
+      // TODO Rename file load_class.csv to avoid DOUBLE CALL!
       process.exit(0);
     }, objSQLConnection
 );

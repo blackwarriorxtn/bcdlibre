@@ -1,0 +1,48 @@
+<% /*
+
+      Copyright 2016 Replay SDK (http://www.replay-sdk.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+ */ -%>
+<div class="container-fluid">
+  <% if (records && records.length > 0) { %>
+  <table class="table table-hover table-striped table-bordered">
+    <caption><%=__("Liste des %d lecteurs", records.length)%> (<%= __("maximum affichés")%> : <%= sql.limit %>)</caption>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th><%=__("Nom")%></th>
+        <th><%=__("Prénom")%></th>
+        <th><%=__("Catégorie")%></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for(var i=0; i< records.length; i++) { %>
+        <tr data-href="view?id=<%- records[i].id %>">
+          <td><a href="view?id=<%- records[i].id %>"><%= records[i].id %></a></td>
+          <td><%= records[i].last_name %></td>
+          <td><%= records[i].first_name %></td>
+          <td><%= records[i].category %></td>
+        </tr>
+      <% } // for %>
+    </tbody>
+  </table>
+  <%
+  } // if (records && records.length > 0)
+  else
+  {
+    %><div class="text-info"><%=__("Aucun lecteur dans la liste.")%></div><%
+  } // else if (records && records.length > 0)
+  %>
+</div><!-- class="container-fluid" -->

@@ -115,5 +115,12 @@
 	"Type": "Type",
 	"Libellé": "Libellé",
 	"Requête": "Requête",
-	"Ce livre est déjà dans l'inventaire (%s)": "Ce livre est déjà dans l'inventaire (%s)"
+	"Ce livre est déjà dans l'inventaire (%s)": "Ce livre est déjà dans l'inventaire (%s)",
+	"Dé-doublonner": "Dé-doublonner",
+	"Supprimer les lecteurs en doubles (dé-doublonner)": "Supprimer les lecteurs en doubles (dé-doublonner)",
+	"Supprimer les lecteurs en doublon (dé-doublonner)": "Supprimer les lecteurs en doublon (dé-doublonner)",
+	"Liste des doublons": "Liste des doublons",
+	"Voulez-vous supprimer tous ces doublons?": "Voulez-vous supprimer tous ces doublons?",
+	"Liste des doublons avec emprunt": "Liste des doublons avec emprunt",
+	"Impossible d'effacer ce lecteur (%s)": "Impossible d'effacer ce lecteur (%s)"
 }

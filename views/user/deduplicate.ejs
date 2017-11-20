@@ -19,21 +19,18 @@
 <html>
   <head>
     <%- include('../html_head', {title: title}) %>
+    <%- include('../form_script') %>
   </head>
   <body>
     <div id="page">
       <div id="main">
-        <%- include('../page_header', {title: title, subtitle: __("Lecteurs"), menus:menus}) %>
-        <div class="container">
-          <%- include('../page_menu', {items:[
-            {link:"new", label:__("Ajouter"), icon:"plus", tooltip:__("Ajouter un lecteur (emprunteur)")},
-            {link:"list", label:__("Lister"), icon:"th-list", tooltip:__("Liste des lecteurs (emprunteurs)")},
-            {link:"search", label:__("Rechercher"), icon:"search", tooltip:__("Rechercher un lecteur (emprunteur)")},
-            {link:"deduplicate", label:__("Dé-doublonner"), icon:"duplicate", tooltip:__("Supprimer les lecteurs en doublon (dé-doublonner)")}
-          ]}) %>
-        </div>
-      </div>
-    </div>
+          <%- include('../page_header', {title: title, subtitle: subtitle, menus:menus}) %>
+          <div class="container">
+            <%- include('../form_confirm', {req:req, form:form, message:message, action:action, img_url:null}) %>
+          </div>
+          <%- include('list_container') %>
+      </div><!-- id="main" -->
+    </div><!-- id="page" -->
 
     <%- include('../page_footer') %>
   </body>
