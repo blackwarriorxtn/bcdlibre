@@ -28,3 +28,4 @@ node_modules
 
 # Debug log from npm
 npm-debug.log
+load_class.csv.ok
