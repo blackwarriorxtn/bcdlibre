@@ -69,5 +69,11 @@
 	"Requête": "Request",
 	"Ce livre est déjà dans l'inventaire (%s)": "This book is already in inventory (%s)",
 	"Dé-doublonner": "Deduplicate",
-	"Supprimer les lecteurs en doubles (dé-doublonner)": "Delete duplicate users (de-duplicate)"
+	"Supprimer les lecteurs en doubles (dé-doublonner)": "Delete duplicate users (de-duplicate)",
+	"Numéro ISBN": "Numéro ISBN",
+	"Classification": "Classification",
+	"Titre": "Titre",
+	"Série": "Série",
+	"Description (Synopsis)": "Description (Synopsis)",
+	"Titre, Auteur, Description": "Titre, Auteur, Description"
 }
