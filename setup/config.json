@@ -11,9 +11,10 @@
   },
   "webservices": {
     "aws" : {
-      "awsId":     "AKIAIUNRAFFUMCQ6YQLQ",
-      "awsSecret": "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",
-      "assocId":   "bcdlibre09-21"
+      "awsId":     "AKIAJQAZJK5NPW6QV6SQ",
+      "awsSecret": "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",
+      "assocId":   "bcdlibre09-21",
+      "locale":    "FR"
     }
   }
 }

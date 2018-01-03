@@ -30,7 +30,16 @@ var mkdirp = require('mkdirp');
 var strAWSId = config.webservices.aws.awsId;
 var strAWSSecret = config.webservices.aws.awsSecret;
 var strAWSAssocId = config.webservices.aws.assocId;
-
+var strAWSLocale = config.webservices.aws.locale;
+var AWSOperationHelper = require('apac').OperationHelper;
+var objAWSOpHelper = new AWSOperationHelper({
+  awsId:     strAWSId,
+  awsSecret: strAWSSecret,
+  assocId:   strAWSAssocId,
+  locale:    strAWSLocale,
+  /* Enable automatic throttling option to workaround Amazon's limit of one request per second per IP */
+  maxRequestsPerSecond: 1
+});
 
 // ******************************************************************************** item
 function module_context(req, res, next)
@@ -822,17 +831,7 @@ router.get('/aws', function(req, objLocalWebServiceResult, next) {
     return objLocalWebServiceResult.sendStatus(400);
   }
 
-  var OperationHelper = require('apac').OperationHelper;
-
-  var opHelper = new OperationHelper({
-      awsId:     strAWSId,
-      awsSecret: strAWSSecret,
-      assocId:   strAWSAssocId,
-      /* Enable automatic throttling option to workaround Amazon's limit of one request per second per IP */
-      maxRequestsPerSecond: 1
-  });
-
-  opHelper.execute('ItemLookup', {
+  objAWSOpHelper.execute('ItemLookup', {
       'IdType': 'ISBN',
       'ItemId': strISBN,
       'SearchIndex': 'Books',
