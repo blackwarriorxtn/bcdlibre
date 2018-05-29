@@ -39,7 +39,7 @@ PASSWORD_OPTION=--password
 if test "$MYSQL_ROOT_PASSWORD" != ""
 then
   # Use MySQL specific environment variable
-  # Note: this is considered insecure (some system the "ps" command can view environment variables)
+  # Note: this is considered insecure (on some systems the "ps" command can view environment variables)
   # TODO use mysql configuration files instead (see https://dev.mysql.com/doc/refman/5.5/en/password-security-user.html)
   export MYSQL_PWD=$MYSQL_ROOT_PASSWORD
   PASSWORD_OPTION=""

@@ -42,7 +42,21 @@ then
   exit 1
 fi
 
-mysql --database="$DB_NAME" --default-character-set=utf8 --user=root --password=$MYSQL_ROOT_PASSWORD < "$BACKUP_FILE_SQL" || handle_error "Can't restore mysql database!"
+# If there's an environment variable MYSQL_ROOT_PASSWORD, use it as the root password (otherwise ask for password interactively)
+PASSWORD_OPTION=--password
+if test "$MYSQL_ROOT_PASSWORD" != ""
+then
+  # Use MySQL specific environment variable
+  # Note: this is considered insecure (on some systems the "ps" command can view environment variables)
+  # TODO use mysql configuration files instead (see https://dev.mysql.com/doc/refman/5.5/en/password-security-user.html)
+  export MYSQL_PWD=$MYSQL_ROOT_PASSWORD
+  PASSWORD_OPTION=""
+fi
+
+# Check that MySQL is up and running (need this to restore via mysql)
+bash `dirname $0`/mysql_ping.sh || handle_error "MySQL is not running!"
+# Restore database via mysql command line
+mysql --database="$DB_NAME" --default-character-set=utf8 --user=root $PASSWORD_OPTION < "$BACKUP_FILE_SQL" || handle_error "Can't restore mysql database!"
 
 # TODO restore images
 
