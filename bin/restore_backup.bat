@@ -19,7 +19,8 @@ SET BACKUP_SQL=%~1
 IF NOT "%BACKUP_SQL%" == "" IF EXIST "%BACKUP_SQL%" GOTO RESTORE_SQL
 
 REM Backup files must be in folder just above source code (bcdlibre/..)
-FOR %%F IN (%~dp0..\..\*.bibliopuce.backup.sql) DO SET BACKUP_SQL=%%F
+REM Note: sort by date (DIR /OD) and take the last file found
+FOR /F "usebackq" %%F IN (`DIR /OD/B %~dps0..\..\*.bibliopuce.backup.sql`) DO SET BACKUP_SQL=%~dps0..\..\%%F
 
 IF NOT EXIST "%BACKUP_SQL%" GOTO ERROR_NOT_FOUND
 
@@ -27,6 +28,7 @@ IF NOT EXIST "%BACKUP_SQL%" GOTO ERROR_NOT_FOUND
 ECHO [%DATE% %TIME%] Restore sql "%BACKUP_SQL%"...
 mysql --user=root --password=%MYSQL_ROOT_PASSWORD% --database=bibliopuce < %BACKUP_SQL%
 PAUSE
+EXIT /b 0
 
 :ERROR_NOT_FOUND
 ECHO [%DATE% %TIME%] ERROR: File not found: "%BACKUP_SQL%"
