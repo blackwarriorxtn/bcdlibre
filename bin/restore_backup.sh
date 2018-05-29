@@ -26,7 +26,7 @@ handle_error()
 DB_NAME=bibliopuce
 # Find backup file in super-directory (../../*.backup.sql.gz)
 BACKUP_FOLDER_PATH=`dirname $0`/../..
-BACKUP_FILE_SQL_GZ=`ls -1 -t "${BACKUP_FOLDER_PATH}/*.bibliopuce.backup.sql.gz" | head -1`
+BACKUP_FILE_SQL_GZ=`ls -1 -t "${BACKUP_FOLDER_PATH}"/*.bibliopuce.backup.sql.gz | head -1`
 if test ! -f "$BACKUP_FILE_SQL_GZ"
 then
   echo "ERROR: File not found: $BACKUP_FILE_SQL_GZ" >&2
@@ -35,7 +35,7 @@ fi
 
 gunzip $BACKUP_FILE_SQL_GZ || handle_error "Can't uncompress mysql dump $BACKUP_FILE_SQL_GZ with gzip"
 echo "[`date +'%Y-%m-%d %H:%M:%S'`] MySQL dump uncompressed successfully"
-BACKUP_FILE_SQL=`ls -1 -t "${BACKUP_FOLDER_PATH}/*.bibliopuce.backup.sql" | head -1`
+BACKUP_FILE_SQL=`ls -1 -t "${BACKUP_FOLDER_PATH}"/*.bibliopuce.backup.sql | head -1`
 if test ! -f "$BACKUP_FILE_SQL"
 then
   echo "ERROR: File not found: $BACKUP_FILE_SQL" >&2
