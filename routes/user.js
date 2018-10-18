@@ -21,6 +21,28 @@ var fs = require('fs')
 var multer = require('multer')
 var upload = multer({ dest: 'uploads/' })
 
+function getDateTimeStamp (objDate) {
+  if (objDate == null) {
+    objDate = new Date()
+  }
+  var intYear = objDate.getFullYear() - 2000
+  var strYear = (intYear < 10 ? '0' + intYear.toString(10) : intYear.toString(10))
+  var intMonth = objDate.getMonth() + 1
+  var strMonth = (intMonth < 10 ? '0' + intMonth.toString(10) : intMonth.toString(10))
+  var intDay = objDate.getDay()
+  var strDay = (intDay < 10 ? '0' + intDay.toString(10) : intDay.toString(10))
+  var intHours = objDate.getHours()
+  var strHours = (intHours < 10 ? '0' + intHours.toString(10) : intHours.toString(10))
+  var intMinutes = objDate.getMinutes()
+  var strMinutes = (intMinutes < 10 ? '0' + intMinutes.toString(10) : intMinutes.toString(10))
+  var intSeconds = objDate.getSeconds()
+  var strSeconds = (intSeconds < 10 ? '0' + intSeconds.toString(10) : intSeconds.toString(10))
+
+  // Will display time in 10:30:23 format
+  var strTimeStamp = strYear + strMonth + strDay + strHours + strMinutes + strSeconds
+  return (strTimeStamp)
+}
+
 // ******************************************************************************** user
 function ModuleContext (req, res, next) {
   // *** PARAMETERS (SQL)
@@ -351,6 +373,8 @@ router.post('/import', upload.single('importCSVFile'), function (req, res, next)
       var strCharset = 'latin1'
       var strClassCSVFile = req.file.path
       var objSQLConnection = db.new_connection()
+      var strTimeStamp = getDateTimeStamp(new Date())
+      var strSQLBackupUserTable = '`' + strTimeStamp + '_user`'
       var arrSQL = [
         'DROP TEMPORARY TABLE IF EXISTS temp_user\n;',
         'CREATE TEMPORARY TABLE temp_user( \n' +
@@ -368,6 +392,11 @@ router.post('/import', upload.single('importCSVFile'), function (req, res, next)
         'IGNORE 1 LINES \n' +
         '(last_name, first_name, category) \n' +
         ';',
+        '/* Backup existing users */ \n' +
+        'CREATE TABLE ' + strSQLBackupUserTable + ' LIKE user \n' +
+        '; \n',
+        'INSERT INTO ' + strSQLBackupUserTable + ' SELECT * FROM user \n' +
+        '; \n',
         '/* Remove users from previous years (CAUTION: can\'t delete users with active borrowings) */ \n' +
         'DELETE FROM user \n' +
         'USING user \n' +
