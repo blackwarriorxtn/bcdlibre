@@ -29,6 +29,7 @@
 %>
 
   <!-- Use a disabled form to display field values (no placeholder) -->
+  <form id="_FORM_VIEW" class="form-horizontal" action="<%=action%>" method="post"<%- (strEncType == null ? ' enctype="application/x-www-form-urlencoded"' : ' enctype="' + strEncType + '"') %>>
       <%
         if (record)
         {
