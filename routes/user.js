@@ -17,6 +17,9 @@
 var express = require('express')
 var router = express.Router()
 var db = require('./db') // database utilities
+var fs = require('fs')
+var multer = require('multer')
+var upload = multer({ dest: 'uploads/' })
 
 // ******************************************************************************** user
 function ModuleContext (req, res, next) {
@@ -291,6 +294,104 @@ router.post('/deduplicate', function (req, res, next) {
       var result = db.rows(arrRows)
       res.render('user/list', { title: req.app.locals.title, subtitle: req.i18n.__('Liste des doublons avec emprunt'), menus: [objMyContext.objMainMenu].concat(objMyContext.objMenu), form: objMyContext.objFormParameters, records: result, sql: objSQLOptions })
     })
+  } else {
+    // Neither _OK nor _CANCEL: error!
+    throw new Error(req.i18n.__('ERROR: Invalid form state (must be _OK or _CANCEL)'))
+  }
+})
+
+// GET import (form)
+router.get('/import', function (req, res, next) {
+  var objMyContext = new ModuleContext(req, res, next)
+  // Check parameter l for limit
+  var intLimit = 15
+  if (req.query.l) {
+    intLimit = parseInt(req.query.l, 10)
+  }
+  var objSQLOptions = {order_by: [{name: 'id', direction: 'DESC'}], limit: intLimit}
+  var arrSQL = '/* Display Users to be deleted */\n' +
+'SELECT * FROM user\n' +
+'ORDER BY id\n' +
+';\n'
+  db.runsql(arrSQL, function (err, arrRows, fields, objSQLConnection) {
+    if (err) throw err
+    // Display records with "list" template
+    var result = db.rows(arrRows)
+    res.render('user/import', {
+      req: req,
+      title: req.app.locals.title,
+      subtitle: req.i18n.__('Liste des lecteurs'),
+      message: {text: req.i18n.__('Voulez-vous supprimer tous ces lecteurs pour les remplacer par la nouvelle liste ?'), type: 'warning'},
+      menus: [objMyContext.objMainMenu].concat(objMyContext.objMenu),
+      form: {
+        table_name: 'user',
+        primary_key: ['id'],
+        autoincrement_column: 'id',
+        fields: [
+          {name: 'importCSVFile', label: req.i18n.__("Fichier à importer (format CSV)"), type: 'File', required: true, validation: null}
+        ],
+        allowed_states: null,
+        sql_counter: null
+      },
+      record: null,
+      records: result,
+      sql: objSQLOptions,
+      action: 'import' })
+  })
+})
+// POST import (form validation then import user records in database)
+router.post('/import', upload.single('importCSVFile'), function (req, res, next) {
+  if (req.body['_CANCEL'] != null) {
+    // Cancel insert : Redirect to menu
+    res.redirect('./')
+  } else if (req.body['_OK'] != null) {
+    // Check files parameter
+    if (req.file) {
+      // Load CSV file into a temporary table, empty user table, then copy all temporary data into users table
+      var strCharset = 'latin1'
+      var strClassCSVFile = req.file.path
+      var objSQLConnection = db.new_connection()
+      var arrSQL = [
+        'DROP TEMPORARY TABLE IF EXISTS temp_user\n;',
+        'CREATE TEMPORARY TABLE temp_user( \n' +
+        '  id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY, \n' +
+        '  last_name VARCHAR(255) NOT NULL, \n' +
+        '  first_name VARCHAR(255) NULL, \n' +
+        '  category VARCHAR(255) NOT NULL \n' +
+        ') \n' +
+        '; \n',
+        'LOAD DATA LOCAL INFILE ' + objSQLConnection.escape(strClassCSVFile) + ' \n' +
+        'INTO TABLE temp_user \n' +
+        'CHARACTER SET ' + objSQLConnection.escape(strCharset) + ' \n' +
+        'FIELDS TERMINATED BY \',\' \n' +
+        'LINES STARTING BY \'\' TERMINATED BY \'\n\' \n' +
+        'IGNORE 1 LINES \n' +
+        '(last_name, first_name, category) \n' +
+        ';',
+        '/* Remove users from previous years (CAUTION: can\'t delete users with active borrowings) */ \n' +
+        'DELETE FROM user \n' +
+        'USING user \n' +
+        'LEFT OUTER JOIN borrow ON user.id = borrow.user_id \n' +
+        'WHERE borrow.id IS NULL \n' +
+        '; \n',
+        'INSERT INTO user(last_name, first_name, category) SELECT last_name, first_name, category FROM temp_user \n' +
+        ';\n'
+      ]
+      db.runsql(arrSQL, function (err, arrRows, fields, objSQLConnection) {
+        if (err) throw err
+        // Delete temporary file
+        if (fs.existsSync(strClassCSVFile)) {
+          fs.unlinkSync(strClassCSVFile)
+        }
+        // Display records with "list" command
+        res.redirect('./list')
+      }, objSQLConnection)
+    } else {
+      res.render('error', {
+        message: req.i18n.__('ERREUR: Aucun fichier CSV sélectionné!'),
+        error: {}
+      })
+    } // if (req.files && req.files[0])
   } else {
     // Neither _OK nor _CANCEL: error!
     throw new Error(req.i18n.__('ERROR: Invalid form state (must be _OK or _CANCEL)'))

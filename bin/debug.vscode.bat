@@ -22,6 +22,7 @@ CD /D %BCDLIBRE_PATH% || PAUSE
 %COMSPEC% /C %~dp0\stop.bat 2>NUL
 SET VSCODE_EXE=C:\Program Files\Microsoft VS Code\Code.exe
 IF EXIST "C:\Program Files (x86)\Microsoft VS Code\Code.exe" SET VSCODE_EXE=C:\Program Files (x86)\Microsoft VS Code\Code.exe
+IF EXIST "%LOCALAPPDATA%\Programs\Microsoft VS Code\Code.exe" SET VSCODE_EXE=%LOCALAPPDATA%\Programs\Microsoft VS Code\Code.exe
 IF NOT EXIST "%VSCODE_EXE%" GOTO ERROR
 FOR %%P IN ("%VSCODE_EXE%") DO START /D %BCDLIBRE_PATH% %%~sP %BCDLIBRE_PATH% || GOTO ERROR
 EXIT /B 0

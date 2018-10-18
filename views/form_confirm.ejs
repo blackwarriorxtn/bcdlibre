@@ -17,10 +17,18 @@
  */ -%>
 <!-- page_form -->
 <%- include('form_message', {message: message}) %>
-<div class="panel-body">
+<div class="panel-body"><%
+  // Detect if a field is of type "File" (use enctype="multipart/form-data" in that case)
+  var strEncType = null;
+  for(var i=0; i< form.fields.length; i++)
+  {
+    if (form.fields[i].type == "File") {
+      strEncType = 'multipart/form-data';
+    }
+  }
+%>
 
   <!-- Use a disabled form to display field values (no placeholder) -->
-  <form id="_FORM_VIEW" class="form-horizontal" action="<%=action%>" method="post">
       <%
         if (record)
         {
@@ -66,14 +74,13 @@
             } // if (form.autoincrement_column != form.fields[i].name)
           } // for
 
-          if (blnFieldset)
-          {
-            blnFieldset = false;
-            %></fieldset><%
-          } // if (blnFieldset)
         } // if (record)
         %>
-      <%- include('form_okcancel', { visible:true }) %>
-    </fieldset>
-  </form>
+      <%- include('form_okcancel', { visible:true }) %><%
+      if (blnFieldset)
+      {
+        blnFieldset = false;
+        %></fieldset><%
+      } // if (blnFieldset)%>
+</form>
 </div><!-- class="panel-body" -->

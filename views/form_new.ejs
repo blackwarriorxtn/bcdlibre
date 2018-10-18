@@ -17,8 +17,17 @@
  */ -%>
 <!-- page_form -->
 <%- include('form_message', {message: message}) %>
-<div class="panel-body">
-<form id="_FORM_NEW" class="form-horizontal" action="<%=action%>" method="post">
+<div class="panel-body"><%
+  // Detect if a field is of type "File" (use enctype="multipart/form-data" in that case)
+  var strEncType = null;
+  for(var i=0; i< form.fields.length; i++)
+  {
+    if (form.fields[i].type == "File") {
+      strEncType = 'multipart/form-data';
+    }
+  }
+%>
+<form id="_FORM_NEW" class="form-horizontal" action="<%=action%>" method="post"<%- (strEncType == null ? '' : ' enctype="' + strEncType + '"') %>>
 <div class="col-xs-10 col-md-10">
   <fieldset id="_FORM_NEW_FIELDS">
   <%
@@ -46,7 +55,9 @@
         <label for="<%= form.fields[i].name %>" class="control-label col-xs-2 col-md-2"><%= form.fields[i].label %></label>
         <div class="col-xs-10 col-md-10">
         <%
-        if (form.fields[i].maximum_length > 255)
+        if (form.fields[i].type == "File") {
+          %><input type="file" name="<%= form.fields[i].name %>"><%
+        } else if (form.fields[i].maximum_length > 255)
         {
           %><textarea class="form-control<%= (form.fields[i].required ? " form-control-required" : "") %>" name="<%= form.fields[i].name %>" id="<%= form.fields[i].name %>" rows="5"
                       placeholder="<%= form.fields[i].placeholder %>"

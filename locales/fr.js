@@ -122,5 +122,12 @@
 	"Liste des doublons": "Liste des doublons",
 	"Voulez-vous supprimer tous ces doublons?": "Voulez-vous supprimer tous ces doublons?",
 	"Liste des doublons avec emprunt": "Liste des doublons avec emprunt",
-	"Impossible d'effacer ce lecteur (%s)": "Impossible d'effacer ce lecteur (%s)"
+	"Impossible d'effacer ce lecteur (%s)": "Impossible d'effacer ce lecteur (%s)",
+	"Importer": "Importer",
+	"Importer les élèves depuis un fichier CSV  (à faire en début d'année)": "Importer les élèves depuis un fichier CSV  (à faire en début d'année)",
+	"Voulez-vous supprimer tous ces lecteurs pour les remplacer par la nouvelle liste ?": "Voulez-vous supprimer tous ces lecteurs pour les remplacer par la nouvelle liste ?",
+	"ATTENTION : Le fichier CSV doit contenir les champs": "ATTENTION : Le fichier CSV doit contenir les champs",
+	"Fichier à importer (format CSV)": "Fichier à importer (format CSV)",
+	"ATTENTION : Le fichier CSV doit contenir les champs (dans cet ordre)": "ATTENTION : Le fichier CSV doit contenir les champs (dans cet ordre)",
+	"ERREUR: Aucun fichier CSV sélectionné!": "ERREUR: Aucun fichier CSV sélectionné!"
 }
