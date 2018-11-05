@@ -150,8 +150,8 @@ function awsPostProcessing (strISBN, objResultItem, objWebServiceResult) {
   objWebServiceResult.isbn = strISBN
   // TODO handle publisher? language? hyperlink to more information on amazon?
   objWebServiceResult.status = 'OK'
-  // Delete any existing message - on result is enough
-  objWebServiceResult.message = null
+  // Delete any existing message - one result is enough
+  delete objWebServiceResult.message
 }
 
 // GET menu
@@ -521,8 +521,8 @@ router.get('/webservice', function (req, objLocalWebServiceResult, next) {
             }
             // TODO handle description? publisher? language? hyperlink to more information on google?
             objWebServiceResult.status = 'OK'
-            // Delete any existing message - on result is enough
-            objWebServiceResult.message = null
+            // Delete any existing message - one result is enough
+            delete objWebServiceResult.message
           } else {
             // Worldcat error : ignore it
             console.log('Worldcat error : ignore it')
@@ -553,8 +553,8 @@ router.get('/webservice', function (req, objLocalWebServiceResult, next) {
             }
             // TODO handle publisher? language? hyperlink to more information on google?
             objWebServiceResult.status = 'OK'
-            // Delete any existing message - on result is enough
-            objWebServiceResult.message = null
+            // Delete any existing message - one result is enough
+            delete objWebServiceResult.message
           } else {
             // Google error : ignore it
             console.log('Google error : ignore it')
@@ -619,8 +619,8 @@ router.get('/webservice', function (req, objLocalWebServiceResult, next) {
               }
             }
             objWebServiceResult.status = 'OK'
-            // Delete any existing message - on result is enough
-            objWebServiceResult.message = null
+            // Delete any existing message - one result is enough
+            delete objWebServiceResult.message
             if (arrLargeImageURLs) {
               objWebServiceResult.image_urls = arrLargeImageURLs.concat(arrMediumImageURLs, arrSmallImageURLs)
             }
