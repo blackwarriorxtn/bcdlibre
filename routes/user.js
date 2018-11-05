@@ -350,7 +350,7 @@ router.get('/import', function (req, res, next) {
         primary_key: ['id'],
         autoincrement_column: 'id',
         fields: [
-          {name: 'importCSVFile', label: req.i18n.__("Fichier à importer (format CSV)"), type: 'File', required: true, validation: null}
+          {name: 'importCSVFile', label: req.i18n.__('Fichier à importer (format CSV)'), type: 'File', required: true, validation: null}
         ],
         allowed_states: null,
         sql_counter: null

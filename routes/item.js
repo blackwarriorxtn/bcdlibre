@@ -150,6 +150,8 @@ function awsPostProcessing (strISBN, objResultItem, objWebServiceResult) {
   objWebServiceResult.isbn = strISBN
   // TODO handle publisher? language? hyperlink to more information on amazon?
   objWebServiceResult.status = 'OK'
+  // Delete any existing message - on result is enough
+  objWebServiceResult.message = null
 }
 
 // GET menu
@@ -448,6 +450,7 @@ router.get('/webservice', function (req, objLocalWebServiceResult, next) {
   }
 
   const urls = [
+    // TODO Delete worldcat if it's not working anymore
     'http://xisbn.worldcat.org/webservices/xid/isbn/' + encodeURIComponent(strISBN) + '?method=getMetadata&format=json&fl=' + encodeURIComponent('*'),
     'https://www.googleapis.com/books/v1/volumes?q=isbn:' + encodeURIComponent(strISBN),
     /* TODO : fetch api key from configuration */
@@ -462,16 +465,20 @@ router.get('/webservice', function (req, objLocalWebServiceResult, next) {
     }
     request(options,
       function (err, res, body) {
-        debug('Body = %j', body)
+        debug('err = %j, Body = %j', err, body)
         var objSQLConnection = db.new_connection()
         var objResult = body
-        if (res.headers['content-type'] && res.headers['content-type'].match(/(application|text)\/xml/)) {
+        if (err) {
+          objResult = {error: err}
+        }
+        if (res && res.headers && res.headers['content-type'] && res.headers['content-type'].match(/(application|text)\/xml/)) {
           // Result contains XML: convert it to JSON automatically
           xml2js.parseString(objResult, {trim: true}, function (err, objResultJSON) {
             db.runsql('INSERT INTO log(`date_time`, `type`, `label`, `request`, `result`) \n' +
 'VALUES (\n' +
 '  NOW(), \'WEBSERVICE\', ' + objSQLConnection.escape('ISBN Web Service') + ', ' + objSQLConnection.escape(url) + ',COMPRESS(' + objSQLConnection.escape(JSON.stringify(objResultJSON)) + ') \n' +
 ')\n;\n' /* strSQL */, null /* fnCallback */, objSQLConnection, false /* blnLogIt */)
+            objResultJSON.url = url
             callback(err, objResultJSON)
           })
         } else {
@@ -479,18 +486,12 @@ router.get('/webservice', function (req, objLocalWebServiceResult, next) {
 'VALUES (\n' +
 '  NOW(), \'WEBSERVICE\', ' + objSQLConnection.escape('ISBN Web Service') + ', ' + objSQLConnection.escape(url) + ',COMPRESS(' + objSQLConnection.escape(JSON.stringify(objResult)) + ') \n' +
 ')\n;\n' /* strSQL */, null /* fnCallback */, objSQLConnection, false /* blnLogIt */)
+          objResult.url = url
           callback(err, objResult)
         }
       }
     )
   }, function (err, res) {
-    // Handle errors gracefully
-    if (err) {
-      objLocalWebServiceResult.status = 'KO'
-      objLocalWebServiceResult.message = err
-      objLocalWebServiceResult.json(objWebServiceResult)
-    }
-
     debug('res=%j\n', res)
 
     if (res && res.length > 0) {
@@ -519,6 +520,8 @@ router.get('/webservice', function (req, objLocalWebServiceResult, next) {
             }
             // TODO handle description? publisher? language? hyperlink to more information on google?
             objWebServiceResult.status = 'OK'
+            // Delete any existing message - on result is enough
+            objWebServiceResult.message = null
           } else {
             // Worldcat error : ignore it
             console.log('Worldcat error : ignore it')
@@ -549,6 +552,8 @@ router.get('/webservice', function (req, objLocalWebServiceResult, next) {
             }
             // TODO handle publisher? language? hyperlink to more information on google?
             objWebServiceResult.status = 'OK'
+            // Delete any existing message - on result is enough
+            objWebServiceResult.message = null
           } else {
             // Google error : ignore it
             console.log('Google error : ignore it')
@@ -613,6 +618,8 @@ router.get('/webservice', function (req, objLocalWebServiceResult, next) {
               }
             }
             objWebServiceResult.status = 'OK'
+            // Delete any existing message - on result is enough
+            objWebServiceResult.message = null
             if (arrLargeImageURLs) {
               objWebServiceResult.image_urls = arrLargeImageURLs.concat(arrMediumImageURLs, arrSmallImageURLs)
             }
@@ -621,34 +628,44 @@ router.get('/webservice', function (req, objLocalWebServiceResult, next) {
             console.log('Goodreads error : ignore it')
           }
         } else {
-          // Unknown format - fatal error
-          objWebServiceResult.message = "Unknown format: can't find book with isbn \"" + strISBN + '"'
+          // Handle errors gracefully
+          if (res[intResult].error) {
+            objWebServiceResult.message = 'Error : ' + res[intResult].error.toString() + (res[intResult].url ? ' from "' + res[intResult].url + '"' : '')
+            console.log(objWebServiceResult.message)
+          } else if (err) {
+            objWebServiceResult.message = 'Error : ' + err.toString() + (res[intResult].url ? ' from "' + res[intResult].url + '"' : '')
+            console.log(objWebServiceResult.message)
+          } else {
+            // No known error, Unknown format - fatal error
+            objWebServiceResult.message = "Unknown format: can't find book with isbn \"" + strISBN + '"' + (res[intResult].url ? ' from "' + res[intResult].url + '"' : '')
+            console.log(objWebServiceResult.message)
+          }
         }
       } // for (var intResult in res)
 
       // If no web service returned a result, set a generic error message
       if (objWebServiceResult.status === 'KO') {
-        objWebServiceResult.message = "Unknown error: can't find book with isbn \"" + strISBN + '"'
+        objWebServiceResult.message += "Unknown error: can't find book with isbn \"" + strISBN + '"'
       }
 
       debug('objWebServiceResult=%j', objWebServiceResult)
+    } // if (res && res.length > 0)
 
-      // Log final result
-      var objSQLConnection = db.new_connection()
-      var strURL = 'http://' + strServerHostPort + '/item/webservice?isbn=' + encodeURIComponent(strISBN)
-      db.runsql('INSERT INTO log(`date_time`, `type`, `label`, `request`, `result`) \n' +
+    // Log final result
+    var objSQLConnection = db.new_connection()
+    var strURL = 'http://' + strServerHostPort + '/item/webservice?isbn=' + encodeURIComponent(strISBN)
+    db.runsql('INSERT INTO log(`date_time`, `type`, `label`, `request`, `result`) \n' +
 'VALUES (\n' +
 '  NOW(), \'WEBSERVICE\', ' + objSQLConnection.escape('ISBN Web Service (final)') + ', ' + objSQLConnection.escape(strURL) + ',COMPRESS(' + objSQLConnection.escape(JSON.stringify(objWebServiceResult)) + ') \n' +
 ')\n;\n' /* strSQL */, null /* fnCallback */, objSQLConnection, false /* blnLogIt */)
 
-      // Nettoyage
-      if (objSQLConnection) {
-        objSQLConnection.end()
-      }
+    // Nettoyage
+    if (objSQLConnection) {
+      objSQLConnection.end()
+    }
 
-      // Return final result
-      objLocalWebServiceResult.json(objWebServiceResult)
-    } // if (res && res.length > 0)
+    // Return final result
+    objLocalWebServiceResult.json(objWebServiceResult)
   })
 })
 

@@ -100,7 +100,7 @@ app.use(bodyParser.json())
 
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
-app.use('/static', express.static(__dirname + '/public'))
+app.use('/static', express.static(path.join(__dirname, 'public')))
 app.use(expressSession({ secret: 'keyboard cat', resave: true, saveUninitialized: true }))
 // If authentication is enabled, set passport module to handle it
 if (app.locals.config.application.authentication === 'true') {
@@ -118,7 +118,7 @@ app.use(function (req, res, next) {
     var strLang = 'en'
     // No cookie: try to detect language based on browser's configuration
     var arrAcceptsLanguages = req.acceptsLanguages()
-    console.log('req.acceptsLanguages()=%j', arrAcceptsLanguages)
+    // DEBUG console.log('req.acceptsLanguages()=%j', arrAcceptsLanguages)
     if (arrAcceptsLanguages) {
       // Check all supported locales to find a matching locale
       for (var intL = 0; intL < arrAcceptsLanguages.length; intL++) {
@@ -132,13 +132,13 @@ app.use(function (req, res, next) {
       }
     } // if (arrAcceptsLanguages)
 
-    console.log('I18N:setLocale: %s', strLang)
+    // DEBUG console.log('I18N:setLocale: %s', strLang)
     req.i18n.setLocale(strLang)
 
     // Store lang in cookie for next call
     res.cookie('bcdlibre_locale', strLang)
   } else {
-    console.log('I18N:setLocaleFromCookie: req.cookies.bcdlibre_locale=%s', req.cookies.bcdlibre_locale)
+    // DEBUG console.log('I18N:setLocaleFromCookie: req.cookies.bcdlibre_locale=%s', req.cookies.bcdlibre_locale)
     // TODO Check that coockie contains a supported languages (see req.i18n.locales)
     req.i18n.setLocaleFromCookie()
   }
