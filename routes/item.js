@@ -450,8 +450,8 @@ router.get('/webservice', function (req, objLocalWebServiceResult, next) {
   }
 
   const urls = [
-    // TODO Delete worldcat if it's not working anymore
-    'http://xisbn.worldcat.org/webservices/xid/isbn/' + encodeURIComponent(strISBN) + '?method=getMetadata&format=json&fl=' + encodeURIComponent('*'),
+    // Worldcat search is obsolete: check out https://www.oclc.org/developer/news/2018/xid-decommission.en.html
+    // 'http://xisbn.worldcat.org/webservices/xid/isbn/' + encodeURIComponent(strISBN) + '?method=getMetadata&format=json&fl=' + encodeURIComponent('*'),
     'https://www.googleapis.com/books/v1/volumes?q=isbn:' + encodeURIComponent(strISBN),
     /* TODO : fetch api key from configuration */
     'https://www.goodreads.com/search.xml?key=VaCw4UGPa9vUTlncfWfg&q=' + encodeURIComponent(strISBN),
@@ -502,6 +502,7 @@ router.get('/webservice', function (req, objLocalWebServiceResult, next) {
         debug('res[intResult]=%j\n', res[intResult])
 
         if (res[intResult].stat) {
+          // OBSOLETE : check out https://www.oclc.org/developer/news/2018/xid-decommission.en.html
           // Worldcat result
           if (res[intResult].stat === 'ok' && res[intResult].list && res[intResult].list.length > 0) {
             objResultItem = res[intResult].list[0] // TODO Handle multiple results? (let the user pick one?)
