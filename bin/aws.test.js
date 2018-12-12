@@ -1,9 +1,9 @@
 var OperationHelper = require('apac').OperationHelper;
  
 var opHelper = new OperationHelper({
-    awsId:     'AKIAJ7R5TX3DPO3IAPBA',
-    awsSecret: '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',
-    assocId:   'bibliopucedem-20'
+    awsId:     'TODO',
+    awsSecret: 'TODO',
+    assocId:   'TODO'
 });
  
 opHelper.execute('ItemLookup', {
